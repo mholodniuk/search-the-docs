@@ -2,6 +2,8 @@ package com.mholodniuk.searchmedaddy.file;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.awscore.exception.AwsServiceException;
 import software.amazon.awssdk.core.ResponseInputStream;
@@ -12,12 +14,12 @@ import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import org.apache.commons.io.IOUtils;
 
 import java.io.*;
 
 @Slf4j
 @Component
+@Profile({"test", "local"})
 public class S3Mock implements S3Client {
     private static final String PATH = "/tmp/s3";
     private static final String SERVICE_NAME = "MOCK_S3_SERVICE";

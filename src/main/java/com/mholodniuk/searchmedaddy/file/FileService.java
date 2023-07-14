@@ -35,7 +35,7 @@ public class FileService {
         try {
             return res.readAllBytes();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new FileReadingException(e);
         }
     }
 }

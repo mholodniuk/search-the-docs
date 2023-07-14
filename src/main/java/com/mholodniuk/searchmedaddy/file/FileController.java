@@ -17,22 +17,22 @@ public class FileController {
     private final FileService fileService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public void uploadImage(@RequestParam("file") MultipartFile file) {
-        saveImage(file);
+    public void uploadFile(@RequestParam("file") MultipartFile file) {
+        saveFile(file);
     }
 
     @GetMapping(value = "{image-id}", produces = MediaType.APPLICATION_PDF_VALUE)
-    public byte[] getCustomerProfileImage(@PathVariable("image-id") String imageId) {
+    public byte[] getFile(@PathVariable("image-id") String imageId) {
         return fileService.getObject("mock", imageId);
     }
 
-    private void saveImage(MultipartFile file) {
+    private void saveFile(MultipartFile file) {
         String imageId = UUID.randomUUID().toString();
         try {
-            log.info("Saved image with id: {}", imageId);
+            log.info("Saved file with name: {}", imageId);
             fileService.putObject("mock", imageId, file.getBytes());
         } catch (IOException e) {
-            throw new RuntimeException("failed to upload profile image", e);
+            throw new RuntimeException("failed to upload a file", e);
         }
     }
 }
