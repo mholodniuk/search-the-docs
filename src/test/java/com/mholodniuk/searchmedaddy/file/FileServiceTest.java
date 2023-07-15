@@ -1,5 +1,6 @@
 package com.mholodniuk.searchmedaddy.file;
 
+import com.mholodniuk.searchmedaddy.document.DocumentService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,11 +24,15 @@ class FileServiceTest {
     @Mock
     private S3Mock s3Client;
 
+    // todo: add tests
+    @Mock
+    private DocumentService documentService;
+
     private FileService fileService;
 
     @BeforeEach
     void setup() {
-        fileService = new FileService(s3Client);
+        fileService = new FileService(s3Client, documentService);
     }
 
     @Test
@@ -70,7 +75,7 @@ class FileServiceTest {
 
         when(s3Client.getObject(eq(getObjectRequest))).thenReturn(res);
 
-        byte[] bytes = fileService.getObject(bucket, key);
+        byte[] bytes = fileService.getFile(bucket, key);
 
         Assertions.assertEquals(bytes, data);
     }
@@ -87,6 +92,6 @@ class FileServiceTest {
 
         when(s3Client.getObject(eq(getObjectRequest))).thenReturn(res);
 
-        Assertions.assertThrows(FileReadingException.class, () -> fileService.getObject(bucket, key));
+        Assertions.assertThrows(FileReadingException.class, () -> fileService.getFile(bucket, key));
     }
 }

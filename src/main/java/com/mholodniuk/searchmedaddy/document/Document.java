@@ -1,4 +1,4 @@
 package com.mholodniuk.searchmedaddy.document;
 
-public record Document(String path, String text) {
+public record Document(String name, String text) {
 }
