@@ -22,7 +22,7 @@ public class DocumentService {
 
     public Result indexDocument(MultipartFile file, String id) throws IOException {
         var content = extractContent(file);
-        var document = new Document(file.getName(), content);
+        var document = new Document(file.getOriginalFilename(), content);
 
         var docId = id != null ? id : UUID.randomUUID().toString();
         log.info("Trying to index a file with id: {} and name: {} was successfully indexed", docId, document.name());
