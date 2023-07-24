@@ -15,7 +15,6 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -25,11 +24,11 @@ class FileService {
     private final DocumentService documentService;
 
     public FileUploadResponse saveFile(MultipartFile file, String bucketName) {
-        String fileId = UUID.randomUUID().toString();
+        String fileId = file.getOriginalFilename();
         try {
             putObject(bucketName, fileId, file.getBytes());
             log.info("Saved file with name: {}", fileId);
-            var indexResult = documentService.indexDocument(file, fileId);
+            var indexResult = documentService.indexDocument(file);
             return new FileUploadResponse(fileId, indexResult.toString());
         } catch (IOException e) {
             log.error("Failed to save file with name: {}", fileId);

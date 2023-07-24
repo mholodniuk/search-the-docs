@@ -15,7 +15,7 @@ POST documents/_search
 {
   "query": {
     "query_string": {
-      "default_field": "text",
+      "default_field": "content",
       "query": "phrase to search :)"
     }
   },

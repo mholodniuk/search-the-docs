@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.UUID;
 
 @Slf4j
 @Service
@@ -20,22 +19,33 @@ public class DocumentService {
     private final ElasticsearchClient elasticsearchClient;
     private static final String DOCUMENT_INDEX = "documents";
 
-    public Result indexDocument(MultipartFile file, String id) throws IOException {
+    public Result indexDocument(MultipartFile file) throws IOException {
         var content = extractContent(file);
+
         var document = new Document(file.getOriginalFilename(), content);
 
-        var docId = id != null ? id : UUID.randomUUID().toString();
-        log.info("Trying to index a file with id: {} and name: {} was successfully indexed", docId, document.name());
+        log.info("Indexing a file: {}", document.name());
         IndexResponse response = elasticsearchClient.index(i -> i
-                .id(docId)
-//                .pipeline()
                 .index(DOCUMENT_INDEX)
                 .document(document));
 
         return response.result();
     }
 
-    public String extractContent(MultipartFile multipartFile) {
+    public void searchDocument(String phrase) {
+        try {
+            var response = elasticsearchClient.search(s -> s
+                            .index(DOCUMENT_INDEX)
+                            .query(q -> q.match(t -> t.field("content").query(phrase))),
+                    Document.class);
+
+            log.info("Doc: {}", response.toString());
+        } catch (IOException e) {
+            log.error(e.getMessage());
+        }
+    }
+
+    private String extractContent(MultipartFile multipartFile) {
         try (PDDocument document = PDDocument.load(multipartFile.getInputStream())) {
             PDFTextStripper pdfStripper = new PDFTextStripper();
             return pdfStripper.getText(document);

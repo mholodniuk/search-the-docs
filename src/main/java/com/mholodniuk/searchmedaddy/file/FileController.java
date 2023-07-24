@@ -2,15 +2,13 @@ package com.mholodniuk.searchmedaddy.file;
 
 import com.mholodniuk.searchmedaddy.file.dto.FileUploadResponse;
 import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-@Slf4j
 @RestController
 @AllArgsConstructor
-@RequestMapping("/documents")
+@RequestMapping("/files")
 public class FileController {
     private final FileService fileService;
 
