@@ -2,15 +2,21 @@ package com.mholodniuk.searchmedaddy.document;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Result;
-import co.elastic.clients.elasticsearch.core.IndexResponse;
+import co.elastic.clients.elasticsearch.core.search.Highlight;
+import co.elastic.clients.elasticsearch.core.search.HighlightField;
+import co.elastic.clients.elasticsearch.core.search.HighlighterType;
+import co.elastic.clients.elasticsearch.core.search.SourceConfig;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
 
 @Slf4j
 @Service
@@ -22,35 +28,60 @@ public class DocumentService {
     public Result indexDocument(MultipartFile file) throws IOException {
         var content = extractContent(file);
 
-        var document = new Document(file.getOriginalFilename(), content);
+        for (int idx = 0; idx < content.size(); idx++) {
+            var document = new Document(file.getOriginalFilename(), content.get(idx), idx);
+            log.info("Indexing page {} of a file: {}", idx, document.name());
+            elasticsearchClient.index(i -> i
+                    .index(DOCUMENT_INDEX)
+                    .document(document));
+        }
 
-        log.info("Indexing a file: {}", document.name());
-        IndexResponse response = elasticsearchClient.index(i -> i
-                .index(DOCUMENT_INDEX)
-                .document(document));
-
-        return response.result();
+        return Result.Created;
     }
 
     public void searchDocument(String phrase) {
         try {
             var response = elasticsearchClient.search(s -> s
                             .index(DOCUMENT_INDEX)
-                            .query(q -> q.match(t -> t.field("content").query(phrase))),
+                            .source(SourceConfig.of(sc -> sc.filter(f -> f.excludes(List.of(FieldAttr.Document.TEXT_FIELD)))))
+                            .highlight(Highlight.of(h -> h
+                                    .fields(FieldAttr.Document.TEXT_FIELD, HighlightField.of(hf -> hf
+                                            .fragmentSize(69)
+                                            .preTags("<b>")
+                                            .postTags("</b>")))
+                                    .type(HighlighterType.Unified)))
+                            .query(q -> q.match(t -> t.field(FieldAttr.Document.TEXT_FIELD).query(phrase))),
                     Document.class);
 
-            log.info("Doc: {}", response.toString());
+            response.hits().hits().forEach(hit -> {
+                System.out.println("HIT: " + hit.highlight().get(FieldAttr.Document.TEXT_FIELD).toString().replace("\n", " "));
+                System.out.println("FILE: " + Objects.requireNonNull(hit.source()).name());
+            });
+
         } catch (IOException e) {
             log.error(e.getMessage());
         }
     }
 
-    private String extractContent(MultipartFile multipartFile) {
+    private List<String> extractContent(MultipartFile multipartFile) {
         try (PDDocument document = PDDocument.load(multipartFile.getInputStream())) {
-            PDFTextStripper pdfStripper = new PDFTextStripper();
-            return pdfStripper.getText(document);
+            // todo: beans?
+            var pdfStripper = new PDFTextStripper();
+            var splitter = new Splitter();
+            var pages = splitter.split(document);
+
+            return pages.stream().map(page -> this.parsePage(pdfStripper, page)).toList();
         } catch (Exception e) {
-            log.error("Error parsing PDF. Message: {}", e.getMessage());
+            log.error("Error loading PDF. Message: {}", e.getMessage());
+            throw new DocumentParsingException(e);
+        }
+    }
+
+    private String parsePage(PDFTextStripper pdfTextStripper, PDDocument document) {
+        try {
+            return pdfTextStripper.getText(document);
+        } catch (IOException e) {
+            log.error("Error parsing page. Message: {}", e.getMessage());
             throw new DocumentParsingException(e);
         }
     }

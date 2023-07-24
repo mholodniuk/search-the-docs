@@ -24,14 +24,14 @@ class FileService {
     private final DocumentService documentService;
 
     public FileUploadResponse saveFile(MultipartFile file, String bucketName) {
-        String fileId = file.getOriginalFilename();
+        String filename = file.getOriginalFilename();
         try {
-            putObject(bucketName, fileId, file.getBytes());
-            log.info("Saved file with name: {}", fileId);
+            putObject(bucketName, filename, file.getBytes());
+            log.info("Saved file with name: {}", filename);
             var indexResult = documentService.indexDocument(file);
-            return new FileUploadResponse(fileId, indexResult.toString());
+            return new FileUploadResponse(filename, indexResult.toString());
         } catch (IOException e) {
-            log.error("Failed to save file with name: {}", fileId);
+            log.error("Failed to save file with name: {}", filename);
             throw new FileSavingException(e);
         }
     }

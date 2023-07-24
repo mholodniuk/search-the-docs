@@ -13,7 +13,7 @@ public class DocumentController {
     private final DocumentService documentService;
 
     @GetMapping("/query")
-    public void queryForDocument(@RequestParam("phrase") String phrase) {
+    public void find(@RequestParam("phrase") String phrase) {
         documentService.searchDocument(phrase);
     }
 }

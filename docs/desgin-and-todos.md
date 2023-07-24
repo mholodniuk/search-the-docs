@@ -4,6 +4,8 @@
 - [index file via spring boot - 2](https://discuss.elastic.co/t/how-to-index-text-files-pdf-doc-txt-in-java/321678/5)
 - [sample app](https://github.com/andreluiz1987/search-store) 
 - [maximum document size](https://discuss.elastic.co/t/maximum-document-size/13086)
+- [java api client highlight](https://medium.com/@andre.luiz1987/highlighting-java-api-client-866de2cfc699)
+- [java api client source](https://medium.com/@andre.luiz1987/more-like-this-query-mlt-java-api-client-f69145593a1b)
 
 ## TODOS
 - add tests
@@ -38,4 +40,6 @@ POST documents/_search
 
 ### Design
 - room logic -> room as a place where users "upload" a file, they can be shared among other users
-- 
+- database -> user and room management (sth light)
+- google oauth for easy access
+- elasticsearch returns already highlighted result with <em></em> tags -> present it wisely on frontend
