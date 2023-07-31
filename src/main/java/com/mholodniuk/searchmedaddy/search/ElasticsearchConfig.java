@@ -6,7 +6,7 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 
 @Configuration
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
-    // todo: add analyzers and other searching stuff
+
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()

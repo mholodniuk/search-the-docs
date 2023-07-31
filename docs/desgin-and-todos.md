@@ -6,10 +6,15 @@
 - [maximum document size](https://discuss.elastic.co/t/maximum-document-size/13086)
 - [java api client highlight](https://medium.com/@andre.luiz1987/highlighting-java-api-client-866de2cfc699)
 - [java api client source](https://medium.com/@andre.luiz1987/more-like-this-query-mlt-java-api-client-f69145593a1b)
+- [embed pdf display](https://itnext.io/you-dont-need-external-packages-to-view-pdf-in-angular-e47779f86595)
+- [spring data elasticsearch](https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#new-features)
+- [implementing custom save, saveAll, search](https://medium.com/@luthfihrz/basic-operations-of-elasticsearch-with-spring-boot-and-spring-data-b1aa241ad9c6)
 
 ## TODOS
 - add tests
 - figure out how to handle saving AND indexing -> make it testable
+- store all metadata of documents/files in DB -> add reindexing feature 
+- bulk indexing pages
 
 
 ### Example usages

@@ -1,4 +1,4 @@
-package com.mholodniuk.searchmedaddy.file;
+package com.mholodniuk.searchmedaddy.file.exception;
 
 
 public class FileReadingException extends RuntimeException {

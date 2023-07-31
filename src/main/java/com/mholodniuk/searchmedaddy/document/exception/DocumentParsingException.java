@@ -1,4 +1,4 @@
-package com.mholodniuk.searchmedaddy.document;
+package com.mholodniuk.searchmedaddy.document.exception;
 
 public class DocumentParsingException extends RuntimeException {
     public DocumentParsingException(Throwable t) {

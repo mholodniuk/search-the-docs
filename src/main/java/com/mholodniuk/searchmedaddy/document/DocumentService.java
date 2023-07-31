@@ -2,10 +2,15 @@ package com.mholodniuk.searchmedaddy.document;
 
 import co.elastic.clients.elasticsearch.ElasticsearchClient;
 import co.elastic.clients.elasticsearch._types.Result;
+import co.elastic.clients.elasticsearch.core.SearchResponse;
 import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.HighlighterType;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import com.mholodniuk.searchmedaddy.document.dto.PhraseSearchResponse;
+import com.mholodniuk.searchmedaddy.document.exception.DocumentParsingException;
+import com.mholodniuk.searchmedaddy.document.mapper.SearchResponseMapper;
+import com.mholodniuk.searchmedaddy.document.utils.FieldAttr;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.multipdf.Splitter;
@@ -16,56 +21,58 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class DocumentService {
     private final ElasticsearchClient elasticsearchClient;
-    private static final String DOCUMENT_INDEX = "documents";
+    private final DocumentRepository documentRepository;
 
-    public Result indexDocument(MultipartFile file) throws IOException {
+    public Result indexDocument(MultipartFile file) {
         var content = extractContent(file);
 
-        for (int idx = 0; idx < content.size(); idx++) {
-            var document = new Document(file.getOriginalFilename(), content.get(idx), idx);
-            log.info("Indexing page {} of a file: {}", idx, document.name());
-            elasticsearchClient.index(i -> i
-                    .index(DOCUMENT_INDEX)
-                    .document(document));
-        }
+        var documents = IntStream.range(0, content.size())
+                .mapToObj(pageIdx -> new Document(file.getOriginalFilename(), content.get(pageIdx), pageIdx))
+                .toList();
+
+        documentRepository.saveAll(documents);
+        log.info("Indexed {} page(s) of a file: {}", documents.size(), file.getOriginalFilename());
 
         return Result.Created;
     }
 
-    public void searchDocument(String phrase) {
+    public Optional<PhraseSearchResponse> searchDocument(String phrase) {
         try {
-            var response = elasticsearchClient.search(s -> s
-                            .index(DOCUMENT_INDEX)
-                            .source(SourceConfig.of(sc -> sc.filter(f -> f.excludes(List.of(FieldAttr.Document.TEXT_FIELD)))))
-                            .highlight(Highlight.of(h -> h
-                                    .fields(FieldAttr.Document.TEXT_FIELD, HighlightField.of(hf -> hf
-                                            .fragmentSize(69)
-                                            .preTags("<b>")
-                                            .postTags("</b>")))
-                                    .type(HighlighterType.Unified)))
-                            .query(q -> q.match(t -> t.field(FieldAttr.Document.TEXT_FIELD).query(phrase))),
-                    Document.class);
+            var response = searchDocumentsByPhrase(phrase);
+            var searchResponse = SearchResponseMapper.mapToDto(response);
 
-            response.hits().hits().forEach(hit -> {
-                System.out.println("HIT: " + hit.highlight().get(FieldAttr.Document.TEXT_FIELD).toString().replace("\n", " "));
-                System.out.println("FILE: " + Objects.requireNonNull(hit.source()).name());
-            });
+            return searchResponse.hits().size() > 0 ? Optional.of(searchResponse) : Optional.empty();
 
         } catch (IOException e) {
             log.error(e.getMessage());
+            return Optional.empty();
         }
+    }
+
+    private SearchResponse<Document> searchDocumentsByPhrase(String phrase) throws IOException {
+        return elasticsearchClient.search(s -> s
+                        .index(Document.getIndexName())
+                        .source(SourceConfig.of(sc -> sc.filter(f -> f.excludes(List.of(FieldAttr.Document.TEXT_FIELD, "_class")))))
+                        .highlight(Highlight.of(h -> h
+                                .fields(FieldAttr.Document.TEXT_FIELD, HighlightField.of(hf -> hf
+                                        .fragmentSize(69)
+                                        .preTags("<b>")
+                                        .postTags("</b>")))
+                                .type(HighlighterType.Unified)))
+                        .query(q -> q.match(t -> t.field(FieldAttr.Document.TEXT_FIELD).query(phrase))),
+                Document.class);
     }
 
     private List<String> extractContent(MultipartFile multipartFile) {
         try (PDDocument document = PDDocument.load(multipartFile.getInputStream())) {
-            // todo: beans?
             var pdfStripper = new PDFTextStripper();
             var splitter = new Splitter();
             var pages = splitter.split(document);

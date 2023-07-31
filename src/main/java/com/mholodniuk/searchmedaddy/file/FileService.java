@@ -2,6 +2,7 @@ package com.mholodniuk.searchmedaddy.file;
 
 import com.mholodniuk.searchmedaddy.document.DocumentService;
 import com.mholodniuk.searchmedaddy.file.dto.FileUploadResponse;
+import com.mholodniuk.searchmedaddy.file.exception.FileReadingException;
 import com.mholodniuk.searchmedaddy.file.exception.FileSavingException;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,14 +30,14 @@ class FileService {
             putObject(bucketName, filename, file.getBytes());
             log.info("Saved file with name: {}", filename);
             var indexResult = documentService.indexDocument(file);
-            return new FileUploadResponse(filename, indexResult.toString());
+            return new FileUploadResponse(filename, indexResult.name());
         } catch (IOException e) {
             log.error("Failed to save file with name: {}", filename);
             throw new FileSavingException(e);
         }
     }
 
-    public byte[] getFile(String bucketName, String key) {
+    byte[] getFile(String bucketName, String key) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
