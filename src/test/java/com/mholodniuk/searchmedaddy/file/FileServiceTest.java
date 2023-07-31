@@ -1,13 +1,19 @@
 package com.mholodniuk.searchmedaddy.file;
 
+import co.elastic.clients.elasticsearch._types.Result;
 import com.mholodniuk.searchmedaddy.document.DocumentService;
+import com.mholodniuk.searchmedaddy.file.exception.FileReadingException;
+import com.mholodniuk.searchmedaddy.file.exception.FileSavingException;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -16,27 +22,28 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 
+import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 
-@ExtendWith(MockitoExtension.class)
+@SpringJUnitConfig(classes = {FileService.class})
 class FileServiceTest {
-    @Mock
+    @MockBean
     private S3Mock s3Client;
 
-    // todo: add tests
-    @Mock
+    @MockBean
     private DocumentService documentService;
 
+    @Autowired
     private FileService fileService;
 
-    @BeforeEach
-    void setup() {
-        fileService = new FileService(s3Client, documentService);
-    }
+    @Mock
+    MultipartFile mockFile
+            = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
 
     @Test
-    void canPutObject() throws IOException {
+    void putObjectTest() throws IOException {
         String bucket = "bucket";
         String key = "key";
         byte[] data = "Hello".getBytes();
@@ -63,7 +70,7 @@ class FileServiceTest {
     }
 
     @Test
-    void canGetObject() throws IOException {
+    void getObjectTest() throws IOException {
         String bucket = "bucket";
         String key = "key";
         byte[] data = "Hello".getBytes();
@@ -93,5 +100,34 @@ class FileServiceTest {
         when(s3Client.getObject(eq(getObjectRequest))).thenReturn(res);
 
         Assertions.assertThrows(FileReadingException.class, () -> fileService.getFile(bucket, key));
+    }
+
+    @Test
+    void savingFileInvokesIndexDocument() {
+        MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
+        given(documentService.indexDocument(file)).willReturn(Result.Created);
+
+        fileService.saveFile(file, "bucketName");
+
+        then(documentService).should().indexDocument(file);
+    }
+
+    @Test
+    void savingFileReturnsCorrectResponse() {
+        MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
+        given(documentService.indexDocument(file)).willReturn(Result.Created);
+
+        var uploadResponse = fileService.saveFile(file, "bucketName");
+
+        Assertions.assertEquals(file.getOriginalFilename(), uploadResponse.key());
+        Assertions.assertEquals(Result.Created.toString(), uploadResponse.indexResult());
+    }
+
+    @Test
+    @SneakyThrows
+    void willThrowOnError() {
+        given(mockFile.getBytes()).willThrow(IOException.class);
+
+        Assertions.assertThrows(FileSavingException.class, () -> fileService.saveFile(mockFile, "bucket"));
     }
 }
