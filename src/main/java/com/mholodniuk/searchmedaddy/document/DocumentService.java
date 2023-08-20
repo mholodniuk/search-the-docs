@@ -28,7 +28,7 @@ public class DocumentService {
         var content = extractContent(file);
 
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new Document(file.getOriginalFilename(), content.get(pageIdx), pageIdx))
+                .mapToObj(pageIdx -> new Document(file.getOriginalFilename(), content.get(pageIdx), pageIdx + 1))
                 .toList();
 
         documentRepository.saveAll(documents);
