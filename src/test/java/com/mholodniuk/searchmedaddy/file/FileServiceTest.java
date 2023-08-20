@@ -105,7 +105,7 @@ class FileServiceTest {
     @Test
     void savingFileInvokesIndexDocument() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file)).willReturn(Result.Created);
+        given(documentService.indexDocument(file)).willReturn("Created");
 
         fileService.saveFile(file, "bucketName");
 
@@ -115,7 +115,7 @@ class FileServiceTest {
     @Test
     void savingFileReturnsCorrectResponse() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file)).willReturn(Result.Created);
+        given(documentService.indexDocument(file)).willReturn("Created");
 
         var uploadResponse = fileService.saveFile(file, "bucketName");
 

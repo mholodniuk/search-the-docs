@@ -30,7 +30,7 @@ class FileService {
             putObject(bucketName, filename, file.getBytes());
             log.info("Saved file with name: {}", filename);
             var indexResult = documentService.indexDocument(file);
-            return new FileUploadResponse(filename, indexResult.name());
+            return new FileUploadResponse(filename, indexResult);
         } catch (IOException e) {
             log.error("Failed to save file with name: {}", filename);
             throw new FileSavingException(e);
@@ -46,6 +46,7 @@ class FileService {
         ResponseInputStream<GetObjectResponse> res = s3.getObject(getObjectRequest);
 
         try {
+            log.info("Returning file {}", key);
             return res.readAllBytes();
         } catch (IOException e) {
             log.error("Failed to read file from bucket {} with key: {}", bucketName, key);
