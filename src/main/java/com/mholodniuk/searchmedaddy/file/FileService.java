@@ -28,7 +28,7 @@ class FileService {
     public FileUploadResponse saveFile(MultipartFile file, String bucketName) {
         String filename = file.getOriginalFilename();
         try {
-            var bytes = file.getBytes();
+            final var bytes = file.getBytes();
             putObject(bucketName, filename, bytes);
             log.info("Saved file with name: {}", filename);
             var indexResult = documentService.indexDocument(bytes, filename);

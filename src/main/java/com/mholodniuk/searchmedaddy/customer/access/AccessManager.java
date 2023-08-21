@@ -1,4 +1,4 @@
-package com.mholodniuk.searchmedaddy.access;
+package com.mholodniuk.searchmedaddy.customer.access;
 
 import org.springframework.stereotype.Component;
 
