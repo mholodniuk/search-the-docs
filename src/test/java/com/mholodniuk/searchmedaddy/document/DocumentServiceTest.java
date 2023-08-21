@@ -37,7 +37,7 @@ class DocumentServiceTest {
     void indexingSinglePageDocumentTest() {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", onePageFile.getContentAsByteArray());
 
-        var result = documentService.indexDocument(file);
+        var result = documentService.indexDocument(file.getBytes(), file.getOriginalFilename());
 
         verify(documentRepository).saveAll(any());
         Assertions.assertEquals("Created", result);
@@ -48,7 +48,7 @@ class DocumentServiceTest {
     void indexingTwoPageDocumentTest() {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", twoPageFile.getContentAsByteArray());
 
-        documentService.indexDocument(file);
+        documentService.indexDocument(file.getBytes(), file.getOriginalFilename());
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
         verify(documentRepository).saveAll(documentsArgumentCaptor.capture());

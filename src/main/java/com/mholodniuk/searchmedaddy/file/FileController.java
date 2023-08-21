@@ -31,4 +31,10 @@ public class FileController {
                           @PathVariable("file-id") String fileId) {
         return fileService.getFile(bucketName, fileId);
     }
+
+    @GetMapping(value = "/{bucket-name}/{file-id}/thumbnail", produces = MediaType.IMAGE_PNG_VALUE)
+    public byte[] getFileThumbnail(@PathVariable("bucket-name") String bucketName,
+                                   @PathVariable("file-id") String fileId) {
+        return fileService.getFile(bucketName, fileId + "-thumbnail");
+    }
 }

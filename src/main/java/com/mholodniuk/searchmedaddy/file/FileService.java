@@ -16,6 +16,7 @@ import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
+import java.util.concurrent.CompletableFuture;
 
 @Slf4j
 @Service
@@ -27,9 +28,17 @@ class FileService {
     public FileUploadResponse saveFile(MultipartFile file, String bucketName) {
         String filename = file.getOriginalFilename();
         try {
-            putObject(bucketName, filename, file.getBytes());
+            var bytes = file.getBytes();
+            putObject(bucketName, filename, bytes);
             log.info("Saved file with name: {}", filename);
-            var indexResult = documentService.indexDocument(file);
+            var indexResult = documentService.indexDocument(bytes, filename);
+
+            CompletableFuture.runAsync(() -> {
+                var thumbnailBytes = ThumbnailGenerator.generateThumbnail(bytes);
+                log.info("Generated thumbnail for {}", filename);
+                putObject(bucketName, filename + "-thumbnail", thumbnailBytes);
+            });
+
             return new FileUploadResponse(filename, indexResult);
         } catch (IOException e) {
             log.error("Failed to save file with name: {}", filename);
@@ -46,7 +55,7 @@ class FileService {
         ResponseInputStream<GetObjectResponse> res = s3.getObject(getObjectRequest);
 
         try {
-            log.info("Returning file {}", key);
+            log.debug("Returning file {}", key);
             return res.readAllBytes();
         } catch (IOException e) {
             log.error("Failed to read file from bucket {} with key: {}", bucketName, key);

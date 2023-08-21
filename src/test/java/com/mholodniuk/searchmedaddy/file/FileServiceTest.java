@@ -1,6 +1,5 @@
 package com.mholodniuk.searchmedaddy.file;
 
-import co.elastic.clients.elasticsearch._types.Result;
 import com.mholodniuk.searchmedaddy.document.DocumentService;
 import com.mholodniuk.searchmedaddy.file.exception.FileReadingException;
 import com.mholodniuk.searchmedaddy.file.exception.FileSavingException;
@@ -103,24 +102,26 @@ class FileServiceTest {
     }
 
     @Test
+    @SneakyThrows
     void savingFileInvokesIndexDocument() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file)).willReturn("Created");
+        given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
 
         fileService.saveFile(file, "bucketName");
 
-        then(documentService).should().indexDocument(file);
+        then(documentService).should().indexDocument(file.getBytes(), file.getOriginalFilename());
     }
 
     @Test
+    @SneakyThrows
     void savingFileReturnsCorrectResponse() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file)).willReturn("Created");
+        given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
 
         var uploadResponse = fileService.saveFile(file, "bucketName");
 
         Assertions.assertEquals(file.getOriginalFilename(), uploadResponse.key());
-        Assertions.assertEquals(Result.Created.toString(), uploadResponse.indexResult());
+        Assertions.assertEquals("Created", uploadResponse.indexResult());
     }
 
     @Test

@@ -9,8 +9,8 @@ import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.text.PDFTextStripper;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -24,15 +24,16 @@ public class DocumentService {
     private final SearchService searchService;
     private final DocumentRepository documentRepository;
 
-    public String indexDocument(MultipartFile file) {
+    public String indexDocument(byte[] file, String filename) {
         var content = extractContent(file);
 
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new Document(file.getOriginalFilename(), content.get(pageIdx), pageIdx + 1))
+                .mapToObj(pageIdx -> new Document(filename, content.get(pageIdx), pageIdx + 1))
+                .peek(document -> log.debug("Indexing page {}. with content: {}", document.getPage(), document.getText()))
                 .toList();
 
         documentRepository.saveAll(documents);
-        log.info("Indexed {} page(s) of a file: {}", documents.size(), file.getOriginalFilename());
+        log.info("Indexed {} page(s) of a file: {}", documents.size(), filename);
 
         return "Created";
     }
@@ -51,8 +52,8 @@ public class DocumentService {
         }
     }
 
-    private List<String> extractContent(MultipartFile multipartFile) {
-        try (PDDocument document = PDDocument.load(multipartFile.getInputStream())) {
+    private List<String> extractContent(byte[] fileBytes) {
+        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(fileBytes))) {
             var pdfStripper = new PDFTextStripper();
             var splitter = new Splitter();
             var pages = splitter.split(document);
