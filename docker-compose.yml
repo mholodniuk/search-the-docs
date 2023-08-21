@@ -28,6 +28,14 @@ services:
       - kibana-data:/usr/share/kibana/data
     networks:
       - es-net
+  postgres:
+    image: postgres:15.4-alpine
+    restart: always
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    ports:
+      - "5432:5432"
 
 volumes:
   es-data:
