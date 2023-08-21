@@ -12,8 +12,8 @@ import java.io.IOException;
 import java.util.List;
 
 @Slf4j
-@Component
-class PdfExtractor implements ContentExtractor {
+@Component("application/pdf")
+public class PdfExtractor implements ContentExtractor {
     @Override
     public List<String> extract(byte[] bytes) {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(bytes))) {

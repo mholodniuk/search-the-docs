@@ -1,22 +1,25 @@
 package com.mholodniuk.searchmedaddy.file;
 
-import lombok.AllArgsConstructor;
+import com.mholodniuk.searchmedaddy.file.validation.ValidFile;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
+@Validated
 @RestController
-@AllArgsConstructor
-@CrossOrigin(origins = "http://localhost:4200")
+@RequiredArgsConstructor
 @RequestMapping("/files")
+@CrossOrigin(origins = "http://localhost:4200")
 public class FileController {
     private final FileService fileService;
 
-    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
+    @PostMapping
+    public ResponseEntity<?> uploadFile(@RequestParam("file") @ValidFile MultipartFile file) {
         var bucketName = "mock"; // todo: resolve bucket name where file should be stored
         var fileResponse = fileService.saveFile(file, bucketName);
         return ResponseEntity.created(

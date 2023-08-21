@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -17,11 +18,11 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class DocumentService {
     private final SearchService searchService;
-    private final ContentExtractor contentExtractor;
+    private final Map<String, ContentExtractor> contentExtractors;
     private final DocumentRepository documentRepository;
 
-    public String indexDocument(byte[] file, String filename) {
-        var content = contentExtractor.extract(file);
+    public String indexDocument(byte[] file, String contentType, String filename) {
+        var content = contentExtractors.get(contentType).extract(file);
 
         var documents = IntStream.range(0, content.size())
                 .mapToObj(pageIdx -> new Document(filename, content.get(pageIdx), pageIdx + 1))

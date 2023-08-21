@@ -105,18 +105,18 @@ class FileServiceTest {
     @SneakyThrows
     void Should_InvokeIndexing_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
+        given(documentService.indexDocument(file.getBytes(), "contentType", file.getOriginalFilename())).willReturn("Created");
 
         fileService.saveFile(file, "bucketName");
 
-        then(documentService).should().indexDocument(file.getBytes(), file.getOriginalFilename());
+        then(documentService).should().indexDocument(file.getBytes(), "contentType", file.getOriginalFilename());
     }
 
     @Test
     @SneakyThrows
     void Should_ReturnProperIndexStatus_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
+        given(documentService.indexDocument(file.getBytes(), "contentType",  file.getOriginalFilename())).willReturn("Created");
 
         var uploadResponse = fileService.saveFile(file, "bucketName");
 

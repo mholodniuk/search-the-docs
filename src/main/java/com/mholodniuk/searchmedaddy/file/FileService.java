@@ -31,7 +31,7 @@ class FileService {
             final var bytes = file.getBytes();
             putObject(bucketName, filename, bytes);
             log.info("Saved file with name: {}", filename);
-            var indexResult = documentService.indexDocument(bytes, filename);
+            var indexResult = documentService.indexDocument(bytes, file.getContentType(), filename);
 
             CompletableFuture.runAsync(() -> {
                 var thumbnailBytes = ThumbnailGenerator.generateThumbnail(bytes);

@@ -1,7 +1,7 @@
 package com.mholodniuk.searchmedaddy.document;
 
 
-import com.mholodniuk.searchmedaddy.document.extract.ContentExtractor;
+import com.mholodniuk.searchmedaddy.document.extract.PdfExtractor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,7 @@ class DocumentServiceTest {
     @MockBean
     private SearchService searchService;
     @MockBean
-    private ContentExtractor contentExtractor;
+    private PdfExtractor contentExtractor;
     @MockBean
     private DocumentRepository documentRepository;
     @Autowired
@@ -34,7 +34,7 @@ class DocumentServiceTest {
     void Should_SaveAllPages_When_Indexing() {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
 
-        var result = documentService.indexDocument(file.getBytes(), file.getOriginalFilename());
+        var result = documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
         verify(documentRepository).saveAll(any());
         Assertions.assertEquals("Created", result);
@@ -46,7 +46,7 @@ class DocumentServiceTest {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(List.of(" A Simple PDF File ...", " A Simple PDF File 2 ..."));
 
-        documentService.indexDocument(file.getBytes(), file.getOriginalFilename());
+        documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
         verify(documentRepository).saveAll(documentsArgumentCaptor.capture());
