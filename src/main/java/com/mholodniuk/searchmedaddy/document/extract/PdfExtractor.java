@@ -13,7 +13,7 @@ import java.util.List;
 
 @Slf4j
 @Component
-class PDFExtractor implements ContentExtractor {
+class PdfExtractor implements ContentExtractor {
     @Override
     public List<String> extract(byte[] bytes) {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(bytes))) {

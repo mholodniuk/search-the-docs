@@ -1,6 +1,8 @@
 package com.mholodniuk.searchmedaddy.file;
 
 import com.mholodniuk.searchmedaddy.file.exception.ThumbnailGenerationException;
+import lombok.AccessLevel;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.ImageType;
@@ -11,11 +13,11 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 @Slf4j
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ThumbnailGenerator {
     public static byte[] generateThumbnail(byte[] fileBytes) {
         try (PDDocument document = PDDocument.load(new ByteArrayInputStream(fileBytes))) {
             var renderer = new PDFRenderer(document);
-            // todo: scale down image
             var bufferedImage = renderer.renderImageWithDPI(0, 50.0f, ImageType.RGB);
             var byteArrayOutputStream = new ByteArrayOutputStream();
             ImageIO.write(bufferedImage, "PNG", byteArrayOutputStream);

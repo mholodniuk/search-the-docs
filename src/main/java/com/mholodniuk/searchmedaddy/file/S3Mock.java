@@ -50,6 +50,7 @@ public class S3Mock implements S3Client {
             FileInputStream fileInputStream = new FileInputStream(buildObjectFullPath(getObjectRequest.bucket(), getObjectRequest.key()));
             return new ResponseInputStream<>(GetObjectResponse.builder().build(), fileInputStream);
         } catch (FileNotFoundException e) {
+            // todo fix
             throw new RuntimeException(e);
         }
     }

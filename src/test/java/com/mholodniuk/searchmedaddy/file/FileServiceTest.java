@@ -42,7 +42,7 @@ class FileServiceTest {
             = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
 
     @Test
-    void putObjectTest() throws IOException {
+    void Should_ProperlySaveAnObject_When_Called() throws IOException {
         String bucket = "bucket";
         String key = "key";
         byte[] data = "Hello".getBytes();
@@ -69,7 +69,7 @@ class FileServiceTest {
     }
 
     @Test
-    void getObjectTest() throws IOException {
+    void Should_ProperlyReturnAnObject_When_Called() throws IOException {
         String bucket = "bucket";
         String key = "key";
         byte[] data = "Hello".getBytes();
@@ -87,7 +87,7 @@ class FileServiceTest {
     }
 
     @Test
-    void willThrowWhenGetObject() throws IOException {
+    void Should_Throw_When_CannotReadBytes() throws IOException {
         String bucket = "bucket";
         String key = "key";
 
@@ -103,7 +103,7 @@ class FileServiceTest {
 
     @Test
     @SneakyThrows
-    void savingFileInvokesIndexDocument() {
+    void Should_InvokeIndexing_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
         given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
 
@@ -114,7 +114,7 @@ class FileServiceTest {
 
     @Test
     @SneakyThrows
-    void savingFileReturnsCorrectResponse() {
+    void Should_ReturnProperIndexStatus_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
         given(documentService.indexDocument(file.getBytes(), file.getOriginalFilename())).willReturn("Created");
 
@@ -126,7 +126,7 @@ class FileServiceTest {
 
     @Test
     @SneakyThrows
-    void willThrowOnError() {
+    void Should_Throw_When_FileInvalid() {
         given(mockFile.getBytes()).willThrow(IOException.class);
 
         Assertions.assertThrows(FileSavingException.class, () -> fileService.saveFile(mockFile, "bucket"));

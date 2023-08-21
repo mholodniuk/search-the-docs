@@ -31,7 +31,7 @@ class DocumentServiceTest {
 
     @Test
     @SneakyThrows
-    void indexingSinglePageDocumentTest() {
+    void Should_SaveAllPages_When_Indexing() {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
 
         var result = documentService.indexDocument(file.getBytes(), file.getOriginalFilename());
@@ -42,7 +42,7 @@ class DocumentServiceTest {
 
     @Test
     @SneakyThrows
-    void indexingTwoPageDocumentTest() {
+    void Should_SaveTwoPages_When_IndexingFileWithTwoPages() {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(List.of(" A Simple PDF File ...", " A Simple PDF File 2 ..."));
 

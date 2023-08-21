@@ -25,7 +25,7 @@ public class DocumentService {
 
         var documents = IntStream.range(0, content.size())
                 .mapToObj(pageIdx -> new Document(filename, content.get(pageIdx), pageIdx + 1))
-                .peek(document -> log.debug("Indexing page {}. with content: {}", document.getPage(), document.getText()))
+                .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 
         documentRepository.saveAll(documents);
