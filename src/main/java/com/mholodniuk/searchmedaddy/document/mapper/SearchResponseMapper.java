@@ -1,13 +1,13 @@
 package com.mholodniuk.searchmedaddy.document.mapper;
 
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import com.mholodniuk.searchmedaddy.document.Document;
+import com.mholodniuk.searchmedaddy.document.SearchableDocument;
 import com.mholodniuk.searchmedaddy.document.utils.FieldAttr;
 import com.mholodniuk.searchmedaddy.document.dto.PhraseSearchResponse;
 import com.mholodniuk.searchmedaddy.document.dto.SingleSearchResponse;
 
 public class SearchResponseMapper {
-    public static PhraseSearchResponse mapToDto(SearchResponse<Document> response) {
+    public static PhraseSearchResponse mapToDto(SearchResponse<SearchableDocument> response) {
         return new PhraseSearchResponse(
                 response.hits().hits()
                         .stream()

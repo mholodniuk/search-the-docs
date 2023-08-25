@@ -1,6 +1,7 @@
 package com.mholodniuk.searchmedaddy.document.extract;
 
 import com.mholodniuk.searchmedaddy.document.exception.DocumentParsingException;
+import com.mholodniuk.searchmedaddy.document.extract.impl.PdfExtractor;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -14,10 +15,10 @@ class PdfExtractorTest {
     @Autowired
     private PdfExtractor extractor;
 
-    @Value("classpath:sample1.pdf")
+    @Value("classpath:pdf/sample1.pdf")
     Resource onePageFile;
 
-    @Value("classpath:sample2.pdf")
+    @Value("classpath:pdf/sample2.pdf")
     Resource twoPageFile;
 
     @Test

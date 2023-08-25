@@ -21,7 +21,7 @@ import java.util.concurrent.CompletableFuture;
 @Slf4j
 @Service
 @AllArgsConstructor
-class FileService {
+public class FileService {
     private final S3Client s3;
     private final DocumentService documentService;
 
@@ -35,8 +35,11 @@ class FileService {
 
             CompletableFuture.runAsync(() -> {
                 var thumbnailBytes = ThumbnailGenerator.generateThumbnail(bytes);
-                log.info("Generated thumbnail for {}", filename);
                 putObject(bucketName, filename + "-thumbnail", thumbnailBytes);
+                log.info("Generated thumbnail for {}", filename);
+            }).exceptionally((ex) -> {
+                log.error("Error generating thumbnail. Message: {}", ex.getMessage());
+                return null;
             });
 
             return new FileUploadResponse(filename, indexResult);

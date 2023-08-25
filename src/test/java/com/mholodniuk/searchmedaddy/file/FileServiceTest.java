@@ -3,6 +3,7 @@ package com.mholodniuk.searchmedaddy.file;
 import com.mholodniuk.searchmedaddy.document.DocumentService;
 import com.mholodniuk.searchmedaddy.file.exception.FileReadingException;
 import com.mholodniuk.searchmedaddy.file.exception.FileSavingException;
+import com.mholodniuk.searchmedaddy.file.mock.S3Mock;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;

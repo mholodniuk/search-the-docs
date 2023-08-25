@@ -1,6 +1,7 @@
-package com.mholodniuk.searchmedaddy.document.extract;
+package com.mholodniuk.searchmedaddy.document.extract.impl;
 
 import com.mholodniuk.searchmedaddy.document.exception.DocumentParsingException;
+import com.mholodniuk.searchmedaddy.document.extract.ContentExtractor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;

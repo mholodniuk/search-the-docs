@@ -15,12 +15,12 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class SearchService {
+class SearchService {
     private final ElasticsearchClient elasticsearchClient;
 
-    SearchResponse<Document> searchDocumentsByPhrase(String phrase) throws IOException {
+    SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase) throws IOException {
         return elasticsearchClient.search(s -> s
-                        .index(Document.getIndexName())
+                        .index(SearchableDocument.getIndexName())
                         .source(SourceConfig.of(sc -> sc.filter(f -> f.excludes(List.of(FieldAttr.Document.TEXT_FIELD, "_class")))))
                         .highlight(Highlight.of(h -> h
                                 .fields(FieldAttr.Document.TEXT_FIELD, HighlightField.of(hf -> hf
@@ -29,6 +29,6 @@ public class SearchService {
                                         .postTags("</b>")))
                                 .type(HighlighterType.Unified)))
                         .query(q -> q.match(t -> t.field(FieldAttr.Document.TEXT_FIELD).query(phrase))),
-                Document.class);
+                SearchableDocument.class);
     }
 }

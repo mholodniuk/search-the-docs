@@ -1,4 +1,4 @@
-package com.mholodniuk.searchmedaddy.file;
+package com.mholodniuk.searchmedaddy.file.mock;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;

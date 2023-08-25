@@ -22,10 +22,11 @@ public class DocumentService {
     private final DocumentRepository documentRepository;
 
     public String indexDocument(byte[] file, String contentType, String filename) {
-        var content = contentExtractors.get(contentType).extract(file);
+        var contentExtractor = contentExtractors.get(contentType);
+        var content = contentExtractor.extract(file);
 
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new Document(filename, content.get(pageIdx), pageIdx + 1))
+                .mapToObj(pageIdx -> new SearchableDocument(filename, content.get(pageIdx), pageIdx + 1))
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 
