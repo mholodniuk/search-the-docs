@@ -4,13 +4,13 @@ import com.mholodniuk.searchmedaddy.document.DocumentService;
 import com.mholodniuk.searchmedaddy.file.dto.FileUploadResponse;
 import com.mholodniuk.searchmedaddy.file.exception.FileReadingException;
 import com.mholodniuk.searchmedaddy.file.exception.FileSavingException;
+import com.mholodniuk.searchmedaddy.file.mock.S3Mock;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -22,7 +22,7 @@ import java.util.concurrent.CompletableFuture;
 @Service
 @AllArgsConstructor
 public class FileService {
-    private final S3Client s3;
+    private final S3Mock s3;
     private final DocumentService documentService;
 
     public FileUploadResponse saveFile(MultipartFile file, String bucketName) {
@@ -38,7 +38,7 @@ public class FileService {
                 putObject(bucketName, filename + "-thumbnail", thumbnailBytes);
                 log.info("Generated thumbnail for {}", filename);
             }).exceptionally((ex) -> {
-                log.error("Error generating thumbnail. Message: {}", ex.getMessage());
+                log.error("Error generating thumbnail for {}. Message: {}", filename, ex.getMessage());
                 return null;
             });
 

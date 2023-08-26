@@ -19,7 +19,7 @@ import java.util.stream.Stream;
 public class DocumentService {
     private final SearchService searchService;
     private final Map<String, ContentExtractor> contentExtractors;
-    private final DocumentRepository documentRepository;
+    private final DocumentSearchRepository documentSearchRepository;
 
     public String indexDocument(byte[] file, String contentType, String filename) {
         var contentExtractor = contentExtractors.get(contentType);
@@ -30,7 +30,7 @@ public class DocumentService {
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 
-        documentRepository.saveAll(documents);
+        documentSearchRepository.saveAll(documents);
         log.info("Indexed {} page(s) of a file: {}", documents.size(), filename);
 
         return "Created";

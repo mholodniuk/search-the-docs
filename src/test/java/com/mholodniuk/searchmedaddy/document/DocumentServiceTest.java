@@ -30,7 +30,7 @@ class DocumentServiceTest {
     @MockBean
     private PdfExtractor contentExtractor;
     @MockBean
-    private DocumentRepository documentRepository;
+    private DocumentSearchRepository documentSearchRepository;
 
     private DocumentService documentService;
 
@@ -39,7 +39,7 @@ class DocumentServiceTest {
         this.documentService = new DocumentService(
                 searchService,
                 Map.of("application/pdf", contentExtractor),
-                documentRepository);
+                documentSearchRepository);
     }
 
     @Test
@@ -50,7 +50,7 @@ class DocumentServiceTest {
 
         var result = documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
-        verify(documentRepository).saveAll(any());
+        verify(documentSearchRepository).saveAll(any());
         Assertions.assertEquals("Created", result);
     }
 
@@ -63,7 +63,7 @@ class DocumentServiceTest {
         documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
-        verify(documentRepository).saveAll(documentsArgumentCaptor.capture());
+        verify(documentSearchRepository).saveAll(documentsArgumentCaptor.capture());
 
         Assertions.assertEquals(2, getDocumentsSize(documentsArgumentCaptor.getValue()));
         Assertions.assertTrue(getFirstPage(documentsArgumentCaptor.getValue()).getText()

@@ -9,12 +9,12 @@
 - [embed pdf display](https://itnext.io/you-dont-need-external-packages-to-view-pdf-in-angular-e47779f86595)
 - [spring data elasticsearch](https://docs.spring.io/spring-data/elasticsearch/docs/current/reference/html/#new-features)
 - [implementing custom save, saveAll, search](https://medium.com/@luthfihrz/basic-operations-of-elasticsearch-with-spring-boot-and-spring-data-b1aa241ad9c6)
+- [secure endpoints annotation](https://www.baeldung.com/spring-security-create-new-custom-security-expression)
 
 ## TODOS
-- add tests
-- figure out how to handle saving AND indexing -> make it testable
 - store all metadata of documents/files in DB -> add reindexing feature 
-- bulk indexing pages
+- [DB] add trigger on user insert -> insert default room
+- check DB todos -> unique constraints and delete cascade
 
 
 ### Example usages
