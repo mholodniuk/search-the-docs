@@ -19,3 +19,9 @@
  - użytkonicy z prawem edycji pokoju mogą dodawać i usuwać pliki z danego pokoju
  - aplikacja dostępna jedynie dla zalogowanych użytkowników
  - użytkownik może założyć konto w systemie (za pomocą Google Auth lub ręcznie)
+
+## Kolejność developmentu
+- Operacje CRUD dla użytkowników
+- (?) Security na podstawie użytkowników + JWT (lub nie)
+- TESTY TESTY TESTY
+- Integracja komponentów 
