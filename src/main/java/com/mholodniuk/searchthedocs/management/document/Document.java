@@ -48,8 +48,10 @@ public class Document {
     @ToString.Exclude
     private Customer owner;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "file_location_id", nullable = false)
-    @ToString.Exclude
+    @Embedded
+    @AttributeOverrides({
+            @AttributeOverride(name = "path", column = @Column(name = "file_path")),
+            @AttributeOverride(name = "storageProvider", column = @Column(name = "storage_destination")),
+    })
     private FileLocation fileLocation;
 }

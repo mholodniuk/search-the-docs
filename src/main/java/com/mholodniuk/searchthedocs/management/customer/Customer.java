@@ -37,8 +37,7 @@ public class Customer {
 
     @OneToMany(
             mappedBy = "owner",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY
     )
     @JsonIgnore
     @ToString.Exclude
@@ -46,8 +45,7 @@ public class Customer {
 
     @OneToMany(
             mappedBy = "participant",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL
+            fetch = FetchType.LAZY
     )
     @JsonIgnore
     @ToString.Exclude

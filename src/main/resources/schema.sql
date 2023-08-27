@@ -12,7 +12,6 @@ CREATE TABLE "rooms"
     "modified_at" TIMESTAMP
 );
 
--- ^ todo owner_id + name => unique
 
 CREATE TABLE "access_keys"
 (
@@ -28,21 +27,16 @@ CREATE TABLE "access_keys"
 
 CREATE TABLE "documents"
 (
-    "id"               UUID PRIMARY KEY,
-    "name"             TEXT      NOT NULL,
-    "tags"             TEXT[],
-    "content_type"     TEXT      NOT NULL,
-    "room_id"          INTEGER   NOT NULL,
-    "owner_id"         INTEGER   NOT NULL,
-    "file_location_id" INTEGER   NOT NULL,
-    "uploaded_at"      TIMESTAMP NOT NULL
-);
-
-CREATE TABLE "file_locations"
-(
-    "id"           SERIAL PRIMARY KEY,
-    "storage_type" TEXT NOT NULL,
-    "file_path"    TEXT NOT NULL
+    "id"                  UUID PRIMARY KEY,
+    "name"                TEXT      NOT NULL,
+    "tags"                TEXT[],
+    "content_type"        TEXT      NOT NULL,
+    "storage_destination" TEXT      NOT NULL,
+    "file_path"           TEXT      NOT NULL,
+    "room_id"             INTEGER   NOT NULL,
+    "owner_id"            INTEGER   NOT NULL,
+    "file_location_id"    INTEGER   NOT NULL,
+    "uploaded_at"         TIMESTAMP NOT NULL
 );
 
 CREATE TABLE "users"
@@ -84,7 +78,7 @@ ALTER TABLE
     ADD
         FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
 
-ALTER TABLE
-    "documents"
-    ADD
-        FOREIGN KEY ("file_location_id") REFERENCES "file_locations" ("id");
+
+ALTER TABLE rooms
+    ADD CONSTRAINT unique_user_rooms
+        UNIQUE (owner_id, name);

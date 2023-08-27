@@ -10,23 +10,14 @@ INSERT INTO public.rooms
 ("name", private, owner_id, created_at, modified_at)
 VALUES('room', false, 1, NOW(), null);
 
--- file storages
-INSERT INTO public.file_locations
-(storage_type, file_path)
-VALUES('LOCAL', '/tmp/s3/mock/Bazy_danych_projekt.pdf');
-
-INSERT INTO public.file_locations
-(storage_type, file_path)
-VALUES('LOCAL', '/tmp/s3/mock/PRACA-INŻYNIERSKA.docx');
-
 -- documents
 INSERT INTO public.documents
-(id, "name", tags, content_type, room_id, owner_id, file_location_id, uploaded_at)
-VALUES(gen_random_uuid(), 'Bazy danych projekt', '{}'::text[], 'application/pdf', 1, 1, 2, NOW());
+(id, "name", tags, content_type, storage_destination, file_path, room_id, owner_id, file_location_id, uploaded_at)
+VALUES(gen_random_uuid(), 'Bazy danych projekt.pdf', '{}'::text[], 'application/pdf', 'LOCAL', '/tmp/s3/mock/Bazy danych projekt.pdf', 1, 1, 2, NOW());
 
 INSERT INTO public.documents
-(id, "name", tags, content_type, room_id, owner_id, file_location_id, uploaded_at)
-VALUES(gen_random_uuid(), 'PRACA-INŻYNIERSKA.docx', '{}'::text[], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 1, 1, 1, NOW());
+(id, "name", tags, content_type, storage_destination, file_path, room_id, owner_id, file_location_id, uploaded_at)
+VALUES(gen_random_uuid(), 'PRACA-INŻYNIERSKA.docx', '{}'::text[], 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', 'LOCAL', '/tmp/s3/mock/PRACA-INŻYNIERSKA.docx', 1, 1, 1, NOW());
 
 
 -- access keys
