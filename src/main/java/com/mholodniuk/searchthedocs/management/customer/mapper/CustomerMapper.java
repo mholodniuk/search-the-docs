@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.customer.mapper;
 
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerCreatedResponse;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -19,8 +19,8 @@ public class CustomerMapper {
         return customer;
     }
 
-    public static CustomerCreatedResponse toCreatedResponse(Customer customer) {
-        return CustomerCreatedResponse.builder()
+    public static CustomerResponse toResponse(Customer customer) {
+        return CustomerResponse.builder()
                 .id(customer.getId())
                 .username(customer.getUsername())
                 .displayName(customer.getDisplayName())

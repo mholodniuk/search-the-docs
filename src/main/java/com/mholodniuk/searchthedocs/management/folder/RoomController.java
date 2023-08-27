@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
-@RequestMapping("/management/rooms")
+@RequestMapping("/rooms")
 @RequiredArgsConstructor
 class RoomController {
     private final RoomRepository roomRepository;

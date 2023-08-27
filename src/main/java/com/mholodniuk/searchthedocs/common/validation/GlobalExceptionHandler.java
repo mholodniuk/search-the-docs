@@ -1,5 +1,7 @@
 package com.mholodniuk.searchthedocs.common.validation;
 
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
+import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -52,10 +54,27 @@ class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(ResourceNotFoundException.class)
+    public ProblemDetail onResourceNotFoundException(ResourceNotFoundException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
+        problemDetail.setTitle("Resource Not found");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidResourceUpdateException.class)
+    public ProblemDetail onInvalidResourceUpdateException(InvalidResourceUpdateException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("Cannot perform update of a resource");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        problemDetail.setProperty("errors", e.getErrors());
+        return problemDetail;
+    }
+
     @ExceptionHandler(Exception.class)
     public ProblemDetail onThrowable(Exception e) {
         e.printStackTrace();
-        log.error("Internal server error" + e.getMessage());
+        log.error("Internal server error " + e.getMessage());
         var problemDetail = ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
         problemDetail.setTitle("Internal Server error");
         problemDetail.setProperty("timestamp", LocalDateTime.now());

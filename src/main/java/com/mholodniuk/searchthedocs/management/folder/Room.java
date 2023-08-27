@@ -1,8 +1,8 @@
 package com.mholodniuk.searchthedocs.management.folder;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.mholodniuk.searchthedocs.management.document.Document;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.document.Document;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
