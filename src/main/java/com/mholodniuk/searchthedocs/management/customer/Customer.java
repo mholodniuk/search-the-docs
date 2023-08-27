@@ -21,6 +21,7 @@ import java.util.Set;
 @ToString
 public class Customer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, unique = true)
@@ -35,20 +36,14 @@ public class Customer {
     @Column(nullable = false)
     private String password;
 
-    @OneToMany(
-            mappedBy = "owner",
-            fetch = FetchType.LAZY
-    )
     @JsonIgnore
     @ToString.Exclude
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Room> rooms;
 
-    @OneToMany(
-            mappedBy = "participant",
-            fetch = FetchType.LAZY
-    )
     @JsonIgnore
     @ToString.Exclude
+    @OneToMany(mappedBy = "participant", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<AccessKey> grantedAccessKeys;
 
     @Override

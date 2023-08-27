@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.document;
 
-import com.mholodniuk.searchthedocs.management.folder.Room;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.folder.Room;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -38,14 +38,14 @@ public class Document {
     @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
-    @ToString.Exclude
     private Room room;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    @ToString.Exclude
     private Customer owner;
 
     @Embedded

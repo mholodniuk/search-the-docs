@@ -25,6 +25,7 @@ import java.util.Set;
 @ToString
 public class Room {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false)
@@ -33,10 +34,10 @@ public class Room {
     @Column(name = "private")
     private Boolean isPrivate;
 
-    @Column
+    @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
 
-    @Column
+    @Column(name = "modified_at")
     private LocalDateTime modifiedAt;
 
     @ToString.Exclude
@@ -44,12 +45,9 @@ public class Room {
     @JoinColumn(name = "owner_id", nullable = false)
     private Customer owner;
 
-    @OneToMany(
-            mappedBy = "room",
-            fetch = FetchType.LAZY
-    )
     @JsonIgnore
     @ToString.Exclude
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Document> documents;
 
 

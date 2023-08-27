@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.access;
 
-import com.mholodniuk.searchthedocs.management.folder.Room;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.folder.Room;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,14 +34,14 @@ public class AccessKey {
     @Column(name = "valid_to", nullable = false)
     private LocalDateTime validTo;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
-    @ToString.Exclude
     private Room room;
 
+    @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "issuer_id", nullable = false)
-    @ToString.Exclude
     private Customer owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
