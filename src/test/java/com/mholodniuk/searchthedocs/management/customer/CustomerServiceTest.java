@@ -1,6 +1,7 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
+import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
@@ -11,10 +12,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
@@ -26,6 +29,31 @@ class CustomerServiceTest {
     private RoomService roomService;
     @Autowired
     private CustomerService customerService;
+
+    @Test
+    void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
+        var request = new CreateCustomerRequest("username", "displayName", "email@email.com", "password");
+        var entity = new Customer();
+        entity.setId(1L);
+        entity.setUsername(request.username());
+        entity.setDisplayName(request.displayName());
+        entity.setPassword(request.password());
+        entity.setEmail(request.email());
+
+        when(customerRepository.save(any())).thenReturn(entity);
+
+        var response = customerService.createCustomer(request);
+
+        verify(roomService).createDefaultRoom(any(Customer.class));
+
+        Assertions.assertNotNull(response);
+//        Assertions.assertEquals(1L, response.id());
+        Assertions.assertEquals(request.username(), response.username());
+        Assertions.assertEquals(request.displayName(), response.displayName());
+        Assertions.assertEquals(request.email(), response.email());
+        Assertions.assertTrue(response.createdAt().isBefore(LocalDateTime.now()));
+        Assertions.assertNotNull(response.token());
+    }
 
     @Test
     void Should_ModifyAllFields_When_Requested() {
