@@ -9,6 +9,7 @@ import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.time.LocalDateTime;
 
@@ -68,6 +69,14 @@ class GlobalExceptionHandler {
         problemDetail.setTitle("Cannot perform update of a resource");
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         problemDetail.setProperty("errors", e.getErrors());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    public ProblemDetail onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid request");
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
 

@@ -25,8 +25,11 @@ public class DocumentService {
         var contentExtractor = contentExtractors.get(contentType);
         var content = contentExtractor.extract(file);
 
+        // var savedDocument = documentManagementService.saveDocument(file, owner, room);
+        // set savedDocument.id() -> SearchableDocument.documentId()
+
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new SearchableDocument(filename, content.get(pageIdx), pageIdx + 1))
+                .mapToObj(pageIdx -> new SearchableDocument("", filename, content.get(pageIdx), pageIdx + 1))
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 

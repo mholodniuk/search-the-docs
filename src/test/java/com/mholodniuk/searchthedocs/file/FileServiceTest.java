@@ -7,12 +7,12 @@ import com.mholodniuk.searchthedocs.file.mock.S3Mock;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
@@ -27,15 +27,15 @@ import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 
-@SpringJUnitConfig(classes = {FileService.class})
+@ExtendWith(MockitoExtension.class)
 class FileServiceTest {
-    @MockBean
+    @Mock
     private S3Mock s3Client;
 
-    @MockBean
+    @Mock
     private DocumentService documentService;
 
-    @Autowired
+    @InjectMocks
     private FileService fileService;
 
     @Mock

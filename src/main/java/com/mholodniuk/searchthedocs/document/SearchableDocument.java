@@ -14,13 +14,16 @@ public class SearchableDocument {
     @Id
     private String ID;
     @Field(type = FieldType.Keyword)
+    private String documentId;
+    @Field(type = FieldType.Keyword)
     private String name;
     @Field(type = FieldType.Text)
     private String text;
     @Field(type = FieldType.Integer)
     private Integer page;
 
-    public SearchableDocument(String name, String content, int page) {
+    public SearchableDocument(String id, String name, String content, int page) {
+        this.documentId = id;
         this.name = name;
         this.text = content;
         this.page = page;

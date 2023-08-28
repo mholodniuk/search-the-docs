@@ -8,30 +8,30 @@ import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundExcepti
 import com.mholodniuk.searchthedocs.management.folder.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
-@SpringJUnitConfig(classes = {CustomerService.class})
+@ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
-    @MockBean
+    @Mock
     private CustomerRepository customerRepository;
-    @MockBean
+    @Mock
     private RoomService roomService;
-    @Autowired
+    @InjectMocks
     private CustomerService customerService;
 
     @Test
-    void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
+    void Should_CreateAndReturnCustomer() {
         var request = new CreateCustomerRequest("username", "displayName", "email@email.com", "password");
         var entity = new Customer();
         entity.setId(1L);
@@ -40,19 +40,25 @@ class CustomerServiceTest {
         entity.setPassword(request.password());
         entity.setEmail(request.email());
 
-        when(customerRepository.save(any())).thenReturn(entity);
-
         var response = customerService.createCustomer(request);
 
-        verify(roomService).createDefaultRoom(any(Customer.class));
+        verify(customerRepository, times(1)).save(any(Customer.class));
 
         Assertions.assertNotNull(response);
-//        Assertions.assertEquals(1L, response.id());
         Assertions.assertEquals(request.username(), response.username());
         Assertions.assertEquals(request.displayName(), response.displayName());
         Assertions.assertEquals(request.email(), response.email());
         Assertions.assertTrue(response.createdAt().isBefore(LocalDateTime.now()));
         Assertions.assertNotNull(response.token());
+    }
+
+    @Test
+    void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
+        var request = new CreateCustomerRequest(null, null, null, null);
+
+        customerService.createCustomer(request);
+
+        verify(roomService, times(1)).createDefaultRoom(any(Customer.class));
     }
 
     @Test
@@ -91,7 +97,6 @@ class CustomerServiceTest {
 
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
         when(customerRepository.existsByUsername(request.username())).thenReturn(false);
-        when(customerRepository.existsByEmail(request.email())).thenReturn(false);
         when(customerRepository.save(any())).thenReturn(entity);
 
         var response = customerService.updateCustomer(customerId, request);
@@ -120,7 +125,6 @@ class CustomerServiceTest {
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
         when(customerRepository.existsByUsername(request.username())).thenReturn(false);
         when(customerRepository.existsByEmail(request.email())).thenReturn(true);
-        when(customerRepository.save(any())).thenReturn(entity);
 
         try {
             customerService.updateCustomer(customerId, request);
@@ -144,7 +148,6 @@ class CustomerServiceTest {
         when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
         when(customerRepository.existsByUsername(request.username())).thenReturn(true);
         when(customerRepository.existsByEmail(request.email())).thenReturn(true);
-        when(customerRepository.save(any())).thenReturn(entity);
 
         try {
             customerService.updateCustomer(customerId, request);

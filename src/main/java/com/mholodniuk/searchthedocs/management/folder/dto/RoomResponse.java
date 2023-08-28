@@ -5,7 +5,7 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record RoomCreatedResponse(
+public record RoomResponse(
         Long id,
         String name,
         boolean isPrivate,

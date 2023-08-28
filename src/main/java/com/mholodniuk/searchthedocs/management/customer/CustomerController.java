@@ -1,15 +1,12 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -20,13 +17,21 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 class CustomerController {
     private final CustomerService customerService;
 
-    @GetMapping
-    public List<Customer> getAllUsers() {
-        return customerService.getAllCustomers();
+    @GetMapping("/{customerId}")
+    public ResponseEntity<?> getCustomerData(@PathVariable Long customerId) {
+        return customerService
+                .getCustomerData(customerId)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{customerId}/rooms")
+    public ResponseEntity<?> getAllCustomerRooms(@PathVariable Long customerId) {
+        return ResponseEntity.ok(customerService.getCustomerRooms(customerId));
     }
 
     @PostMapping
-    public ResponseEntity<CustomerResponse> createCustomer(
+    public ResponseEntity<?> createCustomer(
             @Valid @RequestBody CreateCustomerRequest createcustomerRequest) {
         var customer = customerService.createCustomer(createcustomerRequest);
         return ResponseEntity.created(
@@ -37,7 +42,7 @@ class CustomerController {
     }
 
     @PutMapping("/{customerId}")
-    public ResponseEntity<CustomerResponse> updateCustomer(
+    public ResponseEntity<?> updateCustomer(
             @PathVariable Long customerId,
             @Valid @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         var customer = customerService.updateCustomer(customerId, updateCustomerRequest);

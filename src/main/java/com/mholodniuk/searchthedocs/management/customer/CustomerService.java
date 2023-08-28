@@ -8,12 +8,14 @@ import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.folder.RoomService;
+import com.mholodniuk.searchthedocs.management.folder.dto.RoomResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static com.mholodniuk.searchthedocs.common.operation.Operation.applyIfChanged;
 
@@ -61,8 +63,11 @@ public class CustomerService {
         return CustomerMapper.toResponse(updated);
     }
 
-    @Deprecated
-    public List<Customer> getAllCustomers() {
-        return customerRepository.findAll();
+    public Optional<Customer> getCustomerData(Long customerId) {
+        return customerRepository.findById(customerId);
+    }
+
+    public List<RoomResponse> getCustomerRooms(Long customerId) {
+        return roomService.findAllRoomsByOwnerId(customerId);
     }
 }
