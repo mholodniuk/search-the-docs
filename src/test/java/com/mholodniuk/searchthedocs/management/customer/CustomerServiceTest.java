@@ -2,6 +2,7 @@ package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
@@ -14,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -111,7 +113,7 @@ class CustomerServiceTest {
         var request = new UpdateCustomerRequest("username", null, null, "password");
         long customerId = 1L;
 
-        when(customerRepository.findById(customerId)).thenThrow(ResourceNotFoundException.class);
+        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> customerService.updateCustomer(customerId, request));
     }
@@ -157,5 +159,65 @@ class CustomerServiceTest {
             Assertions.assertEquals(expectedErrors.size(), errors.size());
             Assertions.assertTrue(errors.containsAll(expectedErrors));
         }
+    }
+
+    @Test
+    public void Should_DeleteCustomer_When_AskedFor() {
+        Customer customer = new Customer();
+        customer.setId(1L);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+
+        customerService.deleteById(1L);
+
+        verify(customerRepository).delete(customer);
+    }
+
+    @Test
+    public void Should_Throw_When_NoCustomerWithIdFound() {
+        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> customerService.deleteById(1L));
+    }
+
+    @Test
+    public void Should_ReturnCorrectId_When_SearchedFor() {
+        Customer customer = new Customer();
+        customer.setId(1L);
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+
+        Optional<CustomerResponse> response = customerService.findCustomerById(1L);
+
+        Assertions.assertTrue(response.isPresent());
+        Assertions.assertEquals(1L, response.get().id());
+    }
+
+    @Test
+    public void Should_ReturnEmptyOptional_When_NoCustomerWithId() {
+        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        Optional<CustomerResponse> response = customerService.findCustomerById(1L);
+
+        Assertions.assertTrue(response.isEmpty());
+    }
+
+    @Test
+    public void Should_ReturnCorrectCustomers_When_SearchedForAll() {
+        List<Customer> customers = new ArrayList<>();
+        Customer customer1 = new Customer();
+        customer1.setId(1L);
+        Customer customer2 = new Customer();
+        customer2.setId(2L);
+        customers.add(customer1);
+        customers.add(customer2);
+
+        when(customerRepository.findAll()).thenReturn(customers);
+
+        List<CustomerResponse> responses = customerService.findAllCustomers();
+
+        Assertions.assertEquals(2, responses.size());
+        Assertions.assertEquals(1L, responses.get(0).id());
+        Assertions.assertEquals(2L, responses.get(1).id());
     }
 }

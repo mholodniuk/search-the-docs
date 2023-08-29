@@ -2,6 +2,7 @@ package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.folder.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,28 +17,29 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequiredArgsConstructor
 class CustomerController {
     private final CustomerService customerService;
+    private final RoomService roomService;
 
     @GetMapping
     public ResponseEntity<?> getCustomers() {
-        return ResponseEntity.ok(customerService.getAllCustomers());
+        return ResponseEntity.ok(customerService.findAllCustomers());
     }
 
     @GetMapping("/{customerId}")
-    public ResponseEntity<?> getCustomerData(@PathVariable Long customerId) {
+    public ResponseEntity<?> getCustomer(@PathVariable Long customerId) {
         return customerService
-                .getCustomerData(customerId)
+                .findCustomerById(customerId)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{customerId}/rooms")
     public ResponseEntity<?> getCustomerRooms(@PathVariable Long customerId) {
-        return ResponseEntity.ok(customerService.getCustomerRooms(customerId));
+        return ResponseEntity.ok(roomService.findRoomsByOwnerId(customerId));
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomer(@Valid @RequestBody CreateCustomerRequest createcustomerRequest) {
-        var customer = customerService.createCustomer(createcustomerRequest);
+    public ResponseEntity<?> createCustomer(@Valid @RequestBody CreateCustomerRequest createCustomerRequest) {
+        var customer = customerService.createCustomer(createCustomerRequest);
         return ResponseEntity.created(
                 linkTo(CustomerController.class)
                         .slash(customer.id())
@@ -54,7 +56,7 @@ class CustomerController {
 
     @DeleteMapping("/{customerId}")
     public ResponseEntity<?> deleteCustomer(@PathVariable Long customerId) {
-        customerService.deleteCustomer(customerId);
+        customerService.deleteById(customerId);
         return ResponseEntity.noContent().build();
     }
 

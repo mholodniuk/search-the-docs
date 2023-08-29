@@ -8,7 +8,6 @@ import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.folder.RoomService;
-import com.mholodniuk.searchthedocs.management.folder.dto.RoomResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -63,23 +62,19 @@ public class CustomerService {
         return CustomerMapper.toResponse(updated);
     }
 
-    public void deleteCustomer(Long customerId) {
+    public void deleteById(Long customerId) {
         var customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
         customerRepository.delete(customer);
     }
 
-    public Optional<CustomerResponse> getCustomerData(Long customerId) {
+    public Optional<CustomerResponse> findCustomerById(Long customerId) {
         return customerRepository.findById(customerId).map(CustomerMapper::toResponse);
     }
 
-    public List<CustomerResponse> getAllCustomers() {
+    public List<CustomerResponse> findAllCustomers() {
         return customerRepository.findAll().stream()
                 .map(CustomerMapper::toResponse)
                 .toList();
-    }
-
-    public List<RoomResponse> getCustomerRooms(Long customerId) {
-        return roomService.findAllRoomsByOwnerId(customerId);
     }
 }

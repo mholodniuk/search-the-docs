@@ -4,6 +4,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
-interface AccessKeyRepository extends JpaRepository<AccessKey, String> {
+public interface AccessKeyRepository extends JpaRepository<AccessKey, String> {
     boolean existsAccessKeyByParticipantIdAndRoomId(Long participantId, Long roomId);
 }

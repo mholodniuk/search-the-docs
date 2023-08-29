@@ -4,6 +4,8 @@ import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateEx
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
+import org.postgresql.util.PSQLException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -79,6 +81,18 @@ class GlobalExceptionHandler {
         problemDetail.setTitle("Invalid request");
         problemDetail.setProperty("message", "Incorrect argument type: '%s'".formatted(e.getValue()));
         problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    // should I return low level sql exception to the client (???)
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ProblemDetail onDataIntegrityViolationException(DataIntegrityViolationException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.CONFLICT);
+        problemDetail.setTitle("Cannot process");
+        if (e.getMostSpecificCause() instanceof PSQLException psqlException) {
+            var serverErrorMessage = psqlException.getServerErrorMessage();
+            problemDetail.setProperty("message", serverErrorMessage != null ? serverErrorMessage.getDetail() : "Unknown");
+        }
         return problemDetail;
     }
 
