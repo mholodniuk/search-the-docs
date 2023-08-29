@@ -59,6 +59,7 @@ class GlobalExceptionHandler {
     public ProblemDetail onResourceNotFoundException(ResourceNotFoundException e) {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
         problemDetail.setTitle("Resource Not found");
+        problemDetail.setProperty("message", e.getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
@@ -74,6 +75,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        log.error(e.getMessage());
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid request");
         problemDetail.setProperty("timestamp", LocalDateTime.now());

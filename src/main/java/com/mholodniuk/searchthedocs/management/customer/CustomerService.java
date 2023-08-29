@@ -36,7 +36,7 @@ public class CustomerService {
 
     public CustomerResponse updateCustomer(Long customerId, UpdateCustomerRequest updateRequest) {
         var customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id: " + customerId));
+                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
 
         var errors = new ArrayList<ErrorMessage>();
         applyIfChanged(customer.getUsername(), updateRequest.username(), (updated) -> {
@@ -63,8 +63,20 @@ public class CustomerService {
         return CustomerMapper.toResponse(updated);
     }
 
-    public Optional<Customer> getCustomerData(Long customerId) {
-        return customerRepository.findById(customerId);
+    public void deleteCustomer(Long customerId) {
+        var customer = customerRepository.findById(customerId)
+                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
+        customerRepository.delete(customer);
+    }
+
+    public Optional<CustomerResponse> getCustomerData(Long customerId) {
+        return customerRepository.findById(customerId).map(CustomerMapper::toResponse);
+    }
+
+    public List<CustomerResponse> getAllCustomers() {
+        return customerRepository.findAll().stream()
+                .map(CustomerMapper::toResponse)
+                .toList();
     }
 
     public List<RoomResponse> getCustomerRooms(Long customerId) {

@@ -17,6 +17,11 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 class CustomerController {
     private final CustomerService customerService;
 
+    @GetMapping
+    public ResponseEntity<?> getCustomers() {
+        return ResponseEntity.ok(customerService.getAllCustomers());
+    }
+
     @GetMapping("/{customerId}")
     public ResponseEntity<?> getCustomerData(@PathVariable Long customerId) {
         return customerService
@@ -26,7 +31,7 @@ class CustomerController {
     }
 
     @GetMapping("/{customerId}/rooms")
-    public ResponseEntity<?> getAllCustomerRooms(@PathVariable Long customerId) {
+    public ResponseEntity<?> getCustomerRooms(@PathVariable Long customerId) {
         return ResponseEntity.ok(customerService.getCustomerRooms(customerId));
     }
 
@@ -47,6 +52,12 @@ class CustomerController {
             @Valid @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         var customer = customerService.updateCustomer(customerId, updateCustomerRequest);
         return ResponseEntity.ok(customer);
+    }
+
+    @DeleteMapping("/{customerId}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable Long customerId) {
+        customerService.deleteCustomer(customerId);
+        return ResponseEntity.noContent().build();
     }
 
 }
