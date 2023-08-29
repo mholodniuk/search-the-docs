@@ -75,9 +75,9 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
-        log.error(e.getMessage());
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid request");
+        problemDetail.setProperty("message", "Incorrect argument type: '%s'".formatted(e.getValue()));
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }

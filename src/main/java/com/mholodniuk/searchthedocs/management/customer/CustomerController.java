@@ -36,8 +36,7 @@ class CustomerController {
     }
 
     @PostMapping
-    public ResponseEntity<?> createCustomer(
-            @Valid @RequestBody CreateCustomerRequest createcustomerRequest) {
+    public ResponseEntity<?> createCustomer(@Valid @RequestBody CreateCustomerRequest createcustomerRequest) {
         var customer = customerService.createCustomer(createcustomerRequest);
         return ResponseEntity.created(
                 linkTo(CustomerController.class)
@@ -47,9 +46,8 @@ class CustomerController {
     }
 
     @PutMapping("/{customerId}")
-    public ResponseEntity<?> updateCustomer(
-            @PathVariable Long customerId,
-            @Valid @RequestBody UpdateCustomerRequest updateCustomerRequest) {
+    public ResponseEntity<?> updateCustomer(@PathVariable Long customerId,
+                                            @Valid @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         var customer = customerService.updateCustomer(customerId, updateCustomerRequest);
         return ResponseEntity.ok(customer);
     }
