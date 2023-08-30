@@ -1,4 +1,4 @@
-package com.mholodniuk.searchthedocs.management.folder;
+package com.mholodniuk.searchthedocs.management.room;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

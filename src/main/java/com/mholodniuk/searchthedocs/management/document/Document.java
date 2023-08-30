@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.document;
 
 import com.mholodniuk.searchthedocs.management.customer.Customer;
-import com.mholodniuk.searchthedocs.management.folder.Room;
+import com.mholodniuk.searchthedocs.management.room.Room;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -12,6 +12,7 @@ import org.hibernate.annotations.Type;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "documents")
@@ -21,9 +22,8 @@ import java.util.List;
 @ToString
 public class Document {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    @Column(name = "id", nullable = false)
-    private String id;
+    @Column(name = "id", nullable = false, unique = true)
+    private UUID id;
 
     @Column(name = "name", nullable = false)
     private String name;

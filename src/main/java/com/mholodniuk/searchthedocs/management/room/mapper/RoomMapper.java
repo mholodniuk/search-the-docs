@@ -1,8 +1,8 @@
-package com.mholodniuk.searchthedocs.management.folder.mapper;
+package com.mholodniuk.searchthedocs.management.room.mapper;
 
-import com.mholodniuk.searchthedocs.management.folder.Room;
-import com.mholodniuk.searchthedocs.management.folder.dto.CreateRoomRequest;
-import com.mholodniuk.searchthedocs.management.folder.dto.RoomResponse;
+import com.mholodniuk.searchthedocs.management.room.Room;
+import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

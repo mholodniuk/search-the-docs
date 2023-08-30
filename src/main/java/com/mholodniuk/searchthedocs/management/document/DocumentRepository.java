@@ -5,9 +5,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
-public interface DocumentRepository extends JpaRepository<Document, String> {
+public interface DocumentRepository extends JpaRepository<Document, UUID> {
     @Query("""
             select d from Document d
             left join fetch d.room

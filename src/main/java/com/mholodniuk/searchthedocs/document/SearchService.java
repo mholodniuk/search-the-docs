@@ -18,6 +18,8 @@ import java.util.List;
 class SearchService {
     private final ElasticsearchClient elasticsearchClient;
 
+//    todo: look at this
+//    https://stackoverflow.com/questions/61581529/spring-data-elastic-search-query-highlight
     SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase) throws IOException {
         return elasticsearchClient.search(s -> s
                         .index(SearchableDocument.getIndexName())

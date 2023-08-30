@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.access;
 
 import com.mholodniuk.searchthedocs.management.customer.Customer;
-import com.mholodniuk.searchthedocs.management.folder.Room;
+import com.mholodniuk.searchthedocs.management.room.Room;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

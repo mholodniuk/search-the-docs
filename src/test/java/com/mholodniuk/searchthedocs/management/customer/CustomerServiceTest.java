@@ -6,7 +6,7 @@ import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
-import com.mholodniuk.searchthedocs.management.folder.RoomService;
+import com.mholodniuk.searchthedocs.management.room.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

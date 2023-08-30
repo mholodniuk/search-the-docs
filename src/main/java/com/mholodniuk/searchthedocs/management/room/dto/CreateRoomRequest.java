@@ -1,4 +1,4 @@
-package com.mholodniuk.searchthedocs.management.folder.dto;
+package com.mholodniuk.searchthedocs.management.room.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

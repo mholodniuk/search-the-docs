@@ -1,6 +1,7 @@
-package com.mholodniuk.searchthedocs.management.folder;
+package com.mholodniuk.searchthedocs.management.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.mholodniuk.searchthedocs.management.access.AccessKey;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.document.Document;
 import jakarta.persistence.*;
@@ -50,6 +51,10 @@ public class Room {
     @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<Document> documents;
 
+    @JsonIgnore
+    @ToString.Exclude
+    @OneToMany(mappedBy = "room", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<AccessKey> accessKeys;
 
     @Override
     public boolean equals(Object o) {

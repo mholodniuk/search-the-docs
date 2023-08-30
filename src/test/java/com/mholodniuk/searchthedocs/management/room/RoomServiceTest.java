@@ -1,13 +1,11 @@
-package com.mholodniuk.searchthedocs.management.folder;
+package com.mholodniuk.searchthedocs.management.room;
 
-import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
-import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
-import com.mholodniuk.searchthedocs.management.folder.dto.CreateRoomRequest;
-import com.mholodniuk.searchthedocs.management.folder.dto.UpdateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -20,7 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static com.mholodniuk.searchthedocs.management.folder.RoomConsts.DEFAULT_ROOM_NAME;
+import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_ROOM_NAME;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 

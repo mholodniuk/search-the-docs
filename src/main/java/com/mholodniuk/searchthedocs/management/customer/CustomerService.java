@@ -7,7 +7,7 @@ import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerReques
 import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
-import com.mholodniuk.searchthedocs.management.folder.RoomService;
+import com.mholodniuk.searchthedocs.management.room.RoomService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

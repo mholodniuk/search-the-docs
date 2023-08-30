@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/documents")
+@RequestMapping("/search")
 public class DocumentController {
     private final DocumentService documentService;
 

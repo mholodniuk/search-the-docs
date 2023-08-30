@@ -1,8 +1,8 @@
-package com.mholodniuk.searchthedocs.management.folder;
+package com.mholodniuk.searchthedocs.management.room;
 
-import com.mholodniuk.searchthedocs.management.folder.dto.CreateRoomRequest;
-import com.mholodniuk.searchthedocs.management.folder.dto.RoomResponse;
-import com.mholodniuk.searchthedocs.management.folder.dto.UpdateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
+import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

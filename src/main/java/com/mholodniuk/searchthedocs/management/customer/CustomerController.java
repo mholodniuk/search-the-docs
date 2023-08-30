@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.folder.RoomService;
+import com.mholodniuk.searchthedocs.management.room.RoomService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
