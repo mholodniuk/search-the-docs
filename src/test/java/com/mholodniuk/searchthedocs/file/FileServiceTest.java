@@ -50,9 +50,9 @@ class FileServiceTest {
 
         fileService.putObject(bucket, key, data);
 
-        ArgumentCaptor<PutObjectRequest> putObjectRequestArgumentCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+        var putObjectRequestArgumentCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
 
-        ArgumentCaptor<RequestBody> requestBodyArgumentCaptor = ArgumentCaptor.forClass(RequestBody.class);
+        var requestBodyArgumentCaptor = ArgumentCaptor.forClass(RequestBody.class);
 
         verify(s3Client).putObject(putObjectRequestArgumentCaptor.capture(), requestBodyArgumentCaptor.capture());
 

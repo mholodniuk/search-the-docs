@@ -9,6 +9,7 @@ import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -108,10 +109,14 @@ class RoomServiceTest {
 
         var response = roomService.updateRoom(1L, request);
 
+        var roomArgumentCaptor = ArgumentCaptor.forClass(Room.class);
+        verify(roomRepository).save(roomArgumentCaptor.capture());
+        var capturedSavedRoom = roomArgumentCaptor.getValue();
+
         verify(roomRepository, times(1)).save(any(Room.class));
-        Assertions.assertEquals(request.name(), response.name());
-        Assertions.assertEquals(request.isPrivate(), response.isPrivate());
-        Assertions.assertTrue(response.modifiedAt().isAfter(response.createdAt()));
+        Assertions.assertEquals(request.name(), capturedSavedRoom.getName());
+        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.getIsPrivate());
+        Assertions.assertTrue(response.modifiedAt().isAfter(capturedSavedRoom.getCreatedAt()));
     }
 
     @Test
@@ -131,9 +136,14 @@ class RoomServiceTest {
 
         var response = roomService.updateRoom(1L, request);
 
+        var roomArgumentCaptor = ArgumentCaptor.forClass(Room.class);
+        verify(roomRepository).save(roomArgumentCaptor.capture());
+        var capturedSavedRoom = roomArgumentCaptor.getValue();
+
         verify(roomRepository, times(1)).save(any(Room.class));
-        Assertions.assertEquals(room.getName(), response.name());
-        Assertions.assertEquals(request.isPrivate(), response.isPrivate());
+        Assertions.assertEquals(room.getName(), capturedSavedRoom.getName());
+        Assertions.assertNotEquals(room.getName(), request.name());
+        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.getIsPrivate());
         Assertions.assertTrue(response.modifiedAt().isAfter(response.createdAt()));
     }
 

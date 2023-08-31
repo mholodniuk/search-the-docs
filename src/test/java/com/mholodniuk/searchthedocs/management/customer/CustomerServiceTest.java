@@ -10,6 +10,7 @@ import com.mholodniuk.searchthedocs.management.room.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -64,46 +65,58 @@ class CustomerServiceTest {
     @Test
     void Should_ModifyAllFields_When_Requested() {
         var request = new UpdateCustomerRequest("username", "displayName", "test@mail.com", "password");
-        var entity = new Customer();
+        var customer = new Customer();
         long customerId = 1L;
-        entity.setId(1L);
-        entity.setUsername("to-be-changed");
-        entity.setDisplayName("to-be-changed");
-        entity.setPassword("to-be-changed");
-        entity.setEmail("to-be-changed");
+        customer.setId(1L);
+        customer.setUsername("to-be-changed");
+        customer.setDisplayName("to-be-changed");
+        customer.setPassword("to-be-changed");
+        customer.setEmail("to-be-changed");
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
         when(customerRepository.existsByUsername(request.username())).thenReturn(false);
         when(customerRepository.existsByEmail(request.email())).thenReturn(false);
-        when(customerRepository.save(any())).thenReturn(entity);
+        when(customerRepository.save(any())).thenReturn(customer);
 
-        var response = customerService.updateCustomer(customerId, request);
+        customerService.updateCustomer(customerId, request);
 
-        Assertions.assertEquals(request.username(), response.username());
-        Assertions.assertEquals(request.email(), response.email());
-        Assertions.assertEquals(request.displayName(), response.displayName());
+        var customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerArgumentCaptor.capture());
+        var capturedSavedCustomer = customerArgumentCaptor.getValue();
+
+        verify(customerRepository, times(1)).save(any(Customer.class));
+        Assertions.assertEquals(request.username(), capturedSavedCustomer.getUsername());
+        Assertions.assertEquals(request.displayName(), capturedSavedCustomer.getDisplayName());
+        Assertions.assertEquals(request.email(), capturedSavedCustomer.getEmail());
+        Assertions.assertEquals(request.password(), capturedSavedCustomer.getPassword());
     }
 
     @Test
     void Should_ModifyOnlyPresentFields_When_Requested() {
         var request = new UpdateCustomerRequest("username", null, null, "password");
-        var entity = new Customer();
+        var customer = new Customer();
         long customerId = 1L;
-        entity.setId(1L);
-        entity.setUsername("to-be-changed");
-        entity.setDisplayName("not-to-be-changed");
-        entity.setPassword("to-be-changed");
-        entity.setEmail("not-to-be-changed");
+        customer.setId(1L);
+        customer.setUsername("to-be-changed");
+        customer.setDisplayName("not-to-be-changed");
+        customer.setPassword("to-be-changed");
+        customer.setEmail("not-to-be-changed");
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
+        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
         when(customerRepository.existsByUsername(request.username())).thenReturn(false);
-        when(customerRepository.save(any())).thenReturn(entity);
+        when(customerRepository.save(any(Customer.class))).thenReturn(customer);
 
-        var response = customerService.updateCustomer(customerId, request);
+        customerService.updateCustomer(customerId, request);
 
-        Assertions.assertEquals(request.username(), response.username());
-        Assertions.assertEquals("not-to-be-changed", response.email());
-        Assertions.assertEquals("not-to-be-changed", response.displayName());
+        var customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
+        verify(customerRepository).save(customerArgumentCaptor.capture());
+        var capturedSavedCustomer = customerArgumentCaptor.getValue();
+
+        verify(customerRepository, times(1)).save(any(Customer.class));
+        Assertions.assertEquals(request.username(), capturedSavedCustomer.getUsername());
+        Assertions.assertEquals(request.password(), capturedSavedCustomer.getPassword());
+        Assertions.assertNotEquals(customer.getDisplayName(), request.displayName());
+        Assertions.assertNotEquals(customer.getEmail(), request.email());
     }
 
     @Test
