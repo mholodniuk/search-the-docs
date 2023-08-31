@@ -2,7 +2,9 @@ package com.mholodniuk.searchthedocs.management.customer.mapper;
 
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
+import com.mholodniuk.searchthedocs.management.room.mapper.RoomMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -17,6 +19,16 @@ public class CustomerMapper {
         return customer;
     }
 
+    public static CustomerDTO toDTO(Customer customer) {
+        return CustomerDTO.builder()
+                .id(customer.getId())
+                .username(customer.getUsername())
+                .displayName(customer.getDisplayName())
+                .email(customer.getEmail())
+                .token("jwt token TBA")
+                .build();
+    }
+
     public static CustomerResponse toResponse(Customer customer) {
         return CustomerResponse.builder()
                 .id(customer.getId())
@@ -24,6 +36,7 @@ public class CustomerMapper {
                 .displayName(customer.getDisplayName())
                 .email(customer.getEmail())
                 .token("jwt token TBA")
+                .rooms(RoomMapper.toDTO(customer.getRooms()))
                 .build();
     }
 }

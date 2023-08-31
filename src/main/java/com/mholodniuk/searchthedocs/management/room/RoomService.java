@@ -6,6 +6,7 @@ import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
 import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
 import com.mholodniuk.searchthedocs.management.room.mapper.RoomMapper;
@@ -26,7 +27,7 @@ public class RoomService {
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
 
-    public RoomResponse createRoom(CreateRoomRequest createRoomRequest) {
+    public RoomDTO createRoom(CreateRoomRequest createRoomRequest) {
         if (roomRepository.existsByNameAndOwnerId(createRoomRequest.name(), createRoomRequest.ownerId())) {
             var errors = List.of(new ErrorMessage("name", "User already owns room with given name", List.of(createRoomRequest.name(), createRoomRequest.ownerId())));
             throw new InvalidResourceUpdateException("Cannot create entity", errors);
@@ -41,10 +42,10 @@ public class RoomService {
         room.setOwner(owner);
         roomRepository.save(room);
 
-        return RoomMapper.toResponse(room);
+        return RoomMapper.toDTO(room);
     }
 
-    public RoomResponse createDefaultRoom(Customer customer) {
+    public RoomDTO createDefaultRoom(Customer customer) {
         var room = new Room();
         room.setOwner(customer);
         room.setCreatedAt(LocalDateTime.now());
@@ -53,10 +54,10 @@ public class RoomService {
         room.setIsPrivate(true);
         roomRepository.save(room);
 
-        return RoomMapper.toResponse(room);
+        return RoomMapper.toDTO(room);
     }
 
-    public RoomResponse updateRoom(Long roomId, UpdateRoomRequest updateRequest) {
+    public RoomDTO updateRoom(Long roomId, UpdateRoomRequest updateRequest) {
         var room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No room with id %s found".formatted(roomId)));
 
@@ -74,20 +75,20 @@ public class RoomService {
 
         var updated = roomRepository.save(room);
 
-        return RoomMapper.toResponse(updated);
+        return RoomMapper.toDTO(updated);
     }
 
-    public List<RoomResponse> findAllRooms() {
+    public List<RoomDTO> findAllRooms() {
         return roomRepository.findAll().stream()
-                .map(RoomMapper::toResponse)
+                .map(RoomMapper::toDTO)
                 .toList();
     }
 
     public Optional<RoomResponse> findRoomById(Long customerId) {
-        return roomRepository.findById(customerId).map(RoomMapper::toResponse);
+        return roomRepository.findByIdWithDocuments(customerId).map(RoomMapper::toResponse);
     }
 
-    public List<RoomResponse> findRoomsByOwnerId(Long customerId) {
+    public List<RoomDTO> findRoomsByOwnerId(Long customerId) {
         return roomRepository.findAllByOwnerId(customerId);
     }
 

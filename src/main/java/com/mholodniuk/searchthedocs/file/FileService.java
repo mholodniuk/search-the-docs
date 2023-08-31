@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.file;
 
-import com.mholodniuk.searchthedocs.document.DocumentService;
+import com.mholodniuk.searchthedocs.document.DocumentIndexService;
 import com.mholodniuk.searchthedocs.file.dto.FileUploadResponse;
 import com.mholodniuk.searchthedocs.file.exception.FileReadingException;
 import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
@@ -25,7 +25,7 @@ import static com.mholodniuk.searchthedocs.file.mock.S3Mock.MOCK_BUCKET_NAME;
 @AllArgsConstructor
 public class FileService {
     private final S3Mock s3;
-    private final DocumentService documentService;
+    private final DocumentIndexService documentIndexService;
 
     public FileUploadResponse saveFile(MultipartFile file) {
         String filename = file.getOriginalFilename();
@@ -33,7 +33,7 @@ public class FileService {
             final var bytes = file.getBytes();
             putObject(MOCK_BUCKET_NAME, filename, bytes);
             log.info("Saved file with name: {}", filename);
-            var indexResult = documentService.indexDocument(bytes, file.getContentType(), filename);
+            var indexResult = documentIndexService.indexDocument(bytes, file.getContentType(), filename);
 
             CompletableFuture.runAsync(() -> {
                 var thumbnailBytes = ThumbnailGenerator.generateThumbnail(bytes);

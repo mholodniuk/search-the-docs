@@ -2,6 +2,8 @@ package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.document.Document;
+import com.mholodniuk.searchthedocs.management.document.FileLocation;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
@@ -18,6 +20,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_ROOM_NAME;
 import static org.mockito.ArgumentMatchers.any;
@@ -206,8 +209,11 @@ class RoomServiceTest {
         room.setId(1L);
         room.setName("room");
         room.setIsPrivate(true);
+        var document = new Document();
+        document.setFileLocation(new FileLocation());
+        room.setDocuments(Set.of(document));
 
-        when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
+        when(roomRepository.findByIdWithDocuments(1L)).thenReturn(Optional.of(room));
 
         var response = roomService.findRoomById(1L);
 
@@ -217,7 +223,7 @@ class RoomServiceTest {
 
     @Test
     public void Should_ReturnEmptyOptional_When_NoRoomWithId() {
-        when(roomRepository.findById(1L)).thenReturn(Optional.empty());
+        when(roomRepository.findByIdWithDocuments(1L)).thenReturn(Optional.empty());
 
         var response = roomService.findRoomById(1L);
 

@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.file;
 
-import com.mholodniuk.searchthedocs.document.DocumentService;
+import com.mholodniuk.searchthedocs.document.DocumentIndexService;
 import com.mholodniuk.searchthedocs.file.exception.FileReadingException;
 import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
 import com.mholodniuk.searchthedocs.file.mock.S3Mock;
@@ -33,7 +33,7 @@ class FileServiceTest {
     private S3Mock s3Client;
 
     @Mock
-    private DocumentService documentService;
+    private DocumentIndexService documentIndexService;
 
     @InjectMocks
     private FileService fileService;
@@ -106,18 +106,18 @@ class FileServiceTest {
     @SneakyThrows
     void Should_InvokeIndexing_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file.getBytes(), "contentType", file.getOriginalFilename())).willReturn("Created");
+        given(documentIndexService.indexDocument(file.getBytes(), "contentType", file.getOriginalFilename())).willReturn("Created");
 
         fileService.saveFile(file);
 
-        then(documentService).should().indexDocument(file.getBytes(), "contentType", file.getOriginalFilename());
+        then(documentIndexService).should().indexDocument(file.getBytes(), "contentType", file.getOriginalFilename());
     }
 
     @Test
     @SneakyThrows
     void Should_ReturnProperIndexStatus_When_FileSaved() {
         MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentService.indexDocument(file.getBytes(), "contentType",  file.getOriginalFilename())).willReturn("Created");
+        given(documentIndexService.indexDocument(file.getBytes(), "contentType",  file.getOriginalFilename())).willReturn("Created");
 
         var uploadResponse = fileService.saveFile(file);
 

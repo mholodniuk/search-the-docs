@@ -2,10 +2,12 @@ package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
+import com.mholodniuk.searchthedocs.management.room.Room;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
@@ -18,6 +20,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -193,10 +196,14 @@ class CustomerServiceTest {
 
     @Test
     public void Should_ReturnCorrectId_When_SearchedFor() {
-        Customer customer = new Customer();
+        var customer = new Customer();
         customer.setId(1L);
+        var room = new Room();
+        room.setId(1L);
+        room.setIsPrivate(true);
+        customer.setRooms(Set.of(room));
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(customerRepository.findByIdWithRooms(1L)).thenReturn(Optional.of(customer));
 
         Optional<CustomerResponse> response = customerService.findCustomerById(1L);
 
@@ -206,7 +213,7 @@ class CustomerServiceTest {
 
     @Test
     public void Should_ReturnEmptyOptional_When_NoCustomerWithId() {
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(customerRepository.findByIdWithRooms(1L)).thenReturn(Optional.empty());
 
         Optional<CustomerResponse> response = customerService.findCustomerById(1L);
 
@@ -225,7 +232,7 @@ class CustomerServiceTest {
 
         when(customerRepository.findAll()).thenReturn(customers);
 
-        List<CustomerResponse> responses = customerService.findAllCustomers();
+        List<CustomerDTO> responses = customerService.findAllCustomers();
 
         Assertions.assertEquals(2, responses.size());
         Assertions.assertEquals(1L, responses.get(0).id());

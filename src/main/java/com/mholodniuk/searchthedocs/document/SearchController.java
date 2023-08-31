@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RequestMapping("/search")
 public class SearchController {
-    private final DocumentService documentService;
+    private final DocumentIndexService documentIndexService;
 
     @GetMapping
     public ResponseEntity<?> findByPhrase(@RequestParam("phrase") String phrase) {
-        return documentService.searchDocument(phrase)
+        return documentIndexService.searchDocument(phrase)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

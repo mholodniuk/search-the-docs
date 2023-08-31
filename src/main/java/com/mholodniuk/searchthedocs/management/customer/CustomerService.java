@@ -2,6 +2,7 @@ package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
@@ -25,15 +26,15 @@ public class CustomerService {
     private final RoomService roomService;
 
     @Transactional
-    public CustomerResponse createCustomer(CreateCustomerRequest createCustomerRequest) {
+    public CustomerDTO createCustomer(CreateCustomerRequest createCustomerRequest) {
         var customer = CustomerMapper.fromCreateRequest(createCustomerRequest);
         customerRepository.save(customer);
         roomService.createDefaultRoom(customer);
 
-        return CustomerMapper.toResponse(customer);
+        return CustomerMapper.toDTO(customer);
     }
 
-    public CustomerResponse updateCustomer(Long customerId, UpdateCustomerRequest updateRequest) {
+    public CustomerDTO updateCustomer(Long customerId, UpdateCustomerRequest updateRequest) {
         var customer = customerRepository.findById(customerId)
                 .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
 
@@ -59,7 +60,7 @@ public class CustomerService {
 
         var updated = customerRepository.save(customer);
 
-        return CustomerMapper.toResponse(updated);
+        return CustomerMapper.toDTO(updated);
     }
 
     public void deleteById(Long customerId) {
@@ -69,12 +70,12 @@ public class CustomerService {
     }
 
     public Optional<CustomerResponse> findCustomerById(Long customerId) {
-        return customerRepository.findById(customerId).map(CustomerMapper::toResponse);
+        return customerRepository.findByIdWithRooms(customerId).map(CustomerMapper::toResponse);
     }
 
-    public List<CustomerResponse> findAllCustomers() {
+    public List<CustomerDTO> findAllCustomers() {
         return customerRepository.findAll().stream()
-                .map(CustomerMapper::toResponse)
+                .map(CustomerMapper::toDTO)
                 .toList();
     }
 }

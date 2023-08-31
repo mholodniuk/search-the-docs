@@ -22,9 +22,9 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@SpringJUnitConfig(classes = {DocumentService.class})
+@SpringJUnitConfig(classes = {DocumentIndexService.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
-class DocumentServiceTest {
+class DocumentIndexServiceTest {
     @MockBean
     private SearchService searchService;
     @MockBean
@@ -32,11 +32,11 @@ class DocumentServiceTest {
     @MockBean
     private DocumentSearchRepository documentSearchRepository;
 
-    private DocumentService documentService;
+    private DocumentIndexService documentIndexService;
 
     @BeforeAll
     void setUp() {
-        this.documentService = new DocumentService(
+        this.documentIndexService = new DocumentIndexService(
                 searchService,
                 Map.of("application/pdf", contentExtractor),
                 documentSearchRepository);
@@ -48,7 +48,7 @@ class DocumentServiceTest {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(Collections.emptyList());
 
-        var result = documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+        var result = documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
         verify(documentSearchRepository).saveAll(any());
         Assertions.assertEquals("Created", result);
@@ -60,7 +60,7 @@ class DocumentServiceTest {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(List.of(" A Simple PDF File ...", " A Simple PDF File 2 ..."));
 
-        documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+        documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
         verify(documentSearchRepository).saveAll(documentsArgumentCaptor.capture());
@@ -77,7 +77,7 @@ class DocumentServiceTest {
         when(contentExtractor.extract(file.getBytes())).thenThrow(DocumentParsingException.class);
 
         Assertions.assertThrows(DocumentParsingException.class, () -> {
-            documentService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+            documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
         });
     }
 

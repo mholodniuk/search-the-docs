@@ -16,7 +16,7 @@ import java.util.stream.Stream;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class DocumentService {
+public class DocumentIndexService {
     private final SearchService searchService;
     private final Map<String, ContentExtractor> contentExtractors;
     private final DocumentSearchRepository documentSearchRepository;
@@ -45,7 +45,7 @@ public class DocumentService {
             var searchResponse = SearchResponseMapper.mapToDto(response);
 
             return Stream.of(searchResponse)
-                    .filter(result -> result.hits().size() > 0)
+                    .filter(result -> !result.hits().isEmpty())
                     .findAny();
         } catch (IOException e) {
             log.error(e.getMessage());

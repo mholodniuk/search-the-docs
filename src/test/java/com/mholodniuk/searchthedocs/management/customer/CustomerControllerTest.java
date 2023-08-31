@@ -1,12 +1,13 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,8 +41,8 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnCustomerList_WhenFound() throws Exception {
-        var customer1 = CustomerResponse.builder().id(1L).username("name1").build();
-        var customer2 = CustomerResponse.builder().id(2L).username("name2").build();
+        var customer1 = CustomerDTO.builder().id(1L).username("name1").build();
+        var customer2 = CustomerDTO.builder().id(2L).username("name2").build();
 
         when(customerService.findAllCustomers()).thenReturn(List.of(customer1, customer2));
 
@@ -75,6 +76,7 @@ class CustomerControllerTest {
                 .displayName("display")
                 .email("mail@mail.org")
                 .token("token")
+                .rooms(List.of(new RoomDTO(1L, "room", true, LocalDateTime.now(), LocalDateTime.now())))
                 .build();
 
         when(customerService.findCustomerById(1L)).thenReturn(Optional.of(customer));
@@ -85,7 +87,12 @@ class CustomerControllerTest {
                 .andExpect(jsonPath("$.id").value(customer.id()))
                 .andExpect(jsonPath("$.username").value(customer.username()))
                 .andExpect(jsonPath("$.displayName").value(customer.displayName()))
-                .andExpect(jsonPath("$.email").value(customer.email()));
+                .andExpect(jsonPath("$.email").value(customer.email()))
+                .andExpect(jsonPath("$.rooms").isArray())
+                .andExpect(jsonPath("$.rooms[0].name").value("room"))
+                .andExpect(jsonPath("$.rooms[0].isPrivate").value(true))
+                .andExpect(jsonPath("$.rooms.length()").value(1));
+
     }
 
     @Test
@@ -107,7 +114,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnRoomsOwnedByCustomer_When_SearchedByCustomerId() throws Exception {
-        var room1 = RoomResponse.builder()
+        var room1 = RoomDTO.builder()
                 .id(1L)
                 .name("Default")
                 .isPrivate(true)
@@ -115,7 +122,7 @@ class CustomerControllerTest {
                 .modifiedAt(LocalDateTime.now().minusDays(1))
                 .build();
 
-        var room2 = RoomResponse.builder()
+        var room2 = RoomDTO.builder()
                 .id(2L)
                 .name("Created")
                 .isPrivate(false)
@@ -138,7 +145,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_CreateCustomer_When_ValidRequest() throws Exception {
-        var customerCreatedResponse = CustomerResponse.builder()
+        var customerCreatedResponse = CustomerDTO.builder()
                 .username("name")
                 .displayName("display")
                 .id(1L)
@@ -211,7 +218,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnOkAndModifiedEntity_When_CorrectRequest() throws Exception {
-        var updatedCustomer = CustomerResponse.builder()
+        var updatedCustomer = CustomerDTO.builder()
                 .id(3L)
                 .username("to-be-changed")
                 .displayName("display")

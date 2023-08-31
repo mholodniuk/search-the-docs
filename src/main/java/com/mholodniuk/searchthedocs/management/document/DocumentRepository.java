@@ -4,7 +4,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -14,6 +14,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
             left join fetch d.room
             left join fetch d.owner
             left join fetch d.fileLocation
+            where d.id = :id
             """)
-    List<Document> findAllWithAll();
+    Optional<Document> findByIdWithExtraInfo(UUID id);
 }
