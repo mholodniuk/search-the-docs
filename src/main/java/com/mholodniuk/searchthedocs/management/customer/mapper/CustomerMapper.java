@@ -6,8 +6,6 @@ import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
-
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CustomerMapper {
     public static Customer fromCreateRequest(CreateCustomerRequest createCustomerRequest) {
@@ -25,7 +23,6 @@ public class CustomerMapper {
                 .username(customer.getUsername())
                 .displayName(customer.getDisplayName())
                 .email(customer.getEmail())
-                .createdAt(LocalDateTime.now())
                 .token("jwt token TBA")
                 .build();
     }

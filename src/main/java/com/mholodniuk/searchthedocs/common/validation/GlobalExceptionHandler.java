@@ -8,6 +8,7 @@ import org.postgresql.util.PSQLException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -88,6 +89,15 @@ class GlobalExceptionHandler {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid request");
         problemDetail.setProperty("message", "Incorrect argument format: '%s'".formatted(e.getValue()));
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ProblemDetail onHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid request");
+        problemDetail.setProperty("message", e.getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }

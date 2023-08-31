@@ -37,7 +37,9 @@ class CustomerController {
 
     @GetMapping("/{customerId}/rooms")
     public ResponseEntity<?> getCustomerRooms(@PathVariable Long customerId) {
-        return ResponseEntity.ok(roomService.findRoomsByOwnerId(customerId));
+        return ResponseEntity.ok(
+                new CollectionResponse<>("rooms", roomService.findRoomsByOwnerId(customerId))
+        );
     }
 
     @PostMapping
