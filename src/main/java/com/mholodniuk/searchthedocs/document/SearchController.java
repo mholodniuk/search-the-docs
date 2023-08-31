@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/search")
-public class DocumentController {
+public class SearchController {
     private final DocumentService documentService;
 
     @GetMapping

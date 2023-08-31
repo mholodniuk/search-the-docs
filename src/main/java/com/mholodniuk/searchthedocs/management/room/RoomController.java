@@ -1,14 +1,12 @@
 package com.mholodniuk.searchthedocs.management.room;
 
+import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
 import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
@@ -19,8 +17,10 @@ class RoomController {
     private final RoomService roomService;
 
     @GetMapping
-    public List<RoomResponse> getRooms() {
-        return roomService.findAllRooms();
+    public ResponseEntity<?> getRooms() {
+        return ResponseEntity.ok(
+                new CollectionResponse<>("rooms", roomService.findAllRooms())
+        );
     }
 
     @GetMapping("/{roomId}")
@@ -28,13 +28,8 @@ class RoomController {
         return roomService
                 .findRoomById(roomId)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
-
-//    @GetMapping("/{roomId}/documents")
-//    public ResponseEntity<?> getRoomDocuments(@PathVariable Long roomId) {
-//        return ResponseEntity.ok(documentRepository.findDocumentsByRoomId(customerId));
-//    }
 
     @PostMapping
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomRequest createRoomRequest) {

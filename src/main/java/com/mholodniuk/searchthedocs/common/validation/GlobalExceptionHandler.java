@@ -12,6 +12,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 
@@ -49,12 +50,19 @@ class GlobalExceptionHandler {
                 .map(fieldError -> ErrorMessage.builder()
                         .message(fieldError.getMessage())
                         .field(extractAfterLastDot(fieldError.getPropertyPath().toString()))
-//                        .invalidValue(fieldError.getInvalidValue())
+                        .invalidValue(parseInvalidValue(fieldError.getInvalidValue()))
                         .build())
                 .toList();
         problemDetail.setProperty("errors", errors);
 
         return problemDetail;
+    }
+
+    private String parseInvalidValue(Object value) {
+        if (value instanceof MultipartFile file) {
+            return file.getOriginalFilename();
+        }
+        return value.toString();
     }
 
     @ExceptionHandler(ResourceNotFoundException.class)
@@ -79,7 +87,7 @@ class GlobalExceptionHandler {
     public ProblemDetail onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
         problemDetail.setTitle("Invalid request");
-        problemDetail.setProperty("message", "Incorrect argument type: '%s'".formatted(e.getValue()));
+        problemDetail.setProperty("message", "Incorrect argument format: '%s'".formatted(e.getValue()));
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }

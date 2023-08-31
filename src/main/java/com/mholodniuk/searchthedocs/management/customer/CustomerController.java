@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
+import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
@@ -21,7 +22,9 @@ class CustomerController {
 
     @GetMapping
     public ResponseEntity<?> getCustomers() {
-        return ResponseEntity.ok(customerService.findAllCustomers());
+        return ResponseEntity.ok(
+                new CollectionResponse<>("customers", customerService.findAllCustomers())
+        );
     }
 
     @GetMapping("/{customerId}")
@@ -29,7 +32,7 @@ class CustomerController {
         return customerService
                 .findCustomerById(customerId)
                 .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{customerId}/rooms")
