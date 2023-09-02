@@ -1,10 +1,7 @@
 package com.mholodniuk.searchthedocs.file;
 
-import com.mholodniuk.searchthedocs.document.DocumentIndexService;
 import com.mholodniuk.searchthedocs.file.exception.FileReadingException;
-import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
 import com.mholodniuk.searchthedocs.file.mock.S3Mock;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -12,8 +9,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
@@ -22,33 +17,24 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.IOException;
 
-import static org.mockito.BDDMockito.given;
-import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class FileServiceTest {
+class S3ServiceTest {
     @Mock
     private S3Mock s3Client;
 
-    @Mock
-    private DocumentIndexService documentIndexService;
-
     @InjectMocks
-    private FileService fileService;
-
-    @Mock
-    MultipartFile mockFile
-            = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
+    private S3Service s3Service;
 
     @Test
     void Should_ProperlySaveAnObject_When_Called() throws IOException {
         String bucket = "bucket";
-        String key = "key";
+        String key = "id";
         byte[] data = "Hello".getBytes();
 
-        fileService.putObject(bucket, key, data);
+        s3Service.putObject(bucket, key, data);
 
         var putObjectRequestArgumentCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
 
@@ -72,7 +58,7 @@ class FileServiceTest {
     @Test
     void Should_ProperlyReturnAnObject_When_Called() throws IOException {
         String bucket = "bucket";
-        String key = "key";
+        String key = "id";
         byte[] data = "Hello".getBytes();
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
@@ -82,7 +68,7 @@ class FileServiceTest {
 
         when(s3Client.getObject(eq(getObjectRequest))).thenReturn(res);
 
-        byte[] bytes = fileService.getFile(bucket, key);
+        byte[] bytes = s3Service.getFile(bucket, key);
 
         Assertions.assertEquals(bytes, data);
     }
@@ -90,7 +76,7 @@ class FileServiceTest {
     @Test
     void Should_Throw_When_CannotReadBytes() throws IOException {
         String bucket = "bucket";
-        String key = "key";
+        String key = "id";
 
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(key).build();
 
@@ -99,37 +85,6 @@ class FileServiceTest {
 
         when(s3Client.getObject(eq(getObjectRequest))).thenReturn(res);
 
-        Assertions.assertThrows(FileReadingException.class, () -> fileService.getFile(bucket, key));
-    }
-
-    @Test
-    @SneakyThrows
-    void Should_InvokeIndexing_When_FileSaved() {
-        MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentIndexService.indexDocument(file.getBytes(), "contentType", file.getOriginalFilename())).willReturn("Created");
-
-        fileService.saveFile(file);
-
-        then(documentIndexService).should().indexDocument(file.getBytes(), "contentType", file.getOriginalFilename());
-    }
-
-    @Test
-    @SneakyThrows
-    void Should_ReturnProperIndexStatus_When_FileSaved() {
-        MultipartFile file = new MockMultipartFile("name", "originalFileName", "contentType", new byte[]{0x00, 0x01});
-        given(documentIndexService.indexDocument(file.getBytes(), "contentType",  file.getOriginalFilename())).willReturn("Created");
-
-        var uploadResponse = fileService.saveFile(file);
-
-        Assertions.assertEquals(file.getOriginalFilename(), uploadResponse.key());
-        Assertions.assertEquals("Created", uploadResponse.indexResult());
-    }
-
-    @Test
-    @SneakyThrows
-    void Should_Throw_When_FileInvalid() {
-        given(mockFile.getBytes()).willThrow(IOException.class);
-
-        Assertions.assertThrows(FileSavingException.class, () -> fileService.saveFile(mockFile));
+        Assertions.assertThrows(FileReadingException.class, () -> s3Service.getFile(bucket, key));
     }
 }

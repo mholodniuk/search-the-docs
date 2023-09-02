@@ -1,4 +1,5 @@
 package com.mholodniuk.searchthedocs.file.dto;
 
-public record FileUploadResponse(String key, String indexResult) {
+// todo: add bucketName ??? how to handle this
+public record FileUploadResponse(String id, String filename) {
 }

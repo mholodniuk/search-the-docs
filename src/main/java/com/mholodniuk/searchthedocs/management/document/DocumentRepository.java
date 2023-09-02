@@ -17,4 +17,7 @@ public interface DocumentRepository extends JpaRepository<Document, UUID> {
             where d.id = :id
             """)
     Optional<Document> findByIdWithExtraInfo(UUID id);
+
+
+    boolean existsByNameAndRoomId(String name, Long roomId);
 }

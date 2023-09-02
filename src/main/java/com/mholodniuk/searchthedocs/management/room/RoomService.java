@@ -84,8 +84,8 @@ public class RoomService {
                 .toList();
     }
 
-    public Optional<RoomResponse> findRoomById(Long customerId) {
-        return roomRepository.findByIdWithDocuments(customerId).map(RoomMapper::toResponse);
+    public Optional<RoomResponse> findRoomById(Long roomId) {
+        return roomRepository.findByIdWithDocuments(roomId).map(RoomMapper::toResponse);
     }
 
     public List<RoomDTO> findRoomsByOwnerId(Long customerId) {

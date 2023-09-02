@@ -17,10 +17,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_ROOM_NAME;
 import static org.mockito.ArgumentMatchers.any;
@@ -210,6 +207,7 @@ class RoomServiceTest {
         room.setName("room");
         room.setIsPrivate(true);
         var document = new Document();
+        document.setId(UUID.randomUUID());
         document.setFileLocation(new FileLocation());
         room.setDocuments(Set.of(document));
 

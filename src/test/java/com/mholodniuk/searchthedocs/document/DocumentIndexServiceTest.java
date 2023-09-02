@@ -3,7 +3,6 @@ package com.mholodniuk.searchthedocs.document;
 
 import com.mholodniuk.searchthedocs.document.exception.DocumentParsingException;
 import com.mholodniuk.searchthedocs.document.extract.impl.PdfExtractor;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 
+import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -43,24 +43,23 @@ class DocumentIndexServiceTest {
     }
 
     @Test
-    @SneakyThrows
-    void Should_SaveAllPages_When_Indexing() {
+    void Should_SaveAllPages_When_Indexing() throws IOException {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(Collections.emptyList());
 
-        var result = documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+        var result = documentIndexService.indexDocument(file.getBytes(), "12-ew12-12dsa", file.getContentType(), file.getOriginalFilename());
 
         verify(documentSearchRepository).saveAll(any());
-        Assertions.assertEquals("Created", result);
+        Assertions.assertEquals("12-ew12-12dsa", result);
     }
 
     @Test
-    @SneakyThrows
-    void Should_SaveTwoPages_When_IndexingFileWithTwoPages() {
+    @SuppressWarnings("unchecked")
+    void Should_SaveTwoPages_When_IndexingFileWithTwoPages() throws IOException {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(List.of(" A Simple PDF File ...", " A Simple PDF File 2 ..."));
 
-        documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
+        documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename());
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
         verify(documentSearchRepository).saveAll(documentsArgumentCaptor.capture());
@@ -71,14 +70,11 @@ class DocumentIndexServiceTest {
     }
 
     @Test
-    @SneakyThrows
-    void Should_Throw_When_NullDocument() {
+    void Should_Throw_When_NullDocument() throws IOException {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenThrow(DocumentParsingException.class);
 
-        Assertions.assertThrows(DocumentParsingException.class, () -> {
-            documentIndexService.indexDocument(file.getBytes(), file.getContentType(), file.getOriginalFilename());
-        });
+        Assertions.assertThrows(DocumentParsingException.class, () -> documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename()));
     }
 
     private long getDocumentsSize(Iterable<SearchableDocument> documents) {

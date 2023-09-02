@@ -21,22 +21,19 @@ public class DocumentIndexService {
     private final Map<String, ContentExtractor> contentExtractors;
     private final DocumentSearchRepository documentSearchRepository;
 
-    public String indexDocument(byte[] file, String contentType, String filename) {
+    public String indexDocument(byte[] file, String id, String contentType, String filename) {
         var contentExtractor = contentExtractors.get(contentType);
         var content = contentExtractor.extract(file);
 
-        // var savedDocument = documentManagementService.saveDocument(file, owner, room);
-        // set savedDocument.id() -> SearchableDocument.documentId()
-
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new SearchableDocument("", filename, content.get(pageIdx), pageIdx + 1))
+                .mapToObj(pageIdx -> new SearchableDocument(id, filename, content.get(pageIdx), pageIdx + 1))
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 
         documentSearchRepository.saveAll(documents);
         log.info("Indexed {} page(s) of a file: {}", documents.size(), filename);
 
-        return "Created";
+        return id;
     }
 
     public Optional<PhraseSearchResponse> searchDocument(String phrase) {

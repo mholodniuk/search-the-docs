@@ -28,7 +28,7 @@ public class DocumentMapper {
 
     public static DocumentDTO toDTO(Document document) {
         return DocumentDTO.builder()
-                .id(document.getId())
+                .id(document.getId().toString())
                 .name(document.getName())
                 .contentType(document.getContentType())
                 .tags(document.getTags())

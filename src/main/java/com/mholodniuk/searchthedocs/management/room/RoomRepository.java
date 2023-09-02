@@ -16,8 +16,10 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             """)
     List<RoomDTO> findAllByOwnerId(Long customerId);
 
-    @Query("select r from Room r join fetch r.documents where r.id = :documentId")
-    Optional<Room> findByIdWithDocuments(Long documentId);
+    @Query("""
+                select r from Room r left join fetch r.documents where r.id = :roomId
+            """)
+    Optional<Room> findByIdWithDocuments(Long roomId);
 
     boolean existsByNameAndOwnerId(String name, Long ownerId);
 }

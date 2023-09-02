@@ -36,7 +36,7 @@ public class CustomerService {
 
     public CustomerDTO updateCustomer(Long customerId, UpdateCustomerRequest updateRequest) {
         var customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
+                .orElseThrow(() -> new ResourceNotFoundException("No customer with filename %s found".formatted(customerId)));
 
         var errors = new ArrayList<ErrorMessage>();
         applyIfChanged(customer.getUsername(), updateRequest.username(), (updated) -> {
@@ -65,7 +65,7 @@ public class CustomerService {
 
     public void deleteById(Long customerId) {
         var customer = customerRepository.findById(customerId)
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(customerId)));
+                .orElseThrow(() -> new ResourceNotFoundException("No customer with filename %s found".formatted(customerId)));
         customerRepository.delete(customer);
     }
 
