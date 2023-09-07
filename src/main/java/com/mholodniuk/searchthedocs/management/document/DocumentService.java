@@ -58,6 +58,12 @@ public class DocumentService {
                 .toList();
     }
 
+    public List<DocumentDTO> findDocumentsInRoom(Long roomId) {
+        return documentRepository.findAllByRoomId(roomId).stream()
+                .map(DocumentMapper::toDTO)
+                .toList();
+    }
+
     public Optional<DocumentResponse> findDocumentById(UUID id) {
         return documentRepository.findByIdWithExtraInfo(id).map(DocumentMapper::toResponse);
     }

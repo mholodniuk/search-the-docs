@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room;
 
+import com.mholodniuk.searchthedocs.management.document.DocumentService;
 import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
 import com.mholodniuk.searchthedocs.management.room.dto.UpdateRoomRequest;
@@ -15,6 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequiredArgsConstructor
 class RoomController {
     private final RoomService roomService;
+    private final DocumentService documentService;
 
     @GetMapping
     public ResponseEntity<?> getRooms() {
@@ -29,6 +31,13 @@ class RoomController {
                 .findRoomById(roomId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
+    }
+
+    @GetMapping("/{roomId}/documents")
+    public ResponseEntity<?> getRoomDocuments(@PathVariable Long roomId) {
+        return ResponseEntity.ok(
+                new CollectionResponse<>("rooms", documentService.findDocumentsInRoom(roomId))
+        );
     }
 
     @PostMapping

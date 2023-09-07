@@ -22,6 +22,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+// todo: rewrite and add tests
 @SpringJUnitConfig(classes = {DocumentIndexService.class})
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class DocumentIndexServiceTest {

@@ -7,6 +7,7 @@ import org.springframework.data.elasticsearch.client.elc.ElasticsearchConfigurat
 @Configuration
 public class ElasticsearchConfig extends ElasticsearchConfiguration {
 
+    // todo: here maybe is problem with testcontainers
     @Override
     public ClientConfiguration clientConfiguration() {
         return ClientConfiguration.builder()
