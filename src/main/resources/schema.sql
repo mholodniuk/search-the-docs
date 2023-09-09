@@ -35,7 +35,6 @@ CREATE TABLE "documents"
     "file_path"           TEXT      NOT NULL,
     "room_id"             INTEGER   NOT NULL,
     "owner_id"            INTEGER   NOT NULL,
-    "file_location_id"    INTEGER   NOT NULL,
     "uploaded_at"         TIMESTAMP NOT NULL
 );
 

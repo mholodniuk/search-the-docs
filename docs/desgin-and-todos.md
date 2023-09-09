@@ -13,8 +13,8 @@
 
 ## TODOS
 - store all metadata of documents/files in DB -> add reindexing feature 
-- [DB] add trigger on user insert -> insert default room
 - check DB todos -> unique constraints and delete cascade
+- CASCADE DELETE ALL DOCUMENTS (RECORDS, FILES AND DOCUMENTS IN INDEX !!!!!)
 
 
 ### Example usages

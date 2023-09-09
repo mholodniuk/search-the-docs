@@ -33,8 +33,11 @@ public class DocumentService {
         }
         var owner = customerRepository.findById(createDocumentRequest.ownerId())
                 .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(createDocumentRequest.ownerId())));
+
         var room = roomRepository.findById(createDocumentRequest.roomId())
                 .orElseThrow(() -> new ResourceNotFoundException("No room with id %s found".formatted(createDocumentRequest.roomId())));
+        room.setModifiedAt(LocalDateTime.now());
+
         var fileLocation = new FileLocation(createDocumentRequest.storage(), createDocumentRequest.filePath());
 
         var document = new Document();
