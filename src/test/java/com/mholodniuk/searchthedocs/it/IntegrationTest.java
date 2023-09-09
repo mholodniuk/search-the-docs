@@ -14,7 +14,7 @@ import org.testcontainers.utility.MountableFile;
 
 @Testcontainers
 @ExtendWith(SpringExtension.class)
-public abstract class BaseIT {
+public abstract class IntegrationTest {
     @Container
     protected static ElasticsearchContainer elasticsearch = new ElasticTestContainer();
 

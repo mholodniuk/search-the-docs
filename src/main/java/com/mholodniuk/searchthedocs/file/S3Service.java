@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.sync.RequestBody;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectRequest;
 import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -34,6 +35,14 @@ public class S3Service {
             log.error("Failed to read file from bucket {} with id: {}", bucketName, key);
             throw new FileReadingException(e);
         }
+    }
+
+    boolean removeObject(String bucketName, String key) {
+        var objectRequest = DeleteObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+        return s3.deleteObject(objectRequest).deleteMarker();
     }
 
     void putObject(String bucketName, String key, byte[] file) {

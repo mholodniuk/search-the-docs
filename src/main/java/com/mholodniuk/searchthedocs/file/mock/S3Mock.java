@@ -9,12 +9,11 @@ import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.GetObjectRequest;
-import software.amazon.awssdk.services.s3.model.GetObjectResponse;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.*;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 @Slf4j
 @Component
@@ -46,12 +45,23 @@ public class S3Mock implements S3Client {
     }
 
     @Override
+    public DeleteObjectResponse deleteObject(DeleteObjectRequest deleteObjectRequest) {
+        var path = buildObjectFullPath(deleteObjectRequest.bucket(), deleteObjectRequest.key());
+        var reponseBuilder = DeleteObjectResponse.builder();
+        try {
+            Files.delete(Paths.get(path));
+            return reponseBuilder.deleteMarker(true).build();
+        } catch (IOException e) {
+            return reponseBuilder.deleteMarker(false).build();
+        }
+    }
+
+    @Override
     public ResponseInputStream<GetObjectResponse> getObject(GetObjectRequest getObjectRequest) throws AwsServiceException, SdkClientException {
         try {
             FileInputStream fileInputStream = new FileInputStream(buildObjectFullPath(getObjectRequest.bucket(), getObjectRequest.key()));
             return new ResponseInputStream<>(GetObjectResponse.builder().build(), fileInputStream);
         } catch (FileNotFoundException e) {
-            // todo fix
             throw new RuntimeException(e);
         }
     }
