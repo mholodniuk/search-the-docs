@@ -1,6 +1,7 @@
 package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
+import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
@@ -26,10 +27,11 @@ import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_RO
 public class RoomService {
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
+    private final AccessService accessService;
 
     public RoomDTO createRoom(CreateRoomRequest createRoomRequest) {
         if (roomRepository.existsByNameAndOwnerId(createRoomRequest.name(), createRoomRequest.ownerId())) {
-            var errors = List.of(new ErrorMessage("name", "User already owns room with given name", List.of(createRoomRequest.name(), createRoomRequest.ownerId())));
+            var errors = List.of(new ErrorMessage("name", "User already owns room with given name", createRoomRequest.name()));
             throw new InvalidResourceUpdateException("Cannot create entity", errors);
         }
 
@@ -42,6 +44,8 @@ public class RoomService {
         room.setOwner(owner);
         roomRepository.save(room);
 
+        accessService.createSelfAccessKey(owner, room);
+
         return RoomMapper.toDTO(room);
     }
 
@@ -51,8 +55,9 @@ public class RoomService {
         room.setCreatedAt(LocalDateTime.now());
         room.setModifiedAt(LocalDateTime.now());
         room.setName(DEFAULT_ROOM_NAME);
-        room.setIsPrivate(true);
+        room.setPrivate(true);
         roomRepository.save(room);
+        accessService.createSelfAccessKey(customer, room);
 
         return RoomMapper.toDTO(room);
     }
@@ -70,7 +75,7 @@ public class RoomService {
                 room.setName(updated);
             }
         });
-        applyIfChanged(room.getIsPrivate(), updateRequest.isPrivate(), room::setIsPrivate);
+        applyIfChanged(room.isPrivate(), updateRequest.isPrivate(), room::setPrivate);
         room.setModifiedAt(LocalDateTime.now());
 
         var updated = roomRepository.save(room);

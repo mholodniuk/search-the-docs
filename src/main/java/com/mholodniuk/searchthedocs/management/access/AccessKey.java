@@ -9,6 +9,7 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "access_keys")
@@ -18,8 +19,8 @@ import java.time.LocalDateTime;
 @ToString
 public class AccessKey {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+    @Column(name = "id", nullable = false, unique = true)
+    private UUID id;
 
     @Column(name = "name")
     private String name;
@@ -28,21 +29,13 @@ public class AccessKey {
     @Column(name = "rights", nullable = false)
     private AccessRight rights;
 
-    @Column(name = "valid_from", nullable = false)
-    private LocalDateTime validFrom;
-
-    @Column(name = "valid_to", nullable = false)
+    @Column(name = "valid_to")
     private LocalDateTime validTo;
 
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
-
-    @ToString.Exclude
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "issuer_id", nullable = false)
-    private Customer owner;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participant_id", nullable = false)

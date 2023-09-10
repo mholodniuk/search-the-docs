@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
+import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
@@ -19,6 +20,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 class CustomerController {
     private final CustomerService customerService;
     private final RoomService roomService;
+    private final  AccessService accessService;
 
     @GetMapping
     public ResponseEntity<?> getCustomers() {
@@ -39,6 +41,13 @@ class CustomerController {
     public ResponseEntity<?> getCustomerRooms(@PathVariable Long customerId) {
         return ResponseEntity.ok(
                 new CollectionResponse<>("rooms", roomService.findRoomsByOwnerId(customerId))
+        );
+    }
+
+    @GetMapping("/{customerId}/access")
+    public ResponseEntity<?> getCustomerAccessKeys(@PathVariable Long customerId) {
+        return ResponseEntity.ok(
+                new CollectionResponse<>("keys", accessService.findCustomerAccessKeys(customerId))
         );
     }
 

@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room;
 
+import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.customer.Customer;
 import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
 import com.mholodniuk.searchthedocs.management.document.Document;
@@ -29,6 +30,8 @@ class RoomServiceTest {
     private RoomRepository roomRepository;
     @Mock
     private CustomerRepository customerRepository;
+    @Mock
+    private AccessService accessService;
     @InjectMocks
     private RoomService roomService;
 
@@ -38,6 +41,7 @@ class RoomServiceTest {
         var response = roomService.createDefaultRoom(new Customer());
 
         verify(roomRepository, times(1)).save(any(Room.class));
+        verify(accessService, times(1)).createSelfAccessKey(any(Customer.class), any(Room.class));
         Assertions.assertNotNull(response);
         Assertions.assertEquals(DEFAULT_ROOM_NAME, response.name());
         Assertions.assertTrue(response.createdAt().isBefore(LocalDateTime.now()));
@@ -85,6 +89,7 @@ class RoomServiceTest {
         var createdRoom = roomService.createRoom(createRoomRequest);
 
         verify(roomRepository, times(1)).save(any(Room.class));
+        verify(accessService, times(1)).createSelfAccessKey(any(Customer.class), any(Room.class));
         Assertions.assertEquals(createRoomRequest.name(), createdRoom.name());
         Assertions.assertEquals(createRoomRequest.isPrivate(), createdRoom.isPrivate());
         Assertions.assertTrue(createdRoom.createdAt().isBefore(LocalDateTime.now()));
@@ -97,7 +102,7 @@ class RoomServiceTest {
         var room = new Room();
         room.setId(1L);
         room.setName("to-be-changed");
-        room.setIsPrivate(false);
+        room.setPrivate(false);
         room.setCreatedAt(LocalDateTime.now());
         var customer = new Customer();
         customer.setId(1L);
@@ -115,7 +120,7 @@ class RoomServiceTest {
 
         verify(roomRepository, times(1)).save(any(Room.class));
         Assertions.assertEquals(request.name(), capturedSavedRoom.getName());
-        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.getIsPrivate());
+        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.isPrivate());
         Assertions.assertTrue(response.modifiedAt().isAfter(capturedSavedRoom.getCreatedAt()));
     }
 
@@ -125,7 +130,7 @@ class RoomServiceTest {
         var room = new Room();
         room.setId(1L);
         room.setName("to-be-changed");
-        room.setIsPrivate(false);
+        room.setPrivate(false);
         room.setCreatedAt(LocalDateTime.now());
         var customer = new Customer();
         customer.setId(1L);
@@ -143,7 +148,7 @@ class RoomServiceTest {
         verify(roomRepository, times(1)).save(any(Room.class));
         Assertions.assertEquals(room.getName(), capturedSavedRoom.getName());
         Assertions.assertNotEquals(room.getName(), request.name());
-        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.getIsPrivate());
+        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.isPrivate());
         Assertions.assertTrue(response.modifiedAt().isAfter(response.createdAt()));
     }
 
@@ -184,7 +189,7 @@ class RoomServiceTest {
         var room = new Room();
         room.setId(1L);
         room.setName("room");
-        room.setIsPrivate(false);
+        room.setPrivate(false);
 
         when(roomRepository.findById(1L)).thenReturn(Optional.of(room));
 
@@ -205,7 +210,7 @@ class RoomServiceTest {
         var room = new Room();
         room.setId(1L);
         room.setName("room");
-        room.setIsPrivate(true);
+        room.setPrivate(true);
         var document = new Document();
         document.setId(UUID.randomUUID());
         document.setFileLocation(new FileLocation());
@@ -233,11 +238,11 @@ class RoomServiceTest {
         var room1 = new Room();
         room1.setId(1L);
         room1.setName("room");
-        room1.setIsPrivate(true);
+        room1.setPrivate(true);
         var room2 = new Room();
         room2.setId(2L);
         room2.setName("room");
-        room2.setIsPrivate(false);
+        room2.setPrivate(false);
         var rooms = new ArrayList<>(List.of(room1, room2));
 
         when(roomRepository.findAll()).thenReturn(rooms);

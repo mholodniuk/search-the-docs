@@ -1,4 +1,4 @@
-package com.mholodniuk.searchthedocs.management.access;
+package com.mholodniuk.searchthedocs.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;

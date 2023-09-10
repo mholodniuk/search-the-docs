@@ -33,7 +33,7 @@ public class Room {
     private String name;
 
     @Column(name = "private")
-    private Boolean isPrivate;
+    private boolean isPrivate;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;

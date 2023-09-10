@@ -200,7 +200,7 @@ class CustomerServiceTest {
         customer.setId(1L);
         var room = new Room();
         room.setId(1L);
-        room.setIsPrivate(true);
+        room.setPrivate(true);
         customer.setRooms(Set.of(room));
 
         when(customerRepository.findByIdWithRooms(1L)).thenReturn(Optional.of(customer));

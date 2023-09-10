@@ -17,11 +17,9 @@ CREATE TABLE "access_keys"
 (
     "id"             UUID PRIMARY KEY,
     "name"           TEXT,
-    "rights"         access_privilege NOT NULL,
-    "valid_from"     TIMESTAMP        NOT NULL,
+    "rights"         varchar NOT NULL,
     "valid_to"       TIMESTAMP,
     "room_id"        INTEGER          NOT NULL,
-    "issuer_id"      INTEGER          NOT NULL,
     "participant_id" INTEGER          NOT NULL
 );
 

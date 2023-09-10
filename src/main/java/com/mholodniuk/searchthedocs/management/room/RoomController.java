@@ -1,5 +1,7 @@
 package com.mholodniuk.searchthedocs.management.room;
 
+import com.mholodniuk.searchthedocs.management.access.AccessService;
+import com.mholodniuk.searchthedocs.management.access.dto.GrantAccessRequest;
 import com.mholodniuk.searchthedocs.management.document.DocumentService;
 import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
@@ -17,6 +19,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 class RoomController {
     private final RoomService roomService;
     private final DocumentService documentService;
+    private final AccessService accessService;
 
     @GetMapping
     public ResponseEntity<?> getRooms() {
@@ -60,6 +63,30 @@ class RoomController {
     @DeleteMapping("/{roomId}")
     public ResponseEntity<?> deleteRoom(@PathVariable Long roomId) {
         roomService.deleteById(roomId);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/{roomId}/access")
+    public ResponseEntity<?> grantAccess(@PathVariable Long roomId,
+                                         @Valid @RequestBody GrantAccessRequest grantAccessRequest) {
+        var accessKey = accessService.grantAccess(roomId, grantAccessRequest);
+        return ResponseEntity.created(
+                linkTo(RoomController.class)
+                        .slash(accessKey.room().id() + "/access/" + accessKey.id()) // todo
+                        .toUri()
+        ).body(accessKey);
+    }
+
+    @GetMapping("/{roomId}/access")
+    public ResponseEntity<?> getRoomAccessKeys(@PathVariable Long roomId) {
+        return ResponseEntity.ok(
+                new CollectionResponse<>("keys", accessService.findRoomAccessKeys(roomId))
+        );
+    }
+
+    @DeleteMapping("/{roomId}/access/{participantId}")
+    public ResponseEntity<?> deleteAccessToRoom(@PathVariable Long roomId, @PathVariable Long participantId) {
+        accessService.revokeAccess(roomId, participantId);
         return ResponseEntity.noContent().build();
     }
 }

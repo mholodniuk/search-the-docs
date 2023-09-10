@@ -6,9 +6,7 @@ import com.mholodniuk.searchthedocs.file.FileService;
 import com.mholodniuk.searchthedocs.file.dto.FileUploadResponse;
 import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
 import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
-import com.mholodniuk.searchthedocs.management.document.dto.CreateDocumentRequest;
-import com.mholodniuk.searchthedocs.management.document.dto.DocumentDTO;
-import com.mholodniuk.searchthedocs.management.document.dto.DocumentResponse;
+import com.mholodniuk.searchthedocs.management.document.dto.*;
 import com.mholodniuk.searchthedocs.management.document.mapper.DocumentMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
@@ -60,7 +58,7 @@ public class DocumentService {
         }
     }
 
-    public DocumentResponse saveDocument(CreateDocumentRequest createDocumentRequest) {
+    DocumentResponse saveDocument(CreateDocumentRequest createDocumentRequest) {
         if (documentRepository.existsByNameAndRoomId(createDocumentRequest.name(), createDocumentRequest.roomId())) {
             var errors = List.of(new ErrorMessage("name", "Room already contains document with given name", List.of(createDocumentRequest.name(), createDocumentRequest.roomId())));
             throw new InvalidResourceUpdateException("Cannot create entity", errors);

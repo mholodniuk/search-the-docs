@@ -16,7 +16,7 @@ public class RoomMapper {
     public static Room fromRequest(CreateRoomRequest createRoomRequest) {
         var room = new Room();
         room.setName(createRoomRequest.name());
-        room.setIsPrivate(createRoomRequest.isPrivate());
+        room.setPrivate(createRoomRequest.isPrivate());
         return room;
     }
 
@@ -24,7 +24,7 @@ public class RoomMapper {
         return RoomDTO.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .isPrivate(room.getIsPrivate())
+                .isPrivate(room.isPrivate())
                 .createdAt(room.getCreatedAt())
                 .modifiedAt(room.getModifiedAt())
                 .build();
@@ -38,7 +38,7 @@ public class RoomMapper {
         return RoomResponse.builder()
                 .id(room.getId())
                 .name(room.getName())
-                .isPrivate(room.getIsPrivate())
+                .isPrivate(room.isPrivate())
                 .createdAt(room.getCreatedAt())
                 .modifiedAt(room.getModifiedAt())
                 .documents(DocumentMapper.toDTO(room.getDocuments()))

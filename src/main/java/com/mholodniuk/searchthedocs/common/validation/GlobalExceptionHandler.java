@@ -1,5 +1,7 @@
 package com.mholodniuk.searchthedocs.common.validation;
 
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreationException;
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
@@ -9,6 +11,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -84,6 +87,24 @@ class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(InvalidResourceCreationException.class)
+    public ProblemDetail onInvalidResourceCreationException(InvalidResourceCreationException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid request");
+        problemDetail.setProperty("message", e.getMessage());
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(InvalidResourceDeletionException.class)
+    public ProblemDetail onInvalidResourceDeletionException(InvalidResourceDeletionException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+        problemDetail.setTitle("Invalid request");
+        problemDetail.setProperty("message", e.getMessage());
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ProblemDetail onMethodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
@@ -111,6 +132,16 @@ class GlobalExceptionHandler {
             var serverErrorMessage = psqlException.getServerErrorMessage();
             problemDetail.setProperty("message", serverErrorMessage != null ? serverErrorMessage.getDetail() : "Unknown");
         }
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail onAccessDeniedException(AccessDeniedException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Forbidden");
+        problemDetail.setProperty("message", e.getMessage());
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
 
