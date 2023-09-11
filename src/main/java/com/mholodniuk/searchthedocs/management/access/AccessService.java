@@ -14,7 +14,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -26,10 +25,6 @@ public class AccessService {
     private final AccessKeyRepository accessKeyRepository;
     private final RoomRepository roomRepository;
     private final CustomerRepository customerRepository;
-
-    public boolean hasAccess(Long participantId, Long roomId, AccessRight accessRight) {
-        return checkAccess(participantId, roomId) == accessRight;
-    }
 
     public AccessKeyResponse grantAccess(Long roomId, GrantAccessRequest grantAccessRequest) {
         // todo: check if user already has access to requested room on selected date ???
@@ -99,11 +94,5 @@ public class AccessService {
                 .findRoomAccessKeys(roomId).stream()
                 .map(AccessKeyMapper::toResponse)
                 .toList();
-    }
-
-    public AccessRight checkAccess(Long participantId, Long roomId) {
-        return accessKeyRepository
-                .findAccessRightsByParticipantIdAndRoomIdOnDate(participantId, roomId, LocalDateTime.now())
-                .orElse(AccessRight.NONE);
     }
 }

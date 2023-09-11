@@ -81,7 +81,6 @@ class CustomerControllerTest {
                 .username("name")
                 .displayName("display")
                 .email("mail@mail.org")
-                .token("token")
                 .rooms(List.of(new RoomDTO(1L, "room", true, LocalDateTime.now(), LocalDateTime.now())))
                 .build();
 

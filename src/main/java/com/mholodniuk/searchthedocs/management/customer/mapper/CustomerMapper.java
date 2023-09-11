@@ -24,7 +24,6 @@ public class CustomerMapper {
                 .username(customer.getUsername())
                 .displayName(customer.getDisplayName())
                 .email(customer.getEmail())
-                .token("jwt token TBA")
                 .build();
     }
 
@@ -44,7 +43,6 @@ public class CustomerMapper {
                 .username(customer.getUsername())
                 .displayName(customer.getDisplayName())
                 .email(customer.getEmail())
-                .token("jwt token TBA")
                 .rooms(RoomMapper.toDTO(customer.getRooms()))
                 .build();
     }

@@ -11,6 +11,7 @@ import com.mholodniuk.searchthedocs.security.dto.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,6 +35,7 @@ class CustomerController {
     }
 
     @GetMapping("/{customerId}")
+    @PreAuthorize("@accessValidationService.validateCustomerAccess(authentication, #customerId)")
     public ResponseEntity<?> getCustomer(@PathVariable Long customerId) {
         return customerService
                 .findCustomerById(customerId)
@@ -42,6 +44,7 @@ class CustomerController {
     }
 
     @GetMapping("/{customerId}/rooms")
+    @PreAuthorize("@accessValidationService.validateCustomerAccess(authentication, #customerId)")
     public ResponseEntity<?> getCustomerRooms(@PathVariable Long customerId) {
         return ResponseEntity.ok(
                 new CollectionResponse<>("rooms", roomService.findRoomsByOwnerId(customerId))
@@ -49,6 +52,7 @@ class CustomerController {
     }
 
     @GetMapping("/{customerId}/access")
+    @PreAuthorize("@accessValidationService.validateCustomerAccess(authentication, #customerId)")
     public ResponseEntity<?> getCustomerAccessKeys(@PathVariable Long customerId) {
         return ResponseEntity.ok(
                 new CollectionResponse<>("keys", accessService.findCustomerAccessKeys(customerId))
@@ -71,6 +75,7 @@ class CustomerController {
     }
 
     @PutMapping("/{customerId}")
+    @PreAuthorize("@accessValidationService.validateCustomerAccess(authentication, #customerId)")
     public ResponseEntity<?> updateCustomer(@PathVariable Long customerId,
                                             @Valid @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         var customer = customerService.updateCustomer(customerId, updateCustomerRequest);
@@ -78,6 +83,7 @@ class CustomerController {
     }
 
     @DeleteMapping("/{customerId}")
+    @PreAuthorize("@accessValidationService.validateCustomerAccess(authentication, #customerId)")
     public ResponseEntity<?> deleteCustomer(@PathVariable Long customerId) {
         customerService.deleteById(customerId);
         return ResponseEntity.noContent().build();

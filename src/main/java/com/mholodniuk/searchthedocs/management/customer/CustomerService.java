@@ -1,10 +1,7 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
-import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
-import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.customer.dto.*;
 import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;

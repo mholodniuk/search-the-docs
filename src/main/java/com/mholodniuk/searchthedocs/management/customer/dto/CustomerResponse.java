@@ -11,7 +11,6 @@ public record CustomerResponse(
         String username,
         String displayName,
         String email,
-        String token,
         List<RoomDTO> rooms
 ) {
 }

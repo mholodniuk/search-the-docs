@@ -17,6 +17,7 @@
 - CASCADE DELETE ALL DOCUMENTS (RECORDS, FILES AND DOCUMENTS IN INDEX !!!!!)
 - ^^^ maybe don't allow for deleting rooms/customers if documents exists
 - preferred option: delete use predefined method that clears files and index when deleting record from DB 
+- upload to non-owned room must be validated
 
 
 ### Example usages

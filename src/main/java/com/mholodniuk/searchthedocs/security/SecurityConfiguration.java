@@ -24,7 +24,7 @@ import org.springframework.security.web.access.intercept.AuthorizationFilter;
 @EnableWebSecurity
 @EnableMethodSecurity
 @RequiredArgsConstructor
-class SecurityConfiguration {
+public class SecurityConfiguration {
     private final JwtAuthenticationFilter authenticationFilter;
     private final UserDetailsService apiUserDetailsService;
 

@@ -7,9 +7,10 @@ import org.springframework.stereotype.Repository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Repository
-public interface AccessKeyRepository extends JpaRepository<AccessKey, String> {
+public interface AccessKeyRepository extends JpaRepository<AccessKey, UUID> {
     @Query("select a.rights from AccessKey a where a.room.id = :roomId and a.participant.id = :participantId and (a.validTo = null or :date < a.validTo)")
     Optional<AccessRight> findAccessRightsByParticipantIdAndRoomIdOnDate(Long participantId, Long roomId, LocalDateTime date);
 
