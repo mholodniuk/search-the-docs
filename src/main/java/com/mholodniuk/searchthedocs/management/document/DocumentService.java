@@ -48,7 +48,7 @@ public class DocumentService {
             return FileUploadResponse.builder()
                     .id(documentId)
                     .filename(filename)
-                    .owner(createdDocument.owner().displayName())
+                    .owner(createdDocument.owner().username())
                     .room(createdDocument.room().name())
                     .build();
 

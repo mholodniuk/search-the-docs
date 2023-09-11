@@ -5,6 +5,9 @@ import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
+import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
+import com.mholodniuk.searchthedocs.security.dto.AuthenticationRequest;
+import com.mholodniuk.searchthedocs.security.dto.AuthenticationResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +23,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 class CustomerController {
     private final CustomerService customerService;
     private final RoomService roomService;
-    private final  AccessService accessService;
+    private final AccessService accessService;
+    private final ApiAuthenticationService authenticationService;
 
     @GetMapping
     public ResponseEntity<?> getCustomers() {
@@ -59,6 +63,11 @@ class CustomerController {
                         .slash(customer.id())
                         .toUri()
         ).body(customer);
+    }
+
+    @PostMapping("/authenticate")
+    public AuthenticationResponse authenticate(@Valid @RequestBody AuthenticationRequest request) {
+        return authenticationService.authenticate(request);
     }
 
     @PutMapping("/{customerId}")

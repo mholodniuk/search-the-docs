@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room;
 
+import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.document.DocumentService;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ public class RoomControllerTest {
     private RoomService roomService;
     @MockBean
     private DocumentService documentService;
+    @MockBean
+    private AccessService accessService;
     @Autowired
     private MockMvc mockMvc;
 

@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.customer;
 
+import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
 import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
@@ -8,6 +9,7 @@ import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateEx
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +37,10 @@ class CustomerControllerTest {
     private CustomerService customerService;
     @MockBean
     private RoomService roomService;
+    @MockBean
+    private AccessService accessService;
+    @MockBean
+    private ApiAuthenticationService authenticationService;
     @Autowired
     private MockMvc mockMvc;
 

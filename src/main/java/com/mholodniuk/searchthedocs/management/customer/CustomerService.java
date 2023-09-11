@@ -9,8 +9,10 @@ import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
+import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,14 +26,18 @@ import static com.mholodniuk.searchthedocs.common.operation.Operation.applyIfCha
 public class CustomerService {
     private final CustomerRepository customerRepository;
     private final RoomService roomService;
+    private final ApiAuthenticationService authenticationService;
+    private final PasswordEncoder passwordEncoder;
 
     @Transactional
     public CustomerDTO createCustomer(CreateCustomerRequest createCustomerRequest) {
         var customer = CustomerMapper.fromCreateRequest(createCustomerRequest);
+        customer.setPassword(passwordEncoder.encode(createCustomerRequest.password()));
         customerRepository.save(customer);
         roomService.createDefaultRoom(customer);
+        var authenticationResponse = authenticationService.generateToken(createCustomerRequest);
 
-        return CustomerMapper.toDTO(customer);
+        return CustomerMapper.toDTO(customer, authenticationResponse.token());
     }
 
     public CustomerDTO updateCustomer(Long customerId, UpdateCustomerRequest updateRequest) {

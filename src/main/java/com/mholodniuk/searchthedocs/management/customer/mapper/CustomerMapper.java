@@ -15,7 +15,6 @@ public class CustomerMapper {
         customer.setUsername(createCustomerRequest.username());
         customer.setDisplayName(createCustomerRequest.displayName());
         customer.setEmail(createCustomerRequest.email());
-        customer.setPassword(createCustomerRequest.password());
         return customer;
     }
 
@@ -26,6 +25,16 @@ public class CustomerMapper {
                 .displayName(customer.getDisplayName())
                 .email(customer.getEmail())
                 .token("jwt token TBA")
+                .build();
+    }
+
+    public static CustomerDTO toDTO(Customer customer, String token) {
+        return CustomerDTO.builder()
+                .id(customer.getId())
+                .username(customer.getUsername())
+                .displayName(customer.getDisplayName())
+                .email(customer.getEmail())
+                .token(token)
                 .build();
     }
 

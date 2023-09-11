@@ -9,6 +9,8 @@ import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateEx
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.Room;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
+import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
+import com.mholodniuk.searchthedocs.security.dto.AuthenticationResponse;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +18,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +35,10 @@ class CustomerServiceTest {
     private CustomerRepository customerRepository;
     @Mock
     private RoomService roomService;
+    @Mock
+    private ApiAuthenticationService authenticationService;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private CustomerService customerService;
 
@@ -44,6 +51,8 @@ class CustomerServiceTest {
         entity.setDisplayName(request.displayName());
         entity.setPassword(request.password());
         entity.setEmail(request.email());
+
+        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
 
         var response = customerService.createCustomer(request);
 
@@ -59,6 +68,8 @@ class CustomerServiceTest {
     @Test
     void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
         var request = new CreateCustomerRequest(null, null, null, null);
+
+        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
 
         customerService.createCustomer(request);
 

@@ -34,7 +34,6 @@ class DocumentController {
     }
 
     @GetMapping
-//    @PreAuthorize("@accessService.hasAccess(1, 1, authentication)")
     public ResponseEntity<?> getAllDocuments() {
         return ResponseEntity.ok(
                 new CollectionResponse<>("documents", documentService.findAllDocuments())
