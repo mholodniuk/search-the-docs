@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.room;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mholodniuk.searchthedocs.management.access.AccessKey;
-import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.user.User;
 import com.mholodniuk.searchthedocs.management.document.Document;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class Room {
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private Customer owner;
+    private User owner;
 
     @JsonIgnore
     @ToString.Exclude

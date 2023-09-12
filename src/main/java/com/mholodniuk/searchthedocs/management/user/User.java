@@ -1,4 +1,4 @@
-package com.mholodniuk.searchthedocs.management.customer;
+package com.mholodniuk.searchthedocs.management.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.mholodniuk.searchthedocs.management.access.AccessKey;
@@ -19,7 +19,7 @@ import java.util.Set;
 @Getter
 @Setter
 @ToString
-public class Customer {
+public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -50,8 +50,8 @@ public class Customer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || Hibernate.getClass(this) != Hibernate.getClass(o)) return false;
-        Customer customer = (Customer) o;
-        return id != null && Objects.equals(id, customer.id);
+        User user = (User) o;
+        return id != null && Objects.equals(id, user.id);
     }
 
     @Override

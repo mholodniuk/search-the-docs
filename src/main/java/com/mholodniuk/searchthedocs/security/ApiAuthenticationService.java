@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.security;
 
-import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
 import com.mholodniuk.searchthedocs.security.dto.AuthenticationRequest;
 import com.mholodniuk.searchthedocs.security.dto.AuthenticationResponse;
 import com.mholodniuk.searchthedocs.security.jwt.JwtService;
@@ -21,8 +21,8 @@ public class ApiAuthenticationService {
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
 
-    public AuthenticationResponse generateToken(CreateCustomerRequest createCustomerRequest) {
-        var user = buildUserDetails(createCustomerRequest.username(), createCustomerRequest.password());
+    public AuthenticationResponse generateToken(CreateUserRequest createUserRequest) {
+        var user = buildUserDetails(createUserRequest.username(), createUserRequest.password());
 
         String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()

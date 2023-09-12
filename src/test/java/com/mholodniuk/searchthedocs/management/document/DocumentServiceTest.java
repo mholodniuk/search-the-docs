@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.document;
 
 import com.mholodniuk.searchthedocs.document.DocumentIndexService;
 import com.mholodniuk.searchthedocs.file.FileService;
-import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.room.RoomRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,7 +18,7 @@ class DocumentServiceTest {
     @Mock
     private DocumentRepository documentRepository;
     @Mock
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     @Mock
     private RoomRepository roomRepository;
     @Mock

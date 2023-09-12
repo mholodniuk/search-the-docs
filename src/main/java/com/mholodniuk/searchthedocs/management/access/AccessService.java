@@ -3,8 +3,8 @@ package com.mholodniuk.searchthedocs.management.access;
 import com.mholodniuk.searchthedocs.management.access.dto.AccessKeyResponse;
 import com.mholodniuk.searchthedocs.management.access.dto.GrantAccessRequest;
 import com.mholodniuk.searchthedocs.management.access.mapper.AccessKeyMapper;
-import com.mholodniuk.searchthedocs.management.customer.Customer;
-import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.user.User;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreationException;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
@@ -24,18 +24,18 @@ import java.util.UUID;
 public class AccessService {
     private final AccessKeyRepository accessKeyRepository;
     private final RoomRepository roomRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
 
     public AccessKeyResponse grantAccess(Long roomId, GrantAccessRequest grantAccessRequest) {
         // todo: check if user already has access to requested room on selected date ???
         var issuedRoom = roomRepository.findPublicRoomById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No public room with id %s found".formatted(roomId)));
 
-        var invitedCustomer = customerRepository.findById(grantAccessRequest.invitedId())
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(grantAccessRequest.invitedId())));
+        var invitedUser = userRepository.findById(grantAccessRequest.invitedId())
+                .orElseThrow(() -> new ResourceNotFoundException("No user with id %s found".formatted(grantAccessRequest.invitedId())));
 
-        if (issuedRoom.getOwner().getId().equals(invitedCustomer.getId())) {
-            throw new InvalidResourceCreationException("Room with id %s already owned by customer with id %s".formatted(roomId, grantAccessRequest.invitedId()));
+        if (issuedRoom.getOwner().getId().equals(invitedUser.getId())) {
+            throw new InvalidResourceCreationException("Room with id %s already owned by user with id %s".formatted(roomId, grantAccessRequest.invitedId()));
         }
 
         var accessKey = new AccessKey();
@@ -45,21 +45,21 @@ public class AccessService {
                 ? grantAccessRequest.validTo().atTime(LocalTime.MAX) : null);
         accessKey.setRights(grantAccessRequest.accessRight());
         accessKey.setRoom(issuedRoom);
-        accessKey.setParticipant(invitedCustomer);
+        accessKey.setParticipant(invitedUser);
 
         accessKeyRepository.save(accessKey);
 
         return AccessKeyMapper.toResponse(accessKey);
     }
 
-    public void createSelfAccessKey(Customer invitedCustomer, Room issuedRoom) {
+    public void createSelfAccessKey(User invitedUser, Room issuedRoom) {
         var accessKey = new AccessKey();
         accessKey.setId(UUID.randomUUID());
         accessKey.setName("Default");
         accessKey.setValidTo(null);
         accessKey.setRights(AccessRight.ALL);
         accessKey.setRoom(issuedRoom);
-        accessKey.setParticipant(invitedCustomer);
+        accessKey.setParticipant(invitedUser);
 
         accessKeyRepository.save(accessKey);
     }
@@ -72,19 +72,19 @@ public class AccessService {
 
         var issuedRoom = roomRepository.findPublicRoomById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No public room with id %s found".formatted(roomId)));
-        var invitedCustomer = customerRepository.findById(participantId)
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(participantId)));
+        var invitedUser = userRepository.findById(participantId)
+                .orElseThrow(() -> new ResourceNotFoundException("No user with id %s found".formatted(participantId)));
 
-        if (issuedRoom.getOwner().getId().equals(invitedCustomer.getId())) {
+        if (issuedRoom.getOwner().getId().equals(invitedUser.getId())) {
             throw new InvalidResourceDeletionException("Cannot revoke access from owned room");
         }
 
         accessKeyRepository.deleteAll(accessKeys);
     }
 
-    public List<AccessKeyResponse> findCustomerAccessKeys(Long customerId) {
+    public List<AccessKeyResponse> findUserAccessKeys(Long userId) {
         return accessKeyRepository
-                .findCustomerAccessKeys(customerId).stream()
+                .findUserAccessKeys(userId).stream()
                 .map(AccessKeyMapper::toResponse)
                 .toList();
     }

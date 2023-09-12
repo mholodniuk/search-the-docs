@@ -1,10 +1,10 @@
-package com.mholodniuk.searchthedocs.management.customer;
+package com.mholodniuk.searchthedocs.management.user;
 
 import com.mholodniuk.searchthedocs.management.access.AccessService;
-import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
-import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
+import com.mholodniuk.searchthedocs.management.user.dto.UpdateUserRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
@@ -30,11 +30,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CustomerController.class)
+@WebMvcTest(UserController.class)
 @AutoConfigureMockMvc(addFilters = false)
-class CustomerControllerTest {
+class UserControllerTest {
     @MockBean
-    private CustomerService customerService;
+    private UserService userService;
     @MockBean
     private RoomService roomService;
     @MockBean
@@ -47,10 +47,10 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnCustomerList_WhenFound() throws Exception {
-        var customer1 = CustomerDTO.builder().id(1L).username("name1").build();
-        var customer2 = CustomerDTO.builder().id(2L).username("name2").build();
+        var customer1 = UserDTO.builder().id(1L).username("name1").build();
+        var customer2 = UserDTO.builder().id(2L).username("name2").build();
 
-        when(customerService.findAllCustomers()).thenReturn(List.of(customer1, customer2));
+        when(userService.findAllUsers()).thenReturn(List.of(customer1, customer2));
 
         mockMvc.perform(get("/customers"))
                 .andExpect(status().isOk())
@@ -65,7 +65,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnEmptyCollection_WhenNothingFound() throws Exception {
-        when(customerService.findAllCustomers()).thenReturn(Collections.emptyList());
+        when(userService.findAllUsers()).thenReturn(Collections.emptyList());
 
         mockMvc.perform(get("/customers"))
                 .andExpect(status().isOk())
@@ -76,7 +76,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnCustomer_When_Found() throws Exception {
-        var customer = CustomerResponse.builder()
+        var customer = UserResponse.builder()
                 .id(1L)
                 .username("name")
                 .displayName("display")
@@ -84,7 +84,7 @@ class CustomerControllerTest {
                 .rooms(List.of(new RoomDTO(1L, "room", true, LocalDateTime.now(), LocalDateTime.now())))
                 .build();
 
-        when(customerService.findCustomerById(1L)).thenReturn(Optional.of(customer));
+        when(userService.findUserById(1L)).thenReturn(Optional.of(customer));
 
         mockMvc.perform(get("/customers/1"))
                 .andExpect(status().isOk())
@@ -111,7 +111,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnNotFound_When_NoCustomerFound() throws Exception {
-        when(customerService.findCustomerById(4L)).thenReturn(Optional.empty());
+        when(userService.findUserById(4L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/customers/4"))
                 .andExpect(status().isNotFound());
@@ -150,7 +150,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_CreateCustomer_When_ValidRequest() throws Exception {
-        var customerCreatedResponse = CustomerDTO.builder()
+        var customerCreatedResponse = UserDTO.builder()
                 .username("name")
                 .displayName("display")
                 .id(1L)
@@ -158,7 +158,7 @@ class CustomerControllerTest {
                 .email("mail@mail.com")
                 .build();
 
-        when(customerService.createCustomer(any(CreateCustomerRequest.class)))
+        when(userService.createUser(any(CreateUserRequest.class)))
                 .thenReturn(customerCreatedResponse);
 
         mockMvc.perform(post("/customers")
@@ -223,13 +223,13 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnOkAndModifiedEntity_When_CorrectRequest() throws Exception {
-        var updatedCustomer = CustomerDTO.builder()
+        var updatedCustomer = UserDTO.builder()
                 .id(3L)
                 .username("to-be-changed")
                 .displayName("display")
                 .email("mail@mail.com")
                 .build();
-        when(customerService.updateCustomer(eq(3L), any(UpdateCustomerRequest.class)))
+        when(userService.updateUser(eq(3L), any(UpdateUserRequest.class)))
                 .thenReturn(updatedCustomer);
 
         mockMvc.perform(put("/customers/3")
@@ -249,7 +249,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnNotFound_When_NoToModifyCustomerFound() throws Exception {
-        when(customerService.updateCustomer(eq(4L), any(UpdateCustomerRequest.class)))
+        when(userService.updateUser(eq(4L), any(UpdateUserRequest.class)))
                 .thenThrow(ResourceNotFoundException.class);
 
         mockMvc.perform(put("/customers/4")
@@ -267,7 +267,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnConflict_When_ErrorsInModification() throws Exception {
-        when(customerService.updateCustomer(eq(4L), any(UpdateCustomerRequest.class)))
+        when(userService.updateUser(eq(4L), any(UpdateUserRequest.class)))
                 .thenThrow(InvalidResourceUpdateException.class);
 
         mockMvc.perform(put("/customers/4")
@@ -283,7 +283,7 @@ class CustomerControllerTest {
 
     @Test
     void Should_ReturnNotFound_When_NoCustomerWithId() throws Exception {
-        doThrow(ResourceNotFoundException.class).when(customerService).deleteById(1L);
+        doThrow(ResourceNotFoundException.class).when(userService).deleteById(1L);
         mockMvc.perform(delete("/customers/1"))
                 .andExpect(status().isNotFound());
     }

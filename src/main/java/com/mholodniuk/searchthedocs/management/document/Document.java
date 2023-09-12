@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.document;
 
-import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.user.User;
 import com.mholodniuk.searchthedocs.management.room.Room;
 import com.vladmihalcea.hibernate.type.array.ListArrayType;
 import jakarta.persistence.*;
@@ -46,7 +46,7 @@ public class Document {
     @ToString.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id", nullable = false)
-    private Customer owner;
+    private User owner;
 
     @Embedded
     @AttributeOverrides({

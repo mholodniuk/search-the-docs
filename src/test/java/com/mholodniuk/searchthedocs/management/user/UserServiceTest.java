@@ -1,10 +1,10 @@
-package com.mholodniuk.searchthedocs.management.customer;
+package com.mholodniuk.searchthedocs.management.user;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
-import com.mholodniuk.searchthedocs.management.customer.dto.CreateCustomerRequest;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerResponse;
-import com.mholodniuk.searchthedocs.management.customer.dto.UpdateCustomerRequest;
+import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
+import com.mholodniuk.searchthedocs.management.user.dto.UpdateUserRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.Room;
@@ -30,9 +30,9 @@ import static org.mockito.Mockito.*;
 
 
 @ExtendWith(MockitoExtension.class)
-class CustomerServiceTest {
+class UserServiceTest {
     @Mock
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     @Mock
     private RoomService roomService;
     @Mock
@@ -40,12 +40,12 @@ class CustomerServiceTest {
     @Mock
     private PasswordEncoder passwordEncoder;
     @InjectMocks
-    private CustomerService customerService;
+    private UserService userService;
 
     @Test
     void Should_CreateAndReturnCustomer() {
-        var request = new CreateCustomerRequest("username", "displayName", "email@email.com", "password");
-        var entity = new Customer();
+        var request = new CreateUserRequest("username", "displayName", "email@email.com", "password");
+        var entity = new User();
         entity.setId(1L);
         entity.setUsername(request.username());
         entity.setDisplayName(request.displayName());
@@ -54,9 +54,9 @@ class CustomerServiceTest {
 
         when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
 
-        var response = customerService.createCustomer(request);
+        var response = userService.createUser(request);
 
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        verify(userRepository, times(1)).save(any(User.class));
 
         Assertions.assertNotNull(response);
         Assertions.assertEquals(request.username(), response.username());
@@ -67,19 +67,19 @@ class CustomerServiceTest {
 
     @Test
     void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
-        var request = new CreateCustomerRequest(null, null, null, null);
+        var request = new CreateUserRequest(null, null, null, null);
 
         when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
 
-        customerService.createCustomer(request);
+        userService.createUser(request);
 
-        verify(roomService, times(1)).createDefaultRoom(any(Customer.class));
+        verify(roomService, times(1)).createDefaultRoom(any(User.class));
     }
 
     @Test
     void Should_ModifyAllFields_When_Requested() {
-        var request = new UpdateCustomerRequest("username", "displayName", "test@mail.com", "password");
-        var customer = new Customer();
+        var request = new UpdateUserRequest("username", "displayName", "test@mail.com", "password");
+        var customer = new User();
         long customerId = 1L;
         customer.setId(1L);
         customer.setUsername("to-be-changed");
@@ -87,18 +87,18 @@ class CustomerServiceTest {
         customer.setPassword("to-be-changed");
         customer.setEmail("to-be-changed");
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        when(customerRepository.existsByUsername(request.username())).thenReturn(false);
-        when(customerRepository.existsByEmail(request.email())).thenReturn(false);
-        when(customerRepository.save(any())).thenReturn(customer);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        when(userRepository.existsByUsername(request.username())).thenReturn(false);
+        when(userRepository.existsByEmail(request.email())).thenReturn(false);
+        when(userRepository.save(any())).thenReturn(customer);
 
-        customerService.updateCustomer(customerId, request);
+        userService.updateUser(customerId, request);
 
-        var customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
-        verify(customerRepository).save(customerArgumentCaptor.capture());
+        var customerArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(customerArgumentCaptor.capture());
         var capturedSavedCustomer = customerArgumentCaptor.getValue();
 
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        verify(userRepository, times(1)).save(any(User.class));
         Assertions.assertEquals(request.username(), capturedSavedCustomer.getUsername());
         Assertions.assertEquals(request.displayName(), capturedSavedCustomer.getDisplayName());
         Assertions.assertEquals(request.email(), capturedSavedCustomer.getEmail());
@@ -107,8 +107,8 @@ class CustomerServiceTest {
 
     @Test
     void Should_ModifyOnlyPresentFields_When_Requested() {
-        var request = new UpdateCustomerRequest("username", null, null, "password");
-        var customer = new Customer();
+        var request = new UpdateUserRequest("username", null, null, "password");
+        var customer = new User();
         long customerId = 1L;
         customer.setId(1L);
         customer.setUsername("to-be-changed");
@@ -116,17 +116,17 @@ class CustomerServiceTest {
         customer.setPassword("to-be-changed");
         customer.setEmail("not-to-be-changed");
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(customer));
-        when(customerRepository.existsByUsername(request.username())).thenReturn(false);
-        when(customerRepository.save(any(Customer.class))).thenReturn(customer);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(customer));
+        when(userRepository.existsByUsername(request.username())).thenReturn(false);
+        when(userRepository.save(any(User.class))).thenReturn(customer);
 
-        customerService.updateCustomer(customerId, request);
+        userService.updateUser(customerId, request);
 
-        var customerArgumentCaptor = ArgumentCaptor.forClass(Customer.class);
-        verify(customerRepository).save(customerArgumentCaptor.capture());
+        var customerArgumentCaptor = ArgumentCaptor.forClass(User.class);
+        verify(userRepository).save(customerArgumentCaptor.capture());
         var capturedSavedCustomer = customerArgumentCaptor.getValue();
 
-        verify(customerRepository, times(1)).save(any(Customer.class));
+        verify(userRepository, times(1)).save(any(User.class));
         Assertions.assertEquals(request.username(), capturedSavedCustomer.getUsername());
         Assertions.assertEquals(request.password(), capturedSavedCustomer.getPassword());
         Assertions.assertNotEquals(customer.getDisplayName(), request.displayName());
@@ -135,26 +135,26 @@ class CustomerServiceTest {
 
     @Test
     void Should_Throw_When_NoCustomersFoundById() {
-        var request = new UpdateCustomerRequest("username", null, null, "password");
+        var request = new UpdateUserRequest("username", null, null, "password");
         long customerId = 1L;
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.empty());
+        when(userRepository.findById(customerId)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> customerService.updateCustomer(customerId, request));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.updateUser(customerId, request));
     }
 
     @Test
     void Should_ThrowForInvalidField_When_EmailTaken() {
-        var request = new UpdateCustomerRequest("username", null, "taken", "password");
-        var entity = new Customer();
+        var request = new UpdateUserRequest("username", null, "taken", "password");
+        var entity = new User();
         long customerId = 1L;
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
-        when(customerRepository.existsByUsername(request.username())).thenReturn(false);
-        when(customerRepository.existsByEmail(request.email())).thenReturn(true);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(entity));
+        when(userRepository.existsByUsername(request.username())).thenReturn(false);
+        when(userRepository.existsByEmail(request.email())).thenReturn(true);
 
         try {
-            customerService.updateCustomer(customerId, request);
+            userService.updateUser(customerId, request);
         } catch (RuntimeException e) {
             Assertions.assertInstanceOf(InvalidResourceUpdateException.class, e);
             var errors = ((InvalidResourceUpdateException) e).getErrors();
@@ -165,19 +165,19 @@ class CustomerServiceTest {
 
     @Test
     void Should_ThrowForInvalidFields_When_EmailAndUsernameTaken() {
-        var request = new UpdateCustomerRequest("taken", null, "also taken", "password");
-        var entity = new Customer();
+        var request = new UpdateUserRequest("taken", null, "also taken", "password");
+        var entity = new User();
         long customerId = 1L;
         var expectedErrors = List.of(
                 new ErrorMessage("email", "User with this email already exists", "also taken"),
                 new ErrorMessage("username", "User with this username already exists", "taken"));
 
-        when(customerRepository.findById(customerId)).thenReturn(Optional.of(entity));
-        when(customerRepository.existsByUsername(request.username())).thenReturn(true);
-        when(customerRepository.existsByEmail(request.email())).thenReturn(true);
+        when(userRepository.findById(customerId)).thenReturn(Optional.of(entity));
+        when(userRepository.existsByUsername(request.username())).thenReturn(true);
+        when(userRepository.existsByEmail(request.email())).thenReturn(true);
 
         try {
-            customerService.updateCustomer(customerId, request);
+            userService.updateUser(customerId, request);
         } catch (RuntimeException e) {
             Assertions.assertInstanceOf(InvalidResourceUpdateException.class, e);
             var errors = ((InvalidResourceUpdateException) e).getErrors();
@@ -188,35 +188,35 @@ class CustomerServiceTest {
 
     @Test
     public void Should_DeleteCustomer_When_AskedFor() {
-        Customer customer = new Customer();
-        customer.setId(1L);
+        User user = new User();
+        user.setId(1L);
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
 
-        customerService.deleteById(1L);
+        userService.deleteById(1L);
 
-        verify(customerRepository).delete(customer);
+        verify(userRepository).delete(user);
     }
 
     @Test
     public void Should_Throw_When_NoCustomerWithIdFound() {
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
-        Assertions.assertThrows(ResourceNotFoundException.class, () -> customerService.deleteById(1L));
+        Assertions.assertThrows(ResourceNotFoundException.class, () -> userService.deleteById(1L));
     }
 
     @Test
     public void Should_ReturnCorrectId_When_SearchedFor() {
-        var customer = new Customer();
+        var customer = new User();
         customer.setId(1L);
         var room = new Room();
         room.setId(1L);
         room.setPrivate(true);
         customer.setRooms(Set.of(room));
 
-        when(customerRepository.findByIdWithRooms(1L)).thenReturn(Optional.of(customer));
+        when(userRepository.findByIdWithRooms(1L)).thenReturn(Optional.of(customer));
 
-        Optional<CustomerResponse> response = customerService.findCustomerById(1L);
+        Optional<UserResponse> response = userService.findUserById(1L);
 
         Assertions.assertTrue(response.isPresent());
         Assertions.assertEquals(1L, response.get().id());
@@ -224,26 +224,26 @@ class CustomerServiceTest {
 
     @Test
     public void Should_ReturnEmptyOptional_When_NoCustomerWithId() {
-        when(customerRepository.findByIdWithRooms(1L)).thenReturn(Optional.empty());
+        when(userRepository.findByIdWithRooms(1L)).thenReturn(Optional.empty());
 
-        Optional<CustomerResponse> response = customerService.findCustomerById(1L);
+        Optional<UserResponse> response = userService.findUserById(1L);
 
         Assertions.assertTrue(response.isEmpty());
     }
 
     @Test
     public void Should_ReturnCorrectCustomers_When_SearchedForAll() {
-        List<Customer> customers = new ArrayList<>();
-        Customer customer1 = new Customer();
-        customer1.setId(1L);
-        Customer customer2 = new Customer();
-        customer2.setId(2L);
-        customers.add(customer1);
-        customers.add(customer2);
+        List<User> users = new ArrayList<>();
+        User user1 = new User();
+        user1.setId(1L);
+        User user2 = new User();
+        user2.setId(2L);
+        users.add(user1);
+        users.add(user2);
 
-        when(customerRepository.findAll()).thenReturn(customers);
+        when(userRepository.findAll()).thenReturn(users);
 
-        List<CustomerDTO> responses = customerService.findAllCustomers();
+        List<UserDTO> responses = userService.findAllUsers();
 
         Assertions.assertEquals(2, responses.size());
         Assertions.assertEquals(1L, responses.get(0).id());

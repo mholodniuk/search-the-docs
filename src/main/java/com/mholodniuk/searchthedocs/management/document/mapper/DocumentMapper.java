@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.document.mapper;
 
-import com.mholodniuk.searchthedocs.management.customer.mapper.CustomerMapper;
+import com.mholodniuk.searchthedocs.management.user.mapper.UserMapper;
 import com.mholodniuk.searchthedocs.management.document.Document;
 import com.mholodniuk.searchthedocs.management.document.dto.DocumentDTO;
 import com.mholodniuk.searchthedocs.management.document.dto.DocumentResponse;
@@ -22,7 +22,7 @@ public class DocumentMapper {
                 .filePath(document.getFileLocation().getPath())
                 .storage(document.getFileLocation().getStorageProvider())
                 .room(RoomMapper.toDTO(document.getRoom()))
-                .owner(CustomerMapper.toDTO(document.getOwner()))
+                .owner(UserMapper.toDTO(document.getOwner()))
                 .build();
     }
 

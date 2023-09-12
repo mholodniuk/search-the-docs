@@ -2,8 +2,8 @@ package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.access.AccessService;
-import com.mholodniuk.searchthedocs.management.customer.Customer;
-import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.user.User;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
@@ -26,7 +26,7 @@ import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_RO
 @RequiredArgsConstructor
 public class RoomService {
     private final RoomRepository roomRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final AccessService accessService;
 
     public RoomDTO createRoom(CreateRoomRequest createRoomRequest) {
@@ -35,8 +35,8 @@ public class RoomService {
             throw new InvalidResourceUpdateException("Cannot create entity", errors);
         }
 
-        var owner = customerRepository.findById(createRoomRequest.ownerId())
-                .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(createRoomRequest.ownerId())));
+        var owner = userRepository.findById(createRoomRequest.ownerId())
+                .orElseThrow(() -> new ResourceNotFoundException("No user with id %s found".formatted(createRoomRequest.ownerId())));
 
         var room = RoomMapper.fromRequest(createRoomRequest);
         room.setCreatedAt(LocalDateTime.now());
@@ -49,15 +49,15 @@ public class RoomService {
         return RoomMapper.toDTO(room);
     }
 
-    public RoomDTO createDefaultRoom(Customer customer) {
+    public RoomDTO createDefaultRoom(User user) {
         var room = new Room();
-        room.setOwner(customer);
+        room.setOwner(user);
         room.setCreatedAt(LocalDateTime.now());
         room.setModifiedAt(LocalDateTime.now());
         room.setName(DEFAULT_ROOM_NAME);
         room.setPrivate(true);
         roomRepository.save(room);
-        accessService.createSelfAccessKey(customer, room);
+        accessService.createSelfAccessKey(user, room);
 
         return RoomMapper.toDTO(room);
     }
@@ -93,8 +93,8 @@ public class RoomService {
         return roomRepository.findByIdWithDocuments(roomId).map(RoomMapper::toResponse);
     }
 
-    public List<RoomDTO> findRoomsByOwnerId(Long customerId) {
-        return roomRepository.findAllByOwnerId(customerId);
+    public List<RoomDTO> findRoomsByOwnerId(Long userId) {
+        return roomRepository.findAllByOwnerId(userId);
     }
 
     public void deleteById(Long roomId) {

@@ -5,7 +5,7 @@ import com.mholodniuk.searchthedocs.document.DocumentIndexService;
 import com.mholodniuk.searchthedocs.file.FileService;
 import com.mholodniuk.searchthedocs.file.dto.FileUploadResponse;
 import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
-import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.document.dto.*;
 import com.mholodniuk.searchthedocs.management.document.mapper.DocumentMapper;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
@@ -29,7 +29,7 @@ import static com.mholodniuk.searchthedocs.file.mock.S3Mock.MOCK_BUCKET_NAME;
 @RequiredArgsConstructor
 public class DocumentService {
     private final DocumentRepository documentRepository;
-    private final CustomerRepository customerRepository;
+    private final UserRepository userRepository;
     private final RoomRepository roomRepository;
     private final DocumentIndexService documentIndexService;
     private final FileService fileService;
@@ -63,7 +63,7 @@ public class DocumentService {
             var errors = List.of(new ErrorMessage("name", "Room already contains document with given name", List.of(createDocumentRequest.name(), createDocumentRequest.roomId())));
             throw new InvalidResourceUpdateException("Cannot create entity", errors);
         }
-        var owner = customerRepository.findById(createDocumentRequest.ownerId())
+        var owner = userRepository.findById(createDocumentRequest.ownerId())
                 .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(createDocumentRequest.ownerId())));
 
         var room = roomRepository.findById(createDocumentRequest.roomId())

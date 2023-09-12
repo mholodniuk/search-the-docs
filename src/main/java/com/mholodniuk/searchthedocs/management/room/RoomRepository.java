@@ -12,9 +12,9 @@ import java.util.Optional;
 public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("""
                 select new com.mholodniuk.searchthedocs.management.room.dto.RoomDTO(r.id, r.name, r.isPrivate, r.createdAt, r.modifiedAt)
-                from Room r where r.owner.id = :customerId
+                from Room r where r.owner.id = :userId
             """)
-    List<RoomDTO> findAllByOwnerId(Long customerId);
+    List<RoomDTO> findAllByOwnerId(Long userId);
 
     @Query("""
                 select r from Room r left join fetch r.documents where r.id = :roomId

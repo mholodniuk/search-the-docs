@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.access;
 
-import com.mholodniuk.searchthedocs.management.customer.Customer;
+import com.mholodniuk.searchthedocs.management.user.User;
 import com.mholodniuk.searchthedocs.management.room.Room;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -40,5 +40,5 @@ public class AccessKey {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "participant_id", nullable = false)
     @ToString.Exclude
-    private Customer participant;
+    private User participant;
 }

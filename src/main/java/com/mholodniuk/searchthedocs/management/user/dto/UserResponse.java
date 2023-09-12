@@ -1,4 +1,4 @@
-package com.mholodniuk.searchthedocs.management.customer.dto;
+package com.mholodniuk.searchthedocs.management.user.dto;
 
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import lombok.Builder;
@@ -6,7 +6,7 @@ import lombok.Builder;
 import java.util.List;
 
 @Builder
-public record CustomerResponse(
+public record UserResponse(
         Long id,
         String username,
         String displayName,

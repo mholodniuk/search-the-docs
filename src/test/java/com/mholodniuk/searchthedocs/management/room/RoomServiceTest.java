@@ -1,8 +1,8 @@
 package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.management.access.AccessService;
-import com.mholodniuk.searchthedocs.management.customer.Customer;
-import com.mholodniuk.searchthedocs.management.customer.CustomerRepository;
+import com.mholodniuk.searchthedocs.management.user.User;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.document.Document;
 import com.mholodniuk.searchthedocs.management.document.FileLocation;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
@@ -29,7 +29,7 @@ class RoomServiceTest {
     @Mock
     private RoomRepository roomRepository;
     @Mock
-    private CustomerRepository customerRepository;
+    private UserRepository userRepository;
     @Mock
     private AccessService accessService;
     @InjectMocks
@@ -38,10 +38,10 @@ class RoomServiceTest {
 
     @Test
     void Should_CreateDefaultRoomForCustomer_When_AskedFor() {
-        var response = roomService.createDefaultRoom(new Customer());
+        var response = roomService.createDefaultRoom(new User());
 
         verify(roomRepository, times(1)).save(any(Room.class));
-        verify(accessService, times(1)).createSelfAccessKey(any(Customer.class), any(Room.class));
+        verify(accessService, times(1)).createSelfAccessKey(any(User.class), any(Room.class));
         Assertions.assertNotNull(response);
         Assertions.assertEquals(DEFAULT_ROOM_NAME, response.name());
         Assertions.assertTrue(response.createdAt().isBefore(LocalDateTime.now()));
@@ -73,7 +73,7 @@ class RoomServiceTest {
     void Should_Throw_When_CustomerDoesNotExists() {
         var createRoomRequest = new CreateRoomRequest("Room", true, 1L);
 
-        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         Assertions.assertThrows(ResourceNotFoundException.class, () -> roomService.createRoom(createRoomRequest));
     }
@@ -81,15 +81,15 @@ class RoomServiceTest {
     @Test
     void Should_CreateRoom_When_RequestAndOthersValid() {
         var createRoomRequest = new CreateRoomRequest("valid room", true, 4L);
-        var owner = new Customer();
+        var owner = new User();
         owner.setId(createRoomRequest.ownerId());
 
-        when(customerRepository.findById(4L)).thenReturn(Optional.of(owner));
+        when(userRepository.findById(4L)).thenReturn(Optional.of(owner));
 
         var createdRoom = roomService.createRoom(createRoomRequest);
 
         verify(roomRepository, times(1)).save(any(Room.class));
-        verify(accessService, times(1)).createSelfAccessKey(any(Customer.class), any(Room.class));
+        verify(accessService, times(1)).createSelfAccessKey(any(User.class), any(Room.class));
         Assertions.assertEquals(createRoomRequest.name(), createdRoom.name());
         Assertions.assertEquals(createRoomRequest.isPrivate(), createdRoom.isPrivate());
         Assertions.assertTrue(createdRoom.createdAt().isBefore(LocalDateTime.now()));
@@ -104,7 +104,7 @@ class RoomServiceTest {
         room.setName("to-be-changed");
         room.setPrivate(false);
         room.setCreatedAt(LocalDateTime.now());
-        var customer = new Customer();
+        var customer = new User();
         customer.setId(1L);
         room.setOwner(customer);
 
@@ -132,7 +132,7 @@ class RoomServiceTest {
         room.setName("to-be-changed");
         room.setPrivate(false);
         room.setCreatedAt(LocalDateTime.now());
-        var customer = new Customer();
+        var customer = new User();
         customer.setId(1L);
         room.setOwner(customer);
 
@@ -165,7 +165,7 @@ class RoomServiceTest {
     void Should_ThrowForInvalidField_When_RoomAlreadyExists() {
         var request = new UpdateRoomRequest("room", true);
         var room = new Room();
-        var customer = new Customer();
+        var customer = new User();
         customer.setId(2L);
         room.setOwner(customer);
 

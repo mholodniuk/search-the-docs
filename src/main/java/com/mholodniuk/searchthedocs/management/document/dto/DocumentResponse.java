@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.document.dto;
 
-import com.mholodniuk.searchthedocs.management.customer.dto.CustomerDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import lombok.Builder;
 
@@ -18,6 +18,6 @@ public record DocumentResponse(
         String filePath,
         String storage,
         RoomDTO room,
-        CustomerDTO owner
+        UserDTO owner
 ) {
 }
