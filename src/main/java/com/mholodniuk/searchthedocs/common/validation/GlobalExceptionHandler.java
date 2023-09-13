@@ -136,6 +136,7 @@ class GlobalExceptionHandler {
         return problemDetail;
     }
 
+    // todo: get rid of exceptions of this type in logs
     @ExceptionHandler(AccessDeniedException.class)
     public ProblemDetail onAccessDeniedException(AccessDeniedException e) {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);

@@ -57,7 +57,7 @@ public class AccessService {
         accessKey.setId(UUID.randomUUID());
         accessKey.setName("Default");
         accessKey.setValidTo(null);
-        accessKey.setRights(AccessRight.ALL);
+        accessKey.setRights(AccessRight.FULL);
         accessKey.setRoom(issuedRoom);
         accessKey.setParticipant(invitedUser);
 

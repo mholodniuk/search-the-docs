@@ -30,7 +30,7 @@ class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> getRoom(@PathVariable Long roomId) {
         return roomService
                 .findRoomById(roomId)
@@ -39,10 +39,10 @@ class RoomController {
     }
 
     @GetMapping("/{roomId}/documents")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> getRoomDocuments(@PathVariable Long roomId) {
         return ResponseEntity.ok(
-                new CollectionResponse<>("rooms", documentService.findDocumentsInRoom(roomId))
+                new CollectionResponse<>("documents", documentService.findDocumentsInRoom(roomId))
         );
     }
 
@@ -57,7 +57,7 @@ class RoomController {
     }
 
     @PutMapping("/{roomId}")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> updateRoom(@PathVariable Long roomId,
                                         @Valid @RequestBody UpdateRoomRequest updateRoomRequest) {
         var room = roomService.updateRoom(roomId, updateRoomRequest);
@@ -65,14 +65,14 @@ class RoomController {
     }
 
     @DeleteMapping("/{roomId}")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> deleteRoom(@PathVariable Long roomId) {
         roomService.deleteById(roomId);
         return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/{roomId}/access")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> grantAccess(@PathVariable Long roomId,
                                          @Valid @RequestBody GrantAccessRequest grantAccessRequest) {
         var accessKey = accessService.grantAccess(roomId, grantAccessRequest);
@@ -84,7 +84,7 @@ class RoomController {
     }
 
     @GetMapping("/{roomId}/access")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> getRoomAccessKeys(@PathVariable Long roomId) {
         return ResponseEntity.ok(
                 new CollectionResponse<>("keys", accessService.findRoomAccessKeys(roomId))
@@ -92,7 +92,7 @@ class RoomController {
     }
 
     @DeleteMapping("/{roomId}/access/{participantId}")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
     public ResponseEntity<?> deleteAccessToRoom(@PathVariable Long roomId, @PathVariable Long participantId) {
         accessService.revokeAccess(roomId, participantId);
         return ResponseEntity.noContent().build();

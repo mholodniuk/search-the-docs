@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.access;
 
+// user can either view or (view and modify) documents within a room
 public enum AccessRight {
-    MODIFIER, VIEWER, ALL, ADMIN, NONE
+    FULL, VIEW, NONE
 }

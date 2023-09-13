@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -19,12 +20,30 @@ public class AccessValidationService {
         return principal.getId().equals(userId);
     }
 
-    public boolean validateRoomOwner(Authentication authentication, Long roomId) {
+    public boolean validateRoomReadAccess(Authentication authentication, Long roomId) {
         var principal = (User) authentication.getPrincipal();
-        return checkAccess(principal.getId(), roomId) != AccessRight.NONE;
+        var access = checkAccessByRoomId(principal.getId(), roomId);
+        return access == AccessRight.VIEW;
     }
 
-    public AccessRight checkAccess(Long participantId, Long roomId) {
+    public boolean validateRoomFullAccess(Authentication authentication, Long roomId) {
+        var principal = (User) authentication.getPrincipal();
+        var access = checkAccessByRoomId(principal.getId(), roomId);
+        return access == AccessRight.FULL;
+    }
+
+    public boolean validateDocumentAccess(Authentication authentication, String documentId) {
+        var principal = (User) authentication.getPrincipal();
+        return checkAccessByDocumentId(principal.getId(), UUID.fromString(documentId)) != AccessRight.NONE;
+    }
+
+    public AccessRight checkAccessByDocumentId(Long participantId, UUID documentId) {
+        return accessKeyRepository
+                .findAccessRightsByParticipantIdAndDocumentIdOnDate(participantId, documentId, LocalDateTime.now())
+                .orElse(AccessRight.NONE);
+    }
+
+    public AccessRight checkAccessByRoomId(Long participantId, Long roomId) {
         return accessKeyRepository
                 .findAccessRightsByParticipantIdAndRoomIdOnDate(participantId, roomId, LocalDateTime.now())
                 .orElse(AccessRight.NONE);

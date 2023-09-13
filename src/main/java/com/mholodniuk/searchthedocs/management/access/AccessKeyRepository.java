@@ -11,8 +11,31 @@ import java.util.UUID;
 
 @Repository
 public interface AccessKeyRepository extends JpaRepository<AccessKey, UUID> {
-    @Query("select a.rights from AccessKey a where a.room.id = :roomId and a.participant.id = :participantId and (a.validTo = null or :date < a.validTo)")
+    @Query("""
+            select
+                a.rights
+            from
+                AccessKey a
+            where
+                    a.room.id = :roomId
+                and a.participant.id = :participantId
+                and (a.validTo = null or :date < a.validTo)
+            """)
     Optional<AccessRight> findAccessRightsByParticipantIdAndRoomIdOnDate(Long participantId, Long roomId, LocalDateTime date);
+
+    @Query("""
+            select
+                a.rights
+            from
+                AccessKey a
+            join
+                Document d on d.room.id = a.room.id
+            where
+                d.id = :documentId
+                and a.participant.id = :participantId
+                and (a.validTo = null or :date < a.validTo)
+            """)
+    Optional<AccessRight> findAccessRightsByParticipantIdAndDocumentIdOnDate(Long participantId, UUID documentId, LocalDateTime date);
 
     @Query("select a from AccessKey a join fetch a.participant p join fetch a.room r where p.id = :userId")
     List<AccessKey> findUserAccessKeys(Long userId);

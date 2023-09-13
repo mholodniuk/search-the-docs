@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,6 +23,7 @@ class DocumentController {
     private final DocumentService documentService;
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("@accessValidationService.validateRoomFullAccess(authentication, #roomId)")
     public ResponseEntity<?> uploadFile(@RequestParam @ValidFile MultipartFile file,
                                         @RequestParam Long roomId,
                                         @RequestParam Long ownerId) {
@@ -41,6 +43,7 @@ class DocumentController {
     }
 
     @GetMapping("/{documentId}")
+    @PreAuthorize("@accessValidationService.validateDocumentAccess(authentication, #documentId)")
     public ResponseEntity<?> getById(@PathVariable @UUID String documentId) {
         return documentService
                 .findDocumentById(toUUID(documentId))
