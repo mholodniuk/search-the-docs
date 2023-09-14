@@ -60,8 +60,8 @@ public class DocumentService {
 
     DocumentResponse saveDocument(CreateDocumentRequest createDocumentRequest) {
         if (documentRepository.existsByNameAndRoomId(createDocumentRequest.name(), createDocumentRequest.roomId())) {
-            var errors = List.of(new ErrorMessage("name", "Room already contains document with given name", List.of(createDocumentRequest.name(), createDocumentRequest.roomId())));
-            throw new InvalidResourceUpdateException("Cannot create entity", errors);
+            var error = new ErrorMessage("name", "Room already contains document with given name", List.of(createDocumentRequest.name(), createDocumentRequest.roomId()));
+            throw new InvalidResourceUpdateException("Cannot create entity", error);
         }
         var owner = userRepository.findById(createDocumentRequest.ownerId())
                 .orElseThrow(() -> new ResourceNotFoundException("No customer with id %s found".formatted(createDocumentRequest.ownerId())));

@@ -31,8 +31,7 @@ public class RoomService {
 
     public RoomDTO createRoom(CreateRoomRequest createRoomRequest) {
         if (roomRepository.existsByNameAndOwnerId(createRoomRequest.name(), createRoomRequest.ownerId())) {
-            var errors = List.of(new ErrorMessage("name", "User already owns room with given name", createRoomRequest.name()));
-            throw new InvalidResourceUpdateException("Cannot create entity", errors);
+            throw new InvalidResourceUpdateException("Cannot create entity", new ErrorMessage("name", "This user already owns room with this name", createRoomRequest.name()));
         }
 
         var owner = userRepository.findById(createRoomRequest.ownerId())
@@ -68,9 +67,7 @@ public class RoomService {
 
         applyIfChanged(room.getName(), updateRequest.name(), (updated) -> {
             if (roomRepository.existsByNameAndOwnerId(updateRequest.name(), room.getOwner().getId())) {
-                throw new InvalidResourceUpdateException("Cannot update entity",
-                        List.of(new ErrorMessage("name", "This user already owns room named %s"
-                                .formatted(updateRequest.name()), updateRequest.name())));
+                throw new InvalidResourceUpdateException("Cannot update entity", new ErrorMessage("name", "This user already owns room with this name", updateRequest.name()));
             } else {
                 room.setName(updated);
             }

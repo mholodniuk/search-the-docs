@@ -3,7 +3,8 @@ package com.mholodniuk.searchthedocs.management.room;
 import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.document.DocumentService;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
-import com.mholodniuk.searchthedocs.security.SecurityConfiguration;
+import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
+import com.mholodniuk.searchthedocs.security.jwt.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,7 +20,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(value = RoomController.class, excludeAutoConfiguration = SecurityConfiguration.class)
+@WebMvcTest(value = RoomController.class)
 @AutoConfigureMockMvc(addFilters = false)
 public class RoomControllerTest {
     @MockBean
@@ -28,6 +29,10 @@ public class RoomControllerTest {
     private DocumentService documentService;
     @MockBean
     private AccessService accessService;
+    @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockBean
+    private ApiAuthenticationService authenticationService;
     @Autowired
     private MockMvc mockMvc;
 

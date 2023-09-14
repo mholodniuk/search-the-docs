@@ -65,7 +65,7 @@ class RoomServiceTest {
             var errorMessage = exception.getErrors().get(0).message();
             var errorField = exception.getErrors().get(0).field();
             Assertions.assertEquals("name", errorField);
-            Assertions.assertEquals("User already owns room with given name", errorMessage);
+            Assertions.assertEquals("This user already owns room with this name", errorMessage);
         }
     }
 

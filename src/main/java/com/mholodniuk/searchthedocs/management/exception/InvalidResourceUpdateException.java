@@ -8,9 +8,15 @@ import java.util.List;
 @Getter
 public class InvalidResourceUpdateException extends RuntimeException {
     private final List<ErrorMessage> errors;
+
     public InvalidResourceUpdateException(String message, List<ErrorMessage> errors) {
         super(message);
         this.errors = errors;
+    }
+
+    public InvalidResourceUpdateException(String message, ErrorMessage error) {
+        super(message);
+        this.errors = List.of(error);
     }
 
 }

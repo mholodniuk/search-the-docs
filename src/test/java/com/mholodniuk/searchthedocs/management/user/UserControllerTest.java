@@ -10,6 +10,8 @@ import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundExcepti
 import com.mholodniuk.searchthedocs.management.room.RoomService;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
 import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
+import com.mholodniuk.searchthedocs.security.jwt.JwtAuthenticationFilter;
+import com.mholodniuk.searchthedocs.security.jwt.JwtService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,42 +42,44 @@ class UserControllerTest {
     @MockBean
     private AccessService accessService;
     @MockBean
+    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    @MockBean
     private ApiAuthenticationService authenticationService;
     @Autowired
     private MockMvc mockMvc;
 
 
     @Test
-    void Should_ReturnCustomerList_WhenFound() throws Exception {
+    void Should_ReturnUserList_WhenFound() throws Exception {
         var customer1 = UserDTO.builder().id(1L).username("name1").build();
         var customer2 = UserDTO.builder().id(2L).username("name2").build();
 
         when(userService.findAllUsers()).thenReturn(List.of(customer1, customer2));
 
-        mockMvc.perform(get("/customers"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.customers").isArray())
+                .andExpect(jsonPath("$.users").isArray())
                 .andExpect(jsonPath("$.count").value(2))
-                .andExpect(jsonPath("$.customers.length()").value(2))
-                .andExpect(jsonPath("$.customers[0].id").value("1"))
-                .andExpect(jsonPath("$.customers[0].username").value("name1"))
-                .andExpect(jsonPath("$.customers[1].id").value("2"))
-                .andExpect(jsonPath("$.customers[1].username").value("name2"));
+                .andExpect(jsonPath("$.users.length()").value(2))
+                .andExpect(jsonPath("$.users[0].id").value("1"))
+                .andExpect(jsonPath("$.users[0].username").value("name1"))
+                .andExpect(jsonPath("$.users[1].id").value("2"))
+                .andExpect(jsonPath("$.users[1].username").value("name2"));
     }
 
     @Test
     void Should_ReturnEmptyCollection_WhenNothingFound() throws Exception {
         when(userService.findAllUsers()).thenReturn(Collections.emptyList());
 
-        mockMvc.perform(get("/customers"))
+        mockMvc.perform(get("/users"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.customers").isArray())
-                .andExpect(jsonPath("$.customers").isEmpty())
+                .andExpect(jsonPath("$.users").isArray())
+                .andExpect(jsonPath("$.users").isEmpty())
                 .andExpect(jsonPath("$.count").value(0));
     }
 
     @Test
-    void Should_ReturnCustomer_When_Found() throws Exception {
+    void Should_ReturnUser_When_Found() throws Exception {
         var customer = UserResponse.builder()
                 .id(1L)
                 .username("name")
@@ -86,7 +90,7 @@ class UserControllerTest {
 
         when(userService.findUserById(1L)).thenReturn(Optional.of(customer));
 
-        mockMvc.perform(get("/customers/1"))
+        mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
                 .andExpect(jsonPath("$.id").value(customer.id()))
@@ -103,22 +107,22 @@ class UserControllerTest {
     @Test
     void Should_ReturnBadRequest_When_InvalidIdTypeProvided() throws Exception {
         var invalidId = "text";
-        mockMvc.perform(get("/customers/%s".formatted(invalidId)))
+        mockMvc.perform(get("/users/%s".formatted(invalidId)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.title").value("Invalid request"))
                 .andExpect(jsonPath("$.message").value("Incorrect argument format: '%s'".formatted(invalidId)));
     }
 
     @Test
-    void Should_ReturnNotFound_When_NoCustomerFound() throws Exception {
+    void Should_ReturnNotFound_When_NoUserFound() throws Exception {
         when(userService.findUserById(4L)).thenReturn(Optional.empty());
 
-        mockMvc.perform(get("/customers/4"))
+        mockMvc.perform(get("/users/4"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void Should_ReturnRoomsOwnedByCustomer_When_SearchedByCustomerId() throws Exception {
+    void Should_ReturnRoomsOwnedByUser_When_SearchedByCustomerId() throws Exception {
         var room1 = RoomDTO.builder()
                 .id(1L)
                 .name("Default")
@@ -137,7 +141,7 @@ class UserControllerTest {
 
         when(roomService.findRoomsByOwnerId(1L)).thenReturn(List.of(room1, room2));
 
-        mockMvc.perform(get("/customers/1/rooms"))
+        mockMvc.perform(get("/users/1/rooms"))
                 .andExpect(jsonPath("$.count").value(2))
                 .andExpect(jsonPath("$.rooms.length()").value(2))
                 .andExpect(jsonPath("$.rooms").isArray())
@@ -149,7 +153,7 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_CreateCustomer_When_ValidRequest() throws Exception {
+    void Should_CreateUser_When_ValidRequest() throws Exception {
         var customerCreatedResponse = UserDTO.builder()
                 .username("name")
                 .displayName("display")
@@ -161,7 +165,7 @@ class UserControllerTest {
         when(userService.createUser(any(CreateUserRequest.class)))
                 .thenReturn(customerCreatedResponse);
 
-        mockMvc.perform(post("/customers")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -173,12 +177,12 @@ class UserControllerTest {
                                 """))
                 .andExpect(status().isCreated())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(header().string("Location", Matchers.containsString("customers/1")));
+                .andExpect(header().string("Location", Matchers.containsString("users/1")));
     }
 
     @Test
     void Should_ReturnBadRequest_When_InvalidEmailFormat() throws Exception {
-        mockMvc.perform(post("/customers")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -197,7 +201,7 @@ class UserControllerTest {
 
     @Test
     void Should_ReturnBadRequest_When_InvalidEmailFormatAndLackingUsername() throws Exception {
-        mockMvc.perform(post("/customers")
+        mockMvc.perform(post("/users")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -217,7 +221,7 @@ class UserControllerTest {
 
     @Test
     void Should_ReturnNotFound_When_EmptyRequest() throws Exception {
-        mockMvc.perform(post("/customers"))
+        mockMvc.perform(post("/users"))
                 .andExpect(status().isBadRequest());
     }
 
@@ -232,7 +236,7 @@ class UserControllerTest {
         when(userService.updateUser(eq(3L), any(UpdateUserRequest.class)))
                 .thenReturn(updatedCustomer);
 
-        mockMvc.perform(put("/customers/3")
+        mockMvc.perform(put("/users/3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -248,11 +252,11 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_ReturnNotFound_When_NoToModifyCustomerFound() throws Exception {
+    void Should_ReturnNotFound_When_NoToModifyUserFound() throws Exception {
         when(userService.updateUser(eq(4L), any(UpdateUserRequest.class)))
                 .thenThrow(ResourceNotFoundException.class);
 
-        mockMvc.perform(put("/customers/4")
+        mockMvc.perform(put("/users/4")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -270,7 +274,7 @@ class UserControllerTest {
         when(userService.updateUser(eq(4L), any(UpdateUserRequest.class)))
                 .thenThrow(InvalidResourceUpdateException.class);
 
-        mockMvc.perform(put("/customers/4")
+        mockMvc.perform(put("/users/4")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content("""
                                 {
@@ -282,21 +286,21 @@ class UserControllerTest {
     }
 
     @Test
-    void Should_ReturnNotFound_When_NoCustomerWithId() throws Exception {
+    void Should_ReturnNotFound_When_NoUserWithId() throws Exception {
         doThrow(ResourceNotFoundException.class).when(userService).deleteById(1L);
-        mockMvc.perform(delete("/customers/1"))
+        mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNotFound());
     }
 
     @Test
-    void Should_ReturnNoContent_When_CustomerWithIdDeleted() throws Exception {
-        mockMvc.perform(delete("/customers/1"))
+    void Should_ReturnNoContent_When_UserWithIdDeleted() throws Exception {
+        mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void Should_ReturnBadRequest_When_InvalidId() throws Exception {
-        mockMvc.perform(delete("/customers/aaa"))
+        mockMvc.perform(delete("/users/aaa"))
                 .andExpect(status().isBadRequest());
     }
 }

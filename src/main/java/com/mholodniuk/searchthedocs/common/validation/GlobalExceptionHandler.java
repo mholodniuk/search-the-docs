@@ -1,8 +1,6 @@
 package com.mholodniuk.searchthedocs.common.validation;
 
-import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreationException;
-import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
-import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
+import com.mholodniuk.searchthedocs.management.exception.*;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
