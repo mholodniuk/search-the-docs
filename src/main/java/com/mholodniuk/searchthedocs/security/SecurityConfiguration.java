@@ -31,6 +31,8 @@ public class SecurityConfiguration {
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         return http
+                .cors(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(
                         authorizeHttp -> {
                             authorizeHttp.requestMatchers(HttpMethod.POST, "/users").permitAll();
@@ -38,7 +40,6 @@ public class SecurityConfiguration {
                             authorizeHttp.anyRequest().authenticated();
                         }
                 )
-                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(authenticationFilter, AuthorizationFilter.class)

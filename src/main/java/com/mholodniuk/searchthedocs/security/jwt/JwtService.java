@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Service
 public class JwtService {
     private static final String key = "ba11c8cb7117c7ac8a333668180c83be3ec82960e9e756f378006e42076ff81c";
-    private static final Long ONE_DAY = 1000 * 60 * 24L;
+    private static final Long ONE_DAY = 1000 * 60 * 60 * 24L;
 
     public String extractUsername(String token) {
         return extractClaim(token, Claims::getSubject);

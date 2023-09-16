@@ -1,7 +1,9 @@
-package com.mholodniuk.searchthedocs.common.validation;
+package com.mholodniuk.searchthedocs.common;
 
+import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.exception.*;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
+import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
@@ -134,9 +136,17 @@ class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    // todo: get rid of exceptions of this type in logs
     @ExceptionHandler(AccessDeniedException.class)
     public ProblemDetail onAccessDeniedException(AccessDeniedException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        problemDetail.setTitle("Forbidden");
+        problemDetail.setProperty("message", e.getMessage());
+        problemDetail.setProperty("timestamp", LocalDateTime.now());
+        return problemDetail;
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ProblemDetail onExpiredJwtException(ExpiredJwtException e) {
         var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Forbidden");
         problemDetail.setProperty("message", e.getMessage());

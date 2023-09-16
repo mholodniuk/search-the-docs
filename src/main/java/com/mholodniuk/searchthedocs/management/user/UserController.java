@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @Validated
+@CrossOrigin
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor

@@ -1,12 +1,16 @@
 version: "3"
 services:
 #  api:
-#    container_name: api
-#    hostname: spring
+#    container_name: backend
+#    hostname: backend
+#    depends_on:
+#      - elasticsearch
+#    build: ./
 #    restart: always
 #    ports:
 #      - "8080:8080"
   elasticsearch:
+    hostname: elastic
     image: elasticsearch:7.17.6
     environment:
       - xpack.security.enabled=false
@@ -29,6 +33,7 @@ services:
     networks:
       - es-net
   postgres:
+    hostname: postgres
     image: postgres:15.4-alpine
     restart: always
     environment:
