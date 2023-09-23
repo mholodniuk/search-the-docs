@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.document.DocumentService;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
 import com.mholodniuk.searchthedocs.security.jwt.JwtAuthenticationFilter;
 import org.junit.jupiter.api.Test;
@@ -38,8 +38,8 @@ public class RoomControllerTest {
 
     @Test
     void Should_ReturnRoomList_WhenFound() throws Exception {
-        var room1 = RoomDTO.builder().id(1L).name("name1").build();
-        var room2 = RoomDTO.builder().id(2L).name("name2").build();
+        var room1 = RoomDto.builder().id(1L).name("name1").build();
+        var room2 = RoomDto.builder().id(2L).name("name2").build();
 
         when(roomService.findAllRooms()).thenReturn(List.of(room1, room2));
 

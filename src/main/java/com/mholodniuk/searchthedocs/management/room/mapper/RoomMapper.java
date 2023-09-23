@@ -3,7 +3,7 @@ package com.mholodniuk.searchthedocs.management.room.mapper;
 import com.mholodniuk.searchthedocs.management.document.mapper.DocumentMapper;
 import com.mholodniuk.searchthedocs.management.room.Room;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -20,8 +20,8 @@ public class RoomMapper {
         return room;
     }
 
-    public static RoomDTO toDTO(Room room) {
-        return RoomDTO.builder()
+    public static RoomDto toDTO(Room room) {
+        return RoomDto.builder()
                 .id(room.getId())
                 .name(room.getName())
                 .isPrivate(room.isPrivate())
@@ -30,7 +30,7 @@ public class RoomMapper {
                 .build();
     }
 
-    public static List<RoomDTO> toDTO(Collection<Room> rooms) {
+    public static List<RoomDto> toDTO(Collection<Room> rooms) {
         return rooms.stream().map(RoomMapper::toDTO).toList();
     }
 

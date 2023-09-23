@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.access.dto;
 
 import com.mholodniuk.searchthedocs.management.access.AccessRight;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 public record AccessKeyResponse(
         String id,
         String name,
-        RoomDTO room,
+        RoomDto room,
         String recipient,
         LocalDateTime validTo,
         AccessRight accessRight

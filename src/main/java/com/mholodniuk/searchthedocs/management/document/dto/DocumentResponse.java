@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.management.document.dto;
 
 import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -17,7 +17,7 @@ public record DocumentResponse(
         LocalDateTime uploadedAt,
         String filePath,
         String storage,
-        RoomDTO room,
+        RoomDto room,
         UserDTO owner
 ) {
 }

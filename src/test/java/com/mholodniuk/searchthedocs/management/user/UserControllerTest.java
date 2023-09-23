@@ -1,6 +1,7 @@
 package com.mholodniuk.searchthedocs.management.user;
 
 import com.mholodniuk.searchthedocs.management.access.AccessService;
+import com.mholodniuk.searchthedocs.management.room.dto.ExtendedRoomDto;
 import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
 import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
 import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
@@ -8,10 +9,9 @@ import com.mholodniuk.searchthedocs.management.user.dto.UpdateUserRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
 import com.mholodniuk.searchthedocs.security.jwt.JwtAuthenticationFilter;
-import com.mholodniuk.searchthedocs.security.jwt.JwtService;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -85,7 +85,6 @@ class UserControllerTest {
                 .username("name")
                 .displayName("display")
                 .email("mail@mail.org")
-                .rooms(List.of(new RoomDTO(1L, "room", true, LocalDateTime.now(), LocalDateTime.now())))
                 .build();
 
         when(userService.findUserById(1L)).thenReturn(Optional.of(customer));
@@ -96,12 +95,7 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.id").value(customer.id()))
                 .andExpect(jsonPath("$.username").value(customer.username()))
                 .andExpect(jsonPath("$.displayName").value(customer.displayName()))
-                .andExpect(jsonPath("$.email").value(customer.email()))
-                .andExpect(jsonPath("$.rooms").isArray())
-                .andExpect(jsonPath("$.rooms[0].name").value("room"))
-                .andExpect(jsonPath("$.rooms[0].isPrivate").value(true))
-                .andExpect(jsonPath("$.rooms.length()").value(1));
-
+                .andExpect(jsonPath("$.email").value(customer.email()));
     }
 
     @Test
@@ -123,20 +117,22 @@ class UserControllerTest {
 
     @Test
     void Should_ReturnRoomsOwnedByUser_When_SearchedByCustomerId() throws Exception {
-        var room1 = RoomDTO.builder()
+        var room1 = ExtendedRoomDto.builder()
                 .id(1L)
                 .name("Default")
                 .isPrivate(true)
                 .createdAt(LocalDateTime.now().minusDays(2))
                 .modifiedAt(LocalDateTime.now().minusDays(1))
+                .documentCount(5L)
                 .build();
 
-        var room2 = RoomDTO.builder()
+        var room2 = ExtendedRoomDto.builder()
                 .id(2L)
                 .name("Created")
                 .isPrivate(false)
                 .createdAt(LocalDateTime.now().minusDays(1))
                 .modifiedAt(LocalDateTime.now().minusHours(3))
+                .documentCount(2L)
                 .build();
 
         when(roomService.findRoomsByOwnerId(1L)).thenReturn(List.of(room1, room2));

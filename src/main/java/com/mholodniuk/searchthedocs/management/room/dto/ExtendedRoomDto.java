@@ -5,11 +5,12 @@ import lombok.Builder;
 import java.time.LocalDateTime;
 
 @Builder
-public record RoomDTO(
+public record ExtendedRoomDto(
         Long id,
         String name,
         boolean isPrivate,
         LocalDateTime createdAt,
-        LocalDateTime modifiedAt
+        LocalDateTime modifiedAt,
+        Long documentCount
 ) {
 }

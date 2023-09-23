@@ -7,6 +7,7 @@ import com.mholodniuk.searchthedocs.security.jwt.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -25,20 +26,35 @@ public class ApiAuthenticationService {
         var user = buildUserDetails(createUserRequest.username(), createUserRequest.password());
 
         String jwtToken = jwtService.generateToken(user);
+        return buildAuthenticationResponse(jwtToken);
+    }
+
+    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest, String includeId) {
+        var auth = authenticationManager.authenticate(
+                new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password())
+        );
+        var user = buildUserDetails(authenticationRequest.username(), authenticationRequest.password());
+        String jwtToken = jwtService.generateToken(user);
+
+        if ("id".equals(includeId)) {
+            return buildAuthenticationResponseWithId(auth, jwtToken);
+        } else {
+            return buildAuthenticationResponse(jwtToken);
+        }
+    }
+
+    private static AuthenticationResponse buildAuthenticationResponse(String jwtToken) {
         return AuthenticationResponse.builder()
                 .token(jwtToken)
                 .build();
     }
 
-    public AuthenticationResponse authenticate(AuthenticationRequest authenticationRequest) {
-        authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(authenticationRequest.username(), authenticationRequest.password())
-        );
-        var user = buildUserDetails(authenticationRequest.username(), authenticationRequest.password());
+    private AuthenticationResponse buildAuthenticationResponseWithId(Authentication authentication, String jwtToken) {
+        var principal = (com.mholodniuk.searchthedocs.security.model.User) authentication.getPrincipal();
 
-        String jwtToken = jwtService.generateToken(user);
         return AuthenticationResponse.builder()
                 .token(jwtToken)
+                .id(principal.getId())
                 .build();
     }
 

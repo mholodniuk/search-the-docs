@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.user.dto;
 
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDTO;
+import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import lombok.Builder;
 
 import java.util.List;
@@ -10,7 +10,6 @@ public record UserResponse(
         Long id,
         String username,
         String displayName,
-        String email,
-        List<RoomDTO> rooms
+        String email
 ) {
 }

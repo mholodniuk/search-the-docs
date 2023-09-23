@@ -43,7 +43,6 @@ public class UserMapper {
                 .username(user.getUsername())
                 .displayName(user.getDisplayName())
                 .email(user.getEmail())
-                .rooms(RoomMapper.toDTO(user.getRooms()))
                 .build();
     }
 }

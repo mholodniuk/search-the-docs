@@ -70,14 +70,16 @@ class UserController {
     }
 
     @PostMapping("/authenticate")
-    public AuthenticationResponse authenticateUser(@Valid @RequestBody AuthenticationRequest request) {
-        return authenticationService.authenticate(request);
+    public AuthenticationResponse authenticateUser(
+            @Valid @RequestBody AuthenticationRequest request,
+            @RequestParam(value = "include", required = false, defaultValue = "") String includeId) {
+        return authenticationService.authenticate(request, includeId);
     }
 
     @PutMapping("/{userId}")
     @PreAuthorize("@accessValidationService.validateUserAccess(authentication, #userId)")
     public ResponseEntity<?> updateUser(@PathVariable Long userId,
-                                            @Valid @RequestBody UpdateUserRequest updateUserRequest) {
+                                        @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         var user = userService.updateUser(userId, updateUserRequest);
         return ResponseEntity.ok(user);
     }

@@ -149,16 +149,7 @@ class GlobalExceptionHandler {
 
     @ExceptionHandler(ExpiredJwtException.class)
     public ProblemDetail onExpiredJwtException(ExpiredJwtException e) {
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        problemDetail.setTitle("Forbidden");
-        problemDetail.setProperty("message", e.getMessage());
-        problemDetail.setProperty("timestamp", LocalDateTime.now());
-        return problemDetail;
-    }
-
-    @ExceptionHandler(SignatureException.class)
-    public ProblemDetail onSignatureException(SignatureException e) {
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
         problemDetail.setTitle("Forbidden");
         problemDetail.setProperty("message", e.getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
