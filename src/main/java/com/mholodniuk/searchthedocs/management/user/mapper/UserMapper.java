@@ -4,7 +4,6 @@ import com.mholodniuk.searchthedocs.management.user.User;
 import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
 import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
 import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
-import com.mholodniuk.searchthedocs.management.room.mapper.RoomMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 

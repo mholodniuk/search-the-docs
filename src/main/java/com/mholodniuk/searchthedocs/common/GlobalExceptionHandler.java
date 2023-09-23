@@ -1,10 +1,11 @@
 package com.mholodniuk.searchthedocs.common;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
-import com.mholodniuk.searchthedocs.management.exception.*;
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreationException;
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
+import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.time.LocalDateTime;
 

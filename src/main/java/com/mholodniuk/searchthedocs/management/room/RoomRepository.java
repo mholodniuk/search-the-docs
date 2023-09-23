@@ -1,7 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.management.room.dto.ExtendedRoomDto;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
