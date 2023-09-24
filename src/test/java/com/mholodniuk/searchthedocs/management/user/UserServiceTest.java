@@ -52,7 +52,7 @@ class UserServiceTest {
         entity.setPassword(request.password());
         entity.setEmail(request.email());
 
-        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
+        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token", null));
 
         var response = userService.createUser(request);
 
@@ -69,7 +69,7 @@ class UserServiceTest {
     void Should_CreateDefaultRoom_When_CustomerGetsCreated() {
         var request = new CreateUserRequest(null, null, null, null);
 
-        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token"));
+        when(authenticationService.generateToken(request)).thenReturn(new AuthenticationResponse("token", null));
 
         userService.createUser(request);
 

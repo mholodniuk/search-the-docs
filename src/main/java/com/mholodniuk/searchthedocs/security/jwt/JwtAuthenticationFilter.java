@@ -1,7 +1,8 @@
 package com.mholodniuk.searchthedocs.security.jwt;
 
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.security.SignatureException;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -47,7 +48,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     SecurityContextHolder.getContext().setAuthentication(authentication);
                 }
             }
-        } catch (ExpiredJwtException | SignatureException e) {
+        } catch (JwtException e) {
             response.setStatus(HttpStatus.UNAUTHORIZED.value());
             var out = response.getWriter();
             response.setContentType("application/json");
@@ -59,11 +60,15 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         filterChain.doFilter(request, response);
     }
 
-    public Map<String, Object> onJwtParseException(Exception e) {
-        return Map.of(
-                "title", "Forbidden",
-                "message", e.getMessage(),
-                "timestamp", LocalDateTime.now()
+    public String onJwtParseException(Exception e) throws JsonProcessingException {
+        var mapper = new ObjectMapper();
+
+        return mapper.writeValueAsString(
+                Map.of(
+                        "title", "Forbidden",
+                        "message", e.getMessage(),
+                        "timestamp", LocalDateTime.now().toString()
+                )
         );
     }
 }

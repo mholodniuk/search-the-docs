@@ -5,7 +5,6 @@ import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreation
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
-import io.jsonwebtoken.ExpiredJwtException;
 import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.postgresql.util.PSQLException;
@@ -14,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -138,18 +138,18 @@ class GlobalExceptionHandler {
         return problemDetail;
     }
 
-    @ExceptionHandler(AccessDeniedException.class)
-    public ProblemDetail onAccessDeniedException(AccessDeniedException e) {
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
-        problemDetail.setTitle("Forbidden");
+    @ExceptionHandler(AuthenticationException.class)
+    public ProblemDetail onAuthenticationException(AuthenticationException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+        problemDetail.setTitle("Unauthorized");
         problemDetail.setProperty("message", e.getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
         return problemDetail;
     }
 
-    @ExceptionHandler(ExpiredJwtException.class)
-    public ProblemDetail onExpiredJwtException(ExpiredJwtException e) {
-        var problemDetail = ProblemDetail.forStatus(HttpStatus.UNAUTHORIZED);
+    @ExceptionHandler(AccessDeniedException.class)
+    public ProblemDetail onAccessDeniedException(AccessDeniedException e) {
+        var problemDetail = ProblemDetail.forStatus(HttpStatus.FORBIDDEN);
         problemDetail.setTitle("Forbidden");
         problemDetail.setProperty("message", e.getMessage());
         problemDetail.setProperty("timestamp", LocalDateTime.now());
