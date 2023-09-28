@@ -7,7 +7,7 @@ import lombok.Builder;
 public record AuthenticationResponse(
         String token,
         @JsonInclude(JsonInclude.Include.NON_NULL)
-        Long id
+        Long userId
 ) {
 }
 

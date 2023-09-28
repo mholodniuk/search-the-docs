@@ -54,7 +54,7 @@ public class ApiAuthenticationService {
 
         return AuthenticationResponse.builder()
                 .token(jwtToken)
-                .id(principal.getId())
+                .userId(principal.getId())
                 .build();
     }
 
