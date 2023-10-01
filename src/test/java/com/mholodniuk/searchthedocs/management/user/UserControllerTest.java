@@ -135,7 +135,7 @@ class UserControllerTest {
                 .documentCount(2L)
                 .build();
 
-        when(roomService.findRoomsByOwnerId(1L)).thenReturn(List.of(room1, room2));
+        when(roomService.findAvailableRooms(1L)).thenReturn(List.of(room1, room2));
 
         mockMvc.perform(get("/users/1/rooms"))
                 .andExpect(jsonPath("$.count").value(2))
