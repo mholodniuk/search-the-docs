@@ -30,7 +30,7 @@ class RoomController {
     }
 
     @GetMapping("/{roomId}")
-    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomAnyAccess(authentication, #roomId)")
     public ResponseEntity<?> getRoom(@PathVariable Long roomId) {
         return roomService
                 .findRoomById(roomId)
@@ -39,7 +39,7 @@ class RoomController {
     }
 
     @GetMapping("/{roomId}/documents")
-    @PreAuthorize("@accessValidationService.validateRoomReadAccess(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomAnyAccess(authentication, #roomId)")
     public ResponseEntity<?> getRoomDocuments(@PathVariable Long roomId) {
         return ResponseEntity.ok(
                 new CollectionResponse<>("documents", documentService.findDocumentsInRoom(roomId))

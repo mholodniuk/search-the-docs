@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
+import java.util.function.Function;
 
 @Slf4j
 @Service
@@ -21,21 +22,25 @@ public class AccessValidationService {
     }
 
     public boolean validateRoomOwner(Authentication authentication, Long roomId) {
-        return validateRoomAccessRight(authentication, roomId, AccessRight.OWNER);
+        return validateRoomAccessRight(authentication, roomId, (access -> access == AccessRight.OWNER));
+    }
+
+    public boolean validateRoomAnyAccess(Authentication authentication, Long roomId) {
+        return validateRoomAccessRight(authentication, roomId, (access -> access != AccessRight.NONE));
     }
 
     public boolean validateRoomReadAccess(Authentication authentication, Long roomId) {
-        return validateRoomAccessRight(authentication, roomId, AccessRight.VIEW);
+        return validateRoomAccessRight(authentication, roomId, (access -> access == AccessRight.VIEW));
     }
 
     public boolean validateRoomFullAccess(Authentication authentication, Long roomId) {
-        return validateRoomAccessRight(authentication, roomId, AccessRight.FULL);
+        return validateRoomAccessRight(authentication, roomId, (access -> access == AccessRight.FULL));
     }
 
-    public boolean validateRoomAccessRight(Authentication authentication, Long roomId, AccessRight accessRight) {
+    public boolean validateRoomAccessRight(Authentication authentication, Long roomId, Function<AccessRight, Boolean> accessExpression) {
         var principal = (User) authentication.getPrincipal();
         var access = checkAccessByRoomId(principal.getId(), roomId);
-        return access == accessRight;
+        return accessExpression.apply(access);
     }
 
     public boolean validateDocumentAccess(Authentication authentication, String documentId) {
@@ -43,13 +48,13 @@ public class AccessValidationService {
         return checkAccessByDocumentId(principal.getId(), UUID.fromString(documentId)) != AccessRight.NONE;
     }
 
-    public AccessRight checkAccessByDocumentId(Long participantId, UUID documentId) {
+    private AccessRight checkAccessByDocumentId(Long participantId, UUID documentId) {
         return accessKeyRepository
                 .findAccessRightsByParticipantIdAndDocumentIdOnDate(participantId, documentId, LocalDateTime.now())
                 .orElse(AccessRight.NONE);
     }
 
-    public AccessRight checkAccessByRoomId(Long participantId, Long roomId) {
+    private AccessRight checkAccessByRoomId(Long participantId, Long roomId) {
         return accessKeyRepository
                 .findAccessRightsByParticipantIdAndRoomIdOnDate(participantId, roomId, LocalDateTime.now())
                 .orElse(AccessRight.NONE);
