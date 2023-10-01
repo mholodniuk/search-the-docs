@@ -47,7 +47,7 @@ class UserController {
     @PreAuthorize("@accessValidationService.validateUserAccess(authentication, #userId)")
     public ResponseEntity<?> getUserRooms(@PathVariable Long userId) {
         return ResponseEntity.ok(
-                new CollectionResponse<>("rooms", roomService.findRoomsByOwnerId(userId))
+                new CollectionResponse<>("rooms", roomService.findAvailableRooms(userId))
         );
     }
 
@@ -55,7 +55,7 @@ class UserController {
     @PreAuthorize("@accessValidationService.validateUserAccess(authentication, #userId)")
     public ResponseEntity<?> getUserAccessKeys(@PathVariable Long userId) {
         return ResponseEntity.ok(
-                new CollectionResponse<>("keys", accessService.findUserAccessKeys(userId))
+                new CollectionResponse<>("keys", accessService.findAllUserAccessKeys(userId))
         );
     }
 

@@ -57,7 +57,7 @@ public class AccessService {
         accessKey.setId(UUID.randomUUID());
         accessKey.setName("Default");
         accessKey.setValidTo(null);
-        accessKey.setRights(AccessRight.FULL);
+        accessKey.setRights(AccessRight.OWNER);
         accessKey.setRoom(issuedRoom);
         accessKey.setParticipant(invitedUser);
 
@@ -82,9 +82,16 @@ public class AccessService {
         accessKeyRepository.deleteAll(accessKeys);
     }
 
-    public List<AccessKeyResponse> findUserAccessKeys(Long userId) {
+    public List<AccessKeyResponse> findAllUserAccessKeys(Long userId) {
         return accessKeyRepository
                 .findUserAccessKeys(userId).stream()
+                .map(AccessKeyMapper::toResponse)
+                .toList();
+    }
+
+    public List<AccessKeyResponse> findUserReceivedAccessKeys(Long userId) {
+        return accessKeyRepository
+                .findUserReceivedAccessKeys(userId).stream()
                 .map(AccessKeyMapper::toResponse)
                 .toList();
     }

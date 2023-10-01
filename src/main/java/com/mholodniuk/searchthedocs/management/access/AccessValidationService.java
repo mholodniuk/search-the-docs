@@ -20,16 +20,22 @@ public class AccessValidationService {
         return principal.getId().equals(userId);
     }
 
+    public boolean validateRoomOwner(Authentication authentication, Long roomId) {
+        return validateRoomAccessRight(authentication, roomId, AccessRight.OWNER);
+    }
+
     public boolean validateRoomReadAccess(Authentication authentication, Long roomId) {
-        var principal = (User) authentication.getPrincipal();
-        var access = checkAccessByRoomId(principal.getId(), roomId);
-        return access == AccessRight.VIEW;
+        return validateRoomAccessRight(authentication, roomId, AccessRight.VIEW);
     }
 
     public boolean validateRoomFullAccess(Authentication authentication, Long roomId) {
+        return validateRoomAccessRight(authentication, roomId, AccessRight.FULL);
+    }
+
+    public boolean validateRoomAccessRight(Authentication authentication, Long roomId, AccessRight accessRight) {
         var principal = (User) authentication.getPrincipal();
         var access = checkAccessByRoomId(principal.getId(), roomId);
-        return access == AccessRight.FULL;
+        return access == accessRight;
     }
 
     public boolean validateDocumentAccess(Authentication authentication, String documentId) {

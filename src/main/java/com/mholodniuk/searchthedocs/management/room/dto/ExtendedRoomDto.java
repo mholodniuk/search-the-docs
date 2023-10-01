@@ -9,6 +9,7 @@ public record ExtendedRoomDto(
         Long id,
         String name,
         boolean isPrivate,
+        boolean isOwner,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
         Long documentCount

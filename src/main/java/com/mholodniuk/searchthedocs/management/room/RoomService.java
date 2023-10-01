@@ -2,20 +2,23 @@ package com.mholodniuk.searchthedocs.management.room;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.access.AccessService;
-import com.mholodniuk.searchthedocs.management.room.dto.*;
-import com.mholodniuk.searchthedocs.management.user.User;
-import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
+import com.mholodniuk.searchthedocs.management.room.dto.*;
 import com.mholodniuk.searchthedocs.management.room.mapper.RoomMapper;
+import com.mholodniuk.searchthedocs.management.user.User;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.mholodniuk.searchthedocs.common.operation.Operation.applyIfChanged;
+import static com.mholodniuk.searchthedocs.common.utils.CommonUtils.concatenate;
+import static com.mholodniuk.searchthedocs.common.utils.CommonUtils.toUUID;
 import static com.mholodniuk.searchthedocs.management.room.RoomConsts.DEFAULT_ROOM_NAME;
 
 
@@ -89,6 +92,18 @@ public class RoomService {
 
     public List<ExtendedRoomDto> findRoomsByOwnerId(Long userId) {
         return roomRepository.findAllByOwnerId(userId);
+    }
+
+    public List<ExtendedRoomDto> findAvailableRooms(Long userId) {
+        var ownedRooms = findRoomsByOwnerId(userId);
+        var accessKeys = accessService.findUserReceivedAccessKeys(userId)
+                .stream()
+                .map(accessKey -> toUUID(accessKey.id()))
+                .collect(Collectors.toSet());
+
+        var invitedRooms = roomRepository.findAllByAccessKeys(accessKeys);
+
+        return concatenate(ownedRooms, invitedRooms);
     }
 
     public void deleteById(Long roomId) {

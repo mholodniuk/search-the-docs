@@ -40,6 +40,9 @@ public interface AccessKeyRepository extends JpaRepository<AccessKey, UUID> {
     @Query("select a from AccessKey a join fetch a.participant p join fetch a.room r where p.id = :userId")
     List<AccessKey> findUserAccessKeys(Long userId);
 
+    @Query("select a from AccessKey a join fetch a.participant p join fetch a.room r where p.id = :userId and a.rights != 'OWNER'")
+    List<AccessKey> findUserReceivedAccessKeys(Long userId);
+
     @Query("select a from AccessKey a join fetch a.participant p join fetch a.room r where r.id = :roomId")
     List<AccessKey> findRoomAccessKeys(Long roomId);
 
