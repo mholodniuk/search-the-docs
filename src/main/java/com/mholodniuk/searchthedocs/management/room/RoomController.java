@@ -78,7 +78,7 @@ class RoomController {
         var accessKey = accessService.grantAccess(roomId, grantAccessRequest);
         return ResponseEntity.created(
                 linkTo(RoomController.class)
-                        .slash(accessKey.room().id() + "/access/" + accessKey.id()) // todo
+                        .slash(accessKey.room().id())
                         .toUri()
         ).body(accessKey);
     }

@@ -31,11 +31,11 @@ public class AccessService {
         var issuedRoom = roomRepository.findPublicRoomById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No public room with id %s found".formatted(roomId)));
 
-        var invitedUser = userRepository.findById(grantAccessRequest.invitedId())
-                .orElseThrow(() -> new ResourceNotFoundException("No user with id %s found".formatted(grantAccessRequest.invitedId())));
+        var invitedUser = userRepository.findByUsername(grantAccessRequest.userToInvite())
+                .orElseThrow(() -> new ResourceNotFoundException("No user with username %s found".formatted(grantAccessRequest.userToInvite())));
 
         if (issuedRoom.getOwner().getId().equals(invitedUser.getId())) {
-            throw new InvalidResourceCreationException("Room with id %s already owned by user with id %s".formatted(roomId, grantAccessRequest.invitedId()));
+            throw new InvalidResourceCreationException("Room with id %s already owned by user with username %s".formatted(roomId, grantAccessRequest.userToInvite()));
         }
 
         var accessKey = new AccessKey();

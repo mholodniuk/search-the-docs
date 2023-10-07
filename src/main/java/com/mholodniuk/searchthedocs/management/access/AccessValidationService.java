@@ -34,7 +34,7 @@ public class AccessValidationService {
     }
 
     public boolean validateRoomFullAccess(Authentication authentication, Long roomId) {
-        return validateRoomAccessRight(authentication, roomId, (access -> access == AccessRight.FULL));
+        return validateRoomAccessRight(authentication, roomId, (access -> (access == AccessRight.FULL || access == AccessRight.OWNER)));
     }
 
     public boolean validateRoomAccessRight(Authentication authentication, Long roomId, Function<AccessRight, Boolean> accessExpression) {
