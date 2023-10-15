@@ -42,7 +42,11 @@ public class DocumentService {
             var createDocumentRequest = buildRequest(file, ownerId, roomId);
 
             var createdDocument = saveDocument(createDocumentRequest);
-            var documentId = documentIndexService.indexDocument(bytes, createdDocument.id().toString(), file.getContentType(), filename);
+            var documentId = documentIndexService.indexDocument(
+                    bytes,
+                    createdDocument.id().toString(),
+                    file.getContentType(),
+                    filename);
             fileService.saveFile(bytes, documentId);
 
             return FileUploadResponse.builder()
@@ -85,6 +89,16 @@ public class DocumentService {
         documentRepository.save(document);
 
         return DocumentMapper.toResponse(document);
+    }
+
+    TagsAssignedResponse assignTags(String documentId, AssignTagsRequest assignTagsRequest) {
+        var document = documentRepository.findById(UUID.fromString(documentId))
+                .orElseThrow(() -> new ResourceNotFoundException("No document with id %s found".formatted(documentId)));
+
+        document.setTags(assignTagsRequest.tags());
+        documentRepository.save(document);
+
+        return new TagsAssignedResponse(documentId, document.getTags());
     }
 
     public List<DocumentDTO> findAllDocuments() {

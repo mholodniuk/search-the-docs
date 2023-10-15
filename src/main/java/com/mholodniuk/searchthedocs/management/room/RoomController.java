@@ -46,6 +46,14 @@ class RoomController {
         );
     }
 
+    @GetMapping("/{roomId}/tags")
+    @PreAuthorize("@accessValidationService.validateRoomAnyAccess(authentication, #roomId)")
+    public ResponseEntity<?> getRoomTags(@PathVariable Long roomId) {
+        return ResponseEntity.ok(
+                new CollectionResponse<>("tags", roomService.findTagsInRoom(roomId))
+        );
+    }
+
     @PostMapping
     public ResponseEntity<?> createRoom(@Valid @RequestBody CreateRoomRequest createRoomRequest) {
         var room = roomService.createRoom(createRoomRequest);
@@ -57,7 +65,7 @@ class RoomController {
     }
 
     @PutMapping("/{roomId}")
-    @PreAuthorize("@accessValidationService.validateRoomOwner(authentication, #roomId)")
+    @PreAuthorize("@accessValidationService.validateRoomAnyAccess(authentication, #roomId)")
     public ResponseEntity<?> updateRoom(@PathVariable Long roomId,
                                         @Valid @RequestBody UpdateRoomRequest updateRoomRequest) {
         var room = roomService.updateRoom(roomId, updateRoomRequest);

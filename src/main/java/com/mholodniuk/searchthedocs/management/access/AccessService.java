@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
@@ -28,11 +29,20 @@ public class AccessService {
 
     public AccessKeyResponse grantAccess(Long roomId, GrantAccessRequest grantAccessRequest) {
         // todo: check if user already has access to requested room on selected date ???
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         var issuedRoom = roomRepository.findPublicRoomById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No public room with id %s found".formatted(roomId)));
 
         var invitedUser = userRepository.findByUsername(grantAccessRequest.userToInvite())
                 .orElseThrow(() -> new ResourceNotFoundException("No user with username %s found".formatted(grantAccessRequest.userToInvite())));
+
+        var date = grantAccessRequest.validTo() != null ? LocalDateTime.from(grantAccessRequest.validTo()) : null;
+        if (accessKeyRepository.findAccessRightsByParticipantIdAndRoomIdOnDate(invitedUser.getId(), roomId, date).isPresent()) {
+            throw new InvalidResourceCreationException("User %s already has access to room with id %s".formatted(grantAccessRequest.userToInvite(), roomId));
+        }
 
         if (issuedRoom.getOwner().getId().equals(invitedUser.getId())) {
             throw new InvalidResourceCreationException("Room with id %s already owned by user with username %s".formatted(roomId, grantAccessRequest.userToInvite()));

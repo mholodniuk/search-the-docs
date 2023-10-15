@@ -39,4 +39,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
 
     @Query("select r from Room r where r.id = :id and r.isPrivate = false")
     Optional<Room> findPublicRoomById(Long id);
+
+    @Query(value = "select distinct unnest(d.tags) t from documents d where d.room_id = :roomId order by t", nativeQuery = true)
+    List<String> findAllTagsByRoom(Long roomId);
 }

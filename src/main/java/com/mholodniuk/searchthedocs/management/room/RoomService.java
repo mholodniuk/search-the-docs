@@ -90,12 +90,18 @@ public class RoomService {
         return roomRepository.findByIdWithDocuments(roomId).map(RoomMapper::toResponse);
     }
 
+    public List<String> findTagsInRoom(Long roomId) {
+        return roomRepository.findAllTagsByRoom(roomId);
+    }
+
     public List<ExtendedRoomDto> findRoomsByOwnerId(Long userId) {
         return roomRepository.findAllByOwnerId(userId);
     }
 
     public List<ExtendedRoomDto> findAvailableRooms(Long userId) {
-        var ownedRooms = findRoomsByOwnerId(userId);
+        var ownedRooms = findRoomsByOwnerId(userId).stream()
+                .sorted((r1, r2) -> Long.compare(r2.documentCount(), r1.documentCount())).toList();
+
         var accessKeys = accessService.findUserReceivedAccessKeys(userId)
                 .stream()
                 .map(accessKey -> toUUID(accessKey.id()))

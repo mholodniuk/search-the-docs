@@ -2,6 +2,7 @@ package com.mholodniuk.searchthedocs.management.document;
 
 import com.mholodniuk.searchthedocs.file.FileController;
 import com.mholodniuk.searchthedocs.file.validation.ValidFile;
+import com.mholodniuk.searchthedocs.management.document.dto.AssignTagsRequest;
 import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
@@ -33,6 +34,15 @@ class DocumentController {
                         .slash(fileUploadResponse.id())
                         .toUri()
         ).body(fileUploadResponse);
+    }
+
+    @PatchMapping("/{documentId}")
+    @PreAuthorize("@accessValidationService.validateDocumentAccess(authentication, #documentId)")
+    public ResponseEntity<?> assignTags(
+            @PathVariable @UUID String documentId,
+            @RequestBody AssignTagsRequest assignTagsRequest) {
+        var tags = documentService.assignTags(documentId, assignTagsRequest);
+        return ResponseEntity.ok(tags);
     }
 
     @GetMapping
