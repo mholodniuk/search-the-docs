@@ -95,7 +95,8 @@ public class DocumentService {
         var document = documentRepository.findById(UUID.fromString(documentId))
                 .orElseThrow(() -> new ResourceNotFoundException("No document with id %s found".formatted(documentId)));
 
-        document.setTags(assignTagsRequest.tags());
+        var filteredTags = assignTagsRequest.tags().stream().filter(tag -> tag != null && !tag.isEmpty()).toList();
+        document.setTags(filteredTags);
         documentRepository.save(document);
 
         return new TagsAssignedResponse(documentId, document.getTags());
