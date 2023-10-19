@@ -7,6 +7,7 @@ public record FileUploadResponse(
         String id,
         String filename,
         String owner,
-        String room
+        String room,
+        String info
 ) {
 }

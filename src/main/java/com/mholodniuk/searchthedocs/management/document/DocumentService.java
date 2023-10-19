@@ -47,11 +47,12 @@ public class DocumentService {
                     createdDocument.id().toString(),
                     file.getContentType(),
                     filename);
-            fileService.saveFile(bytes, documentId);
+            var saveStatus = fileService.saveFile(bytes, documentId);
 
             return FileUploadResponse.builder()
                     .id(documentId)
                     .filename(filename)
+                    .info(saveStatus.status)
                     .owner(createdDocument.owner().username())
                     .room(createdDocument.room().name())
                     .build();
