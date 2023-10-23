@@ -5,6 +5,7 @@ import com.mholodniuk.searchthedocs.management.room.Room;
 import com.mholodniuk.searchthedocs.management.room.dto.CreateRoomRequest;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import com.mholodniuk.searchthedocs.management.room.dto.RoomResponse;
+import com.mholodniuk.searchthedocs.management.user.mapper.UserMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
@@ -41,7 +42,7 @@ public class RoomMapper {
                 .isPrivate(room.isPrivate())
                 .createdAt(room.getCreatedAt())
                 .modifiedAt(room.getModifiedAt())
-                .documents(DocumentMapper.toDTO(room.getDocuments()))
+                .owner(UserMapper.toDTO(room.getOwner()))
                 .build();
     }
 }

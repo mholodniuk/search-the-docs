@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.user;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
-import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDto;
 import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
 import com.mholodniuk.searchthedocs.management.user.dto.UpdateUserRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
@@ -243,7 +243,7 @@ class UserServiceTest {
 
         when(userRepository.findAll()).thenReturn(users);
 
-        List<UserDTO> responses = userService.findAllUsers();
+        List<UserDto> responses = userService.findAllUsers();
 
         Assertions.assertEquals(2, responses.size());
         Assertions.assertEquals(1L, responses.get(0).id());

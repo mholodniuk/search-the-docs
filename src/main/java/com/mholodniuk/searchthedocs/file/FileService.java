@@ -1,13 +1,11 @@
 package com.mholodniuk.searchthedocs.file;
 
+import com.mholodniuk.searchthedocs.file.dto.DeleteStatus;
 import com.mholodniuk.searchthedocs.file.dto.SaveStatus;
-import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
 import com.mholodniuk.searchthedocs.file.exception.ThumbnailGenerationException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-
-import java.util.concurrent.CompletableFuture;
 
 import static com.mholodniuk.searchthedocs.file.mock.S3Mock.MOCK_BUCKET_NAME;
 
@@ -32,5 +30,14 @@ public class FileService {
         }
 
         return SaveStatus.FULL;
+    }
+
+    public DeleteStatus deleteFile(String documentId) {
+        try {
+            var result = s3Service.removeObject(MOCK_BUCKET_NAME, documentId);
+            return result ? DeleteStatus.SUCCESS : DeleteStatus.FAILURE;
+        } catch (Throwable e) {
+            return DeleteStatus.FAILURE;
+        }
     }
 }

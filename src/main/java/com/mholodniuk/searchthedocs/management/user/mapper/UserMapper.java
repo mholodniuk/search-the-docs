@@ -2,7 +2,7 @@ package com.mholodniuk.searchthedocs.management.user.mapper;
 
 import com.mholodniuk.searchthedocs.management.user.User;
 import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
-import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDto;
 import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
@@ -17,8 +17,8 @@ public class UserMapper {
         return user;
     }
 
-    public static UserDTO toDTO(User user) {
-        return UserDTO.builder()
+    public static UserDto toDTO(User user) {
+        return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .displayName(user.getDisplayName())
@@ -26,8 +26,8 @@ public class UserMapper {
                 .build();
     }
 
-    public static UserDTO toDTO(User user, String token) {
-        return UserDTO.builder()
+    public static UserDto toDTO(User user, String token) {
+        return UserDto.builder()
                 .id(user.getId())
                 .username(user.getUsername())
                 .displayName(user.getDisplayName())

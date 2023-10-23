@@ -3,13 +3,12 @@ package com.mholodniuk.searchthedocs.management.user;
 import com.mholodniuk.searchthedocs.management.access.AccessService;
 import com.mholodniuk.searchthedocs.management.room.dto.ExtendedRoomDto;
 import com.mholodniuk.searchthedocs.management.user.dto.CreateUserRequest;
-import com.mholodniuk.searchthedocs.management.user.dto.UserDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDto;
 import com.mholodniuk.searchthedocs.management.user.dto.UserResponse;
 import com.mholodniuk.searchthedocs.management.user.dto.UpdateUserRequest;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceUpdateException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.RoomService;
-import com.mholodniuk.searchthedocs.management.room.dto.RoomDto;
 import com.mholodniuk.searchthedocs.security.ApiAuthenticationService;
 import com.mholodniuk.searchthedocs.security.jwt.JwtAuthenticationFilter;
 import org.hamcrest.Matchers;
@@ -51,8 +50,8 @@ class UserControllerTest {
 
     @Test
     void Should_ReturnUserList_WhenFound() throws Exception {
-        var customer1 = UserDTO.builder().id(1L).username("name1").build();
-        var customer2 = UserDTO.builder().id(2L).username("name2").build();
+        var customer1 = UserDto.builder().id(1L).username("name1").build();
+        var customer2 = UserDto.builder().id(2L).username("name2").build();
 
         when(userService.findAllUsers()).thenReturn(List.of(customer1, customer2));
 
@@ -150,7 +149,7 @@ class UserControllerTest {
 
     @Test
     void Should_CreateUser_When_ValidRequest() throws Exception {
-        var customerCreatedResponse = UserDTO.builder()
+        var customerCreatedResponse = UserDto.builder()
                 .username("name")
                 .displayName("display")
                 .id(1L)
@@ -223,7 +222,7 @@ class UserControllerTest {
 
     @Test
     void Should_ReturnOkAndModifiedEntity_When_CorrectRequest() throws Exception {
-        var updatedCustomer = UserDTO.builder()
+        var updatedCustomer = UserDto.builder()
                 .id(3L)
                 .username("to-be-changed")
                 .displayName("display")

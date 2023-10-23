@@ -3,7 +3,7 @@ package com.mholodniuk.searchthedocs.management.user.dto;
 import lombok.Builder;
 
 @Builder
-public record UserDTO(
+public record UserDto(
         Long id,
         String username,
         String displayName,

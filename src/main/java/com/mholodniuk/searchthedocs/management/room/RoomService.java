@@ -87,7 +87,7 @@ public class RoomService {
     }
 
     public Optional<RoomResponse> findRoomById(Long roomId) {
-        return roomRepository.findByIdWithDocuments(roomId).map(RoomMapper::toResponse);
+        return roomRepository.findByIdWithOwner(roomId).map(RoomMapper::toResponse);
     }
 
     public List<String> findTagsInRoom(Long roomId) {
@@ -115,6 +115,7 @@ public class RoomService {
     public void deleteById(Long roomId) {
         var room = roomRepository.findById(roomId)
                 .orElseThrow(() -> new ResourceNotFoundException("No room with id %s found".formatted(roomId)));
+        // todo: delete all documents from this room
         roomRepository.delete(room);
     }
 }

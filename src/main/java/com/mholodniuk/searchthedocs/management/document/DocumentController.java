@@ -52,6 +52,13 @@ class DocumentController {
         );
     }
 
+    @DeleteMapping("/{documentId}")
+    @PreAuthorize("@accessValidationService.validateDocumentAccess(authentication, #documentId)")
+    public ResponseEntity<?> deleteRoom(@PathVariable @UUID String documentId) {
+        documentService.deleteByDocumentId(documentId);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{documentId}")
     @PreAuthorize("@accessValidationService.validateDocumentAccess(authentication, #documentId)")
     public ResponseEntity<?> getById(@PathVariable @UUID String documentId) {

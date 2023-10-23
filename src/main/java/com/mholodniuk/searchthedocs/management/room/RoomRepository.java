@@ -35,6 +35,11 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
             """)
     Optional<Room> findByIdWithDocuments(Long roomId);
 
+    @Query("""
+                select r from Room r left join fetch r.owner where r.id = :roomId
+            """)
+    Optional<Room> findByIdWithOwner(Long roomId);
+
     boolean existsByNameAndOwnerId(String name, Long ownerId);
 
     @Query("select r from Room r where r.id = :id and r.isPrivate = false")

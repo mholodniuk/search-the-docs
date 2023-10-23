@@ -49,4 +49,8 @@ public class DocumentIndexService {
             return Optional.empty();
         }
     }
+
+    public void deleteDocumentById(String documentId) {
+        documentSearchRepository.deleteByDocumentId(documentId);
+    }
 }

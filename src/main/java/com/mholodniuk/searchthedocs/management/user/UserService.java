@@ -27,7 +27,7 @@ public class UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Transactional
-    public UserDTO createUser(CreateUserRequest createUserRequest) {
+    public UserDto createUser(CreateUserRequest createUserRequest) {
         var user = UserMapper.fromCreateRequest(createUserRequest);
         user.setPassword(passwordEncoder.encode(createUserRequest.password()));
         userRepository.save(user);
@@ -37,7 +37,7 @@ public class UserService {
         return UserMapper.toDTO(user, authenticationResponse.token());
     }
 
-    public UserDTO updateUser(Long userId, UpdateUserRequest updateRequest) {
+    public UserDto updateUser(Long userId, UpdateUserRequest updateRequest) {
         var user = userRepository.findById(userId)
                 .orElseThrow(() -> new ResourceNotFoundException("No user with filename %s found".formatted(userId)));
 
@@ -76,7 +76,7 @@ public class UserService {
         return userRepository.findByIdWithRooms(userId).map(UserMapper::toResponse);
     }
 
-    public List<UserDTO> findAllUsers() {
+    public List<UserDto> findAllUsers() {
         return userRepository.findAll().stream()
                 .map(UserMapper::toDTO)
                 .toList();

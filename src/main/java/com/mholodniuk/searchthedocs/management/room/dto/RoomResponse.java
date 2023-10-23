@@ -1,6 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room.dto;
 
-import com.mholodniuk.searchthedocs.management.document.dto.DocumentDTO;
+import com.mholodniuk.searchthedocs.management.user.dto.UserDto;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -13,6 +13,6 @@ public record RoomResponse(
         boolean isPrivate,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
-        Collection<DocumentDTO> documents
+        UserDto owner
 ) {
 }

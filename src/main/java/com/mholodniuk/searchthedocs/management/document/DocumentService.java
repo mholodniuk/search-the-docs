@@ -92,6 +92,12 @@ public class DocumentService {
         return DocumentMapper.toResponse(document);
     }
 
+    void deleteByDocumentId(String documentId) {
+        documentRepository.deleteById(UUID.fromString(documentId));
+        documentIndexService.deleteDocumentById(documentId);
+        log.info("Delete document result: " + fileService.deleteFile(documentId));
+    }
+
     TagsAssignedResponse assignTags(String documentId, AssignTagsRequest assignTagsRequest) {
         var document = documentRepository.findById(UUID.fromString(documentId))
                 .orElseThrow(() -> new ResourceNotFoundException("No document with id %s found".formatted(documentId)));
