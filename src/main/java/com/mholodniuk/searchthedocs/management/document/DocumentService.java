@@ -2,6 +2,8 @@ package com.mholodniuk.searchthedocs.management.document;
 
 import com.mholodniuk.searchthedocs.common.validation.ErrorMessage;
 import com.mholodniuk.searchthedocs.document.DocumentIndexService;
+import com.mholodniuk.searchthedocs.document.model.SearchableRoom;
+import com.mholodniuk.searchthedocs.document.model.SearchableUser;
 import com.mholodniuk.searchthedocs.file.FileService;
 import com.mholodniuk.searchthedocs.file.dto.FileUploadResponse;
 import com.mholodniuk.searchthedocs.file.exception.FileSavingException;
@@ -46,7 +48,17 @@ public class DocumentService {
                     bytes,
                     createdDocument.id().toString(),
                     file.getContentType(),
-                    filename);
+                    filename,
+                    new SearchableUser(
+                            createdDocument.owner().id(),
+                            createdDocument.owner().username(),
+                            createdDocument.owner().displayName(),
+                            createdDocument.owner().email()
+                    ),
+                    new SearchableRoom(
+                            createdDocument.room().id(),
+                            createdDocument.room().name()
+                    ));
             var saveStatus = fileService.saveFile(bytes, documentId);
 
             return FileUploadResponse.builder()
@@ -107,12 +119,6 @@ public class DocumentService {
         documentRepository.save(document);
 
         return new TagsAssignedResponse(documentId, document.getTags());
-    }
-
-    public List<DocumentDTO> findAllDocuments() {
-        return documentRepository.findAll().stream()
-                .map(DocumentMapper::toDTO)
-                .toList();
     }
 
     public List<DocumentDTO> findDocumentsInRoom(Long roomId) {

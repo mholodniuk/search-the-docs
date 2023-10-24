@@ -1,7 +1,7 @@
 package com.mholodniuk.searchthedocs.document.mapper;
 
 import co.elastic.clients.elasticsearch.core.SearchResponse;
-import com.mholodniuk.searchthedocs.document.SearchableDocument;
+import com.mholodniuk.searchthedocs.document.model.SearchableDocument;
 import com.mholodniuk.searchthedocs.document.utils.FieldAttr;
 import com.mholodniuk.searchthedocs.document.dto.PhraseSearchResponse;
 import com.mholodniuk.searchthedocs.document.dto.SingleSearchResponse;

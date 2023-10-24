@@ -3,6 +3,7 @@ package com.mholodniuk.searchthedocs.document;
 
 import com.mholodniuk.searchthedocs.document.exception.DocumentParsingException;
 import com.mholodniuk.searchthedocs.document.extract.impl.PdfExtractor;
+import com.mholodniuk.searchthedocs.document.model.SearchableDocument;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -48,7 +49,7 @@ class DocumentIndexServiceTest {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(Collections.emptyList());
 
-        var result = documentIndexService.indexDocument(file.getBytes(), "12-ew12-12dsa", file.getContentType(), file.getOriginalFilename());
+        var result = documentIndexService.indexDocument(file.getBytes(), "12-ew12-12dsa", file.getContentType(), file.getOriginalFilename(), null, null);
 
         verify(documentSearchRepository).saveAll(any());
         Assertions.assertEquals("12-ew12-12dsa", result);
@@ -60,7 +61,7 @@ class DocumentIndexServiceTest {
         var file = new MockMultipartFile("file", "sample2.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenReturn(List.of(" A Simple PDF File ...", " A Simple PDF File 2 ..."));
 
-        documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename());
+        documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename(), null, null);
 
         var documentsArgumentCaptor = ArgumentCaptor.forClass(Iterable.class);
         verify(documentSearchRepository).saveAll(documentsArgumentCaptor.capture());
@@ -75,7 +76,7 @@ class DocumentIndexServiceTest {
         var file = new MockMultipartFile("file", "sample1.pdf", "application/pdf", any(byte[].class));
         when(contentExtractor.extract(file.getBytes())).thenThrow(DocumentParsingException.class);
 
-        Assertions.assertThrows(DocumentParsingException.class, () -> documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename()));
+        Assertions.assertThrows(DocumentParsingException.class, () -> documentIndexService.indexDocument(file.getBytes(), "id", file.getContentType(), file.getOriginalFilename(), null, null));
     }
 
     private long getDocumentsSize(Iterable<SearchableDocument> documents) {

@@ -73,7 +73,7 @@ public class UserService {
     }
 
     public Optional<UserResponse> findUserById(Long userId) {
-        return userRepository.findByIdWithRooms(userId).map(UserMapper::toResponse);
+        return userRepository.findById(userId).map(UserMapper::toResponse);
     }
 
     public List<UserDto> findAllUsers() {

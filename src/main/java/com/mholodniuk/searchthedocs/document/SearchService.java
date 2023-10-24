@@ -6,6 +6,7 @@ import co.elastic.clients.elasticsearch.core.search.Highlight;
 import co.elastic.clients.elasticsearch.core.search.HighlightField;
 import co.elastic.clients.elasticsearch.core.search.HighlighterType;
 import co.elastic.clients.elasticsearch.core.search.SourceConfig;
+import com.mholodniuk.searchthedocs.document.model.SearchableDocument;
 import com.mholodniuk.searchthedocs.document.utils.FieldAttr;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

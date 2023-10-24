@@ -3,6 +3,9 @@ package com.mholodniuk.searchthedocs.document;
 import com.mholodniuk.searchthedocs.document.dto.PhraseSearchResponse;
 import com.mholodniuk.searchthedocs.document.extract.ContentExtractor;
 import com.mholodniuk.searchthedocs.document.mapper.SearchResponseMapper;
+import com.mholodniuk.searchthedocs.document.model.SearchableDocument;
+import com.mholodniuk.searchthedocs.document.model.SearchableRoom;
+import com.mholodniuk.searchthedocs.document.model.SearchableUser;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,12 +24,12 @@ public class DocumentIndexService {
     private final Map<String, ContentExtractor> contentExtractors;
     private final DocumentSearchRepository documentSearchRepository;
 
-    public String indexDocument(byte[] file, String id, String contentType, String filename) {
+    public String indexDocument(byte[] file, String id, String contentType, String filename, SearchableUser user, SearchableRoom room) {
         var contentExtractor = contentExtractors.get(contentType);
         var content = contentExtractor.extract(file);
 
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new SearchableDocument(id, filename, content.get(pageIdx), pageIdx + 1))
+                .mapToObj(pageIdx -> new SearchableDocument(id, filename, content.get(pageIdx), pageIdx + 1, room, user))
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 

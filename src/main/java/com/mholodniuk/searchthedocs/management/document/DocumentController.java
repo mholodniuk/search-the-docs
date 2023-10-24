@@ -3,7 +3,6 @@ package com.mholodniuk.searchthedocs.management.document;
 import com.mholodniuk.searchthedocs.file.FileController;
 import com.mholodniuk.searchthedocs.file.validation.ValidFile;
 import com.mholodniuk.searchthedocs.management.document.dto.AssignTagsRequest;
-import com.mholodniuk.searchthedocs.management.dto.CollectionResponse;
 import lombok.RequiredArgsConstructor;
 import org.hibernate.validator.constraints.UUID;
 import org.springframework.http.MediaType;
@@ -43,13 +42,6 @@ class DocumentController {
             @RequestBody AssignTagsRequest assignTagsRequest) {
         var tags = documentService.assignTags(documentId, assignTagsRequest);
         return ResponseEntity.ok(tags);
-    }
-
-    @GetMapping
-    public ResponseEntity<?> getAllDocuments() {
-        return ResponseEntity.ok(
-                new CollectionResponse<>("documents", documentService.findAllDocuments())
-        );
     }
 
     @DeleteMapping("/{documentId}")
