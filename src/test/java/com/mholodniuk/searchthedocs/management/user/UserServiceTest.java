@@ -214,7 +214,7 @@ class UserServiceTest {
         room.setPrivate(true);
         customer.setRooms(Set.of(room));
 
-        when(userRepository.findByIdWithRooms(1L)).thenReturn(Optional.of(customer));
+        when(userRepository.findById(1L)).thenReturn(Optional.of(customer));
 
         Optional<UserResponse> response = userService.findUserById(1L);
 
@@ -224,7 +224,7 @@ class UserServiceTest {
 
     @Test
     public void Should_ReturnEmptyOptional_When_NoCustomerWithId() {
-        when(userRepository.findByIdWithRooms(1L)).thenReturn(Optional.empty());
+        when(userRepository.findById(1L)).thenReturn(Optional.empty());
 
         Optional<UserResponse> response = userService.findUserById(1L);
 
