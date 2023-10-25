@@ -29,7 +29,7 @@ public class DocumentIndexService {
         var content = contentExtractor.extract(file);
 
         var documents = IntStream.range(0, content.size())
-                .mapToObj(pageIdx -> new SearchableDocument(id, filename, content.get(pageIdx), pageIdx + 1, room, user))
+                .mapToObj(pageIdx -> new SearchableDocument(id, filename, content.get(pageIdx), pageIdx + 1, room.name(), user.username(), user.displayName()))
                 .peek(document -> log.debug("Indexing page {} with content: {}", document.getPage(), document.getText()))
                 .toList();
 

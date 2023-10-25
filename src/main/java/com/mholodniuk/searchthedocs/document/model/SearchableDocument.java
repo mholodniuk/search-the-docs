@@ -26,20 +26,26 @@ public class SearchableDocument {
     private Integer page;
     @Field(type = FieldType.Date, format = DateFormat.basic_date)
     private Date uploadedAt;
-    @Field(type = FieldType.Nested)
-    private SearchableRoom room;
-    @Field(type = FieldType.Nested)
-    private SearchableUser owner;
+    @Field(type = FieldType.Keyword)
+    private String room;
+    @Field(type = FieldType.Keyword)
+    private String owner;
+    @Field(type = FieldType.Keyword)
+    private String ownerDisplayName;
+
 
     public SearchableDocument(String id,
                               String name,
                               String content,
                               int page,
-                              SearchableRoom room,
-                              SearchableUser user) {
+                              String room,
+                              String username,
+                              String userDisplayName) {
         this(id, name, content, page);
+        this.uploadedAt = new Date();
         this.room = room;
-        this.owner = user;
+        this.owner = username;
+        this.ownerDisplayName = userDisplayName;
     }
 
     public SearchableDocument(String id, String name, String content, int page) {
