@@ -4,6 +4,7 @@ package com.mholodniuk.searchthedocs.document;
 import com.mholodniuk.searchthedocs.document.exception.DocumentParsingException;
 import com.mholodniuk.searchthedocs.document.extract.impl.PdfExtractor;
 import com.mholodniuk.searchthedocs.document.model.SearchableDocument;
+import com.mholodniuk.searchthedocs.management.room.RoomService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -33,6 +34,8 @@ class DocumentIndexServiceTest {
     private PdfExtractor contentExtractor;
     @MockBean
     private DocumentSearchRepository documentSearchRepository;
+    @MockBean
+    private RoomService roomService;
 
     private DocumentIndexService documentIndexService;
 
@@ -41,7 +44,8 @@ class DocumentIndexServiceTest {
         this.documentIndexService = new DocumentIndexService(
                 searchService,
                 Map.of("application/pdf", contentExtractor),
-                documentSearchRepository);
+                documentSearchRepository,
+                roomService);
     }
 
     @Test

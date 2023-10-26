@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.file.mock;
 
+import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
@@ -62,7 +63,7 @@ public class S3Mock implements S3Client {
             FileInputStream fileInputStream = new FileInputStream(buildObjectFullPath(getObjectRequest.bucket(), getObjectRequest.key()));
             return new ResponseInputStream<>(GetObjectResponse.builder().build(), fileInputStream);
         } catch (FileNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ResourceNotFoundException("No object %s".formatted(getObjectRequest.key()));
         }
     }
 

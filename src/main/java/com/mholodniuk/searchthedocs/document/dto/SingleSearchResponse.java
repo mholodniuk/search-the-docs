@@ -2,5 +2,11 @@ package com.mholodniuk.searchthedocs.document.dto;
 
 import java.util.List;
 
-public record SingleSearchResponse(String documentName, Integer page, List<String> hits, Integer foundNumber) {
+public record SingleSearchResponse(
+        String documentName,
+        String documentId,
+        String room,
+        Integer page,
+        List<String> hits,
+        Integer count) {
 }

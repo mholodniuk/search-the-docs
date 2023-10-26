@@ -19,7 +19,13 @@ public class SearchResponseMapper {
                                     .map(result -> result.replace("\n", " "))
                                     .toList();
 
-                            return new SingleSearchResponse(document.getName(), document.getPage(), phraseHits, phraseHits.size());
+                            return new SingleSearchResponse(
+                                    document.getName(),
+                                    document.getDocumentId(),
+                                    document.getRoom(),
+                                    document.getPage(),
+                                    phraseHits,
+                                    phraseHits.size());
                         })
                         .toList());
     }

@@ -14,8 +14,10 @@ public class SearchController {
     private final DocumentIndexService documentIndexService;
 
     @GetMapping
-    public ResponseEntity<?> findByPhrase(@RequestParam("phrase") String phrase) {
-        return documentIndexService.searchDocument(phrase)
+    public ResponseEntity<?> findByPhrase(
+            @RequestParam("phrase") String phrase,
+            @RequestParam("requester") Long requesterId) {
+        return documentIndexService.searchDocument(phrase, requesterId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

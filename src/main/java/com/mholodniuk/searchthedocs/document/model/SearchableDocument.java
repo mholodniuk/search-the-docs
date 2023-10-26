@@ -26,6 +26,8 @@ public class SearchableDocument {
     private Integer page;
     @Field(type = FieldType.Date, format = DateFormat.basic_date)
     private Date uploadedAt;
+    @Field(type = FieldType.Long)
+    private Long roomId;
     @Field(type = FieldType.Keyword)
     private String room;
     @Field(type = FieldType.Keyword)
@@ -39,10 +41,12 @@ public class SearchableDocument {
                               String content,
                               int page,
                               String room,
+                              Long roomId,
                               String username,
                               String userDisplayName) {
         this(id, name, content, page);
         this.uploadedAt = new Date();
+        this.roomId = roomId;
         this.room = room;
         this.owner = username;
         this.ownerDisplayName = userDisplayName;
