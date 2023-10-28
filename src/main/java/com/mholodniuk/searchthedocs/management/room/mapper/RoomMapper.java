@@ -9,6 +9,8 @@ import com.mholodniuk.searchthedocs.management.user.mapper.UserMapper;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class RoomMapper {
     public static Room fromRequest(CreateRoomRequest createRoomRequest) {
@@ -37,6 +39,19 @@ public class RoomMapper {
                 .modifiedAt(room.getModifiedAt())
                 .owner(UserMapper.toDTO(room.getOwner()))
                 .accessKeys(AccessKeyMapper.toResponse(room.getAccessKeys()))
+                .build();
+    }
+
+    public static RoomResponse appendTags(RoomResponse room, List<String> tags) {
+        return RoomResponse.builder()
+                .id(room.id())
+                .name(room.name())
+                .isPrivate(room.isPrivate())
+                .createdAt(room.createdAt())
+                .modifiedAt(room.modifiedAt())
+                .owner(room.owner())
+                .accessKeys(room.accessKeys())
+                .tags(tags)
                 .build();
     }
 }

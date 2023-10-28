@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.List;
 
 @Builder
 public record RoomResponse(
@@ -14,6 +15,7 @@ public record RoomResponse(
         boolean isPrivate,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
+        List<String> tags,
         UserDto owner,
         Collection<AccessKeyResponse> accessKeys
 ) {

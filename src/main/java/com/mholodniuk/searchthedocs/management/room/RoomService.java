@@ -88,7 +88,8 @@ public class RoomService {
 
     public Optional<RoomResponse> findRoomById(Long roomId) {
         return roomRepository.findByIdWithAccessAndOwner(roomId)
-                .map(RoomMapper::toResponse);
+                .map(RoomMapper::toResponse)
+                .map(room -> RoomMapper.appendTags(room, findTagsInRoom(room.id())));
     }
 
     public List<String> findTagsInRoom(Long roomId) {
