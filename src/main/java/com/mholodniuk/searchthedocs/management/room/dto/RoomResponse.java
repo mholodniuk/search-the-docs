@@ -1,5 +1,6 @@
 package com.mholodniuk.searchthedocs.management.room.dto;
 
+import com.mholodniuk.searchthedocs.management.access.dto.AccessKeyResponse;
 import com.mholodniuk.searchthedocs.management.user.dto.UserDto;
 import lombok.Builder;
 
@@ -13,6 +14,7 @@ public record RoomResponse(
         boolean isPrivate,
         LocalDateTime createdAt,
         LocalDateTime modifiedAt,
-        UserDto owner
+        UserDto owner,
+        Collection<AccessKeyResponse> accessKeys
 ) {
 }

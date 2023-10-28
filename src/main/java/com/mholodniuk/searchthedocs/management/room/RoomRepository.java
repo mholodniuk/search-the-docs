@@ -23,6 +23,7 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     @Query("""
                 select new com.mholodniuk.searchthedocs.management.room.dto.ExtendedRoomDto(
                     r.id, r.name, r.isPrivate, false, r.createdAt, r.modifiedAt,
+                    
                     (select count(*) from Document d where d.room.id = r.id))
                 from Room r
                 join AccessKey a on a.room.id = r.id
@@ -36,9 +37,12 @@ public interface RoomRepository extends JpaRepository<Room, Long> {
     Optional<Room> findByIdWithDocuments(Long roomId);
 
     @Query("""
-                select r from Room r left join fetch r.owner where r.id = :roomId
+                select r from Room r
+                left join fetch r.owner
+                left join fetch r.accessKeys
+                where r.id = :roomId
             """)
-    Optional<Room> findByIdWithOwner(Long roomId);
+    Optional<Room> findByIdWithAccessAndOwner(Long roomId);
 
     boolean existsByNameAndOwnerId(String name, Long ownerId);
 
