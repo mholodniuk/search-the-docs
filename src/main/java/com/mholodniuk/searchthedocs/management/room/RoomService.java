@@ -106,6 +106,7 @@ public class RoomService {
 
         var accessKeys = accessService.findUserReceivedAccessKeys(userId)
                 .stream()
+                .filter(accessKey -> accessKey.validTo() == null || !accessKey.validTo().isBefore(LocalDateTime.now()))
                 .map(accessKey -> toUUID(accessKey.id()))
                 .collect(Collectors.toSet());
 

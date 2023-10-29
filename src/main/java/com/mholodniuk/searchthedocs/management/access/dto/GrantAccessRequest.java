@@ -14,7 +14,7 @@ public record GrantAccessRequest(
         String keyName,
         @NotNull
         AccessRight accessRight,
-        @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
+        @JsonFormat(pattern = "d-M-yyyy", shape = JsonFormat.Shape.STRING)
         @Future(message = "Valid to date must be in future")
         LocalDate validTo
 ) {

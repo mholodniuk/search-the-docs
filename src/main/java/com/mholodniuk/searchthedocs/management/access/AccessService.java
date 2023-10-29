@@ -3,13 +3,13 @@ package com.mholodniuk.searchthedocs.management.access;
 import com.mholodniuk.searchthedocs.management.access.dto.AccessKeyResponse;
 import com.mholodniuk.searchthedocs.management.access.dto.GrantAccessRequest;
 import com.mholodniuk.searchthedocs.management.access.mapper.AccessKeyMapper;
-import com.mholodniuk.searchthedocs.management.user.User;
-import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceCreationException;
 import com.mholodniuk.searchthedocs.management.exception.InvalidResourceDeletionException;
 import com.mholodniuk.searchthedocs.management.exception.ResourceNotFoundException;
 import com.mholodniuk.searchthedocs.management.room.Room;
 import com.mholodniuk.searchthedocs.management.room.RoomRepository;
+import com.mholodniuk.searchthedocs.management.user.User;
+import com.mholodniuk.searchthedocs.management.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -39,7 +39,7 @@ public class AccessService {
         var invitedUser = userRepository.findByUsername(grantAccessRequest.userToInvite())
                 .orElseThrow(() -> new ResourceNotFoundException("No user with username %s found".formatted(grantAccessRequest.userToInvite())));
 
-        var date = grantAccessRequest.validTo() != null ? LocalDateTime.from(grantAccessRequest.validTo()) : null;
+        var date = grantAccessRequest.validTo() != null ? LocalDateTime.from(grantAccessRequest.validTo().atStartOfDay()) : null;
         if (accessKeyRepository.findAccessRightsByParticipantIdAndRoomIdOnDate(invitedUser.getId(), roomId, date).isPresent()) {
             throw new InvalidResourceCreationException("User %s already has access to room with id %s".formatted(grantAccessRequest.userToInvite(), roomId));
         }

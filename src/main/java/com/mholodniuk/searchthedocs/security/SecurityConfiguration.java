@@ -41,6 +41,7 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(
                         authorizeHttp -> {
                             authorizeHttp.requestMatchers(HttpMethod.OPTIONS).permitAll();
+                            authorizeHttp.requestMatchers(HttpMethod.GET, "/files/**").permitAll();
                             authorizeHttp.requestMatchers(HttpMethod.POST, "/users").permitAll();
                             authorizeHttp.requestMatchers(HttpMethod.POST, "/users/authenticate").permitAll();
                             authorizeHttp.anyRequest().authenticated();
