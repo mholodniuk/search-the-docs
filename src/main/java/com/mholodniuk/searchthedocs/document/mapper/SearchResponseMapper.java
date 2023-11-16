@@ -23,6 +23,7 @@ public class SearchResponseMapper {
                                     document.getName(),
                                     document.getDocumentId(),
                                     document.getRoom(),
+                                    document.getOwner(),
                                     document.getPage(),
                                     phraseHits,
                                     phraseHits.size());

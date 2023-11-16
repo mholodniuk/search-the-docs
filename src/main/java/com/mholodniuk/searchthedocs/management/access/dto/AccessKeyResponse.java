@@ -14,6 +14,7 @@ public record AccessKeyResponse(
         String name,
         RoomDto room,
         String recipient,
+        Long recipientId,
         LocalDateTime validTo,
         AccessRight accessRight
 ) {

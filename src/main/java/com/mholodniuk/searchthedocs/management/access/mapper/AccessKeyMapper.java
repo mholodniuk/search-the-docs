@@ -28,6 +28,7 @@ public class AccessKeyMapper {
                         .name(accessKey.getName())
                         .accessRight(accessKey.getRights())
                         .validTo(accessKey.getValidTo())
+                        .recipientId(accessKey.getParticipant().getId())
                         .recipient(accessKey.getParticipant().getUsername())
                         .build())
                 .toList();

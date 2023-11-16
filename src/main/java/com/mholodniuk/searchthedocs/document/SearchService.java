@@ -39,7 +39,7 @@ class SearchService {
                                 )
                                 .type(HighlighterType.Unified)))
                         .query(q -> q
-                                .bool(bh -> bh
+                                .bool(b -> b
                                         .must(m -> m.match(t -> t.field(FieldAttr.Document.TEXT_FIELD).query(phrase)))
                                         .filter(f -> f
                                                 .terms(t -> t
