@@ -32,7 +32,10 @@ public class PdfExtractor implements ContentExtractor {
 
     private String parsePage(PDFTextStripper pdfTextStripper, PDDocument document) {
         try {
-            return pdfTextStripper.getText(document).trim();
+            return pdfTextStripper
+                    .getText(document)
+                    .replace('\n', ' ')
+                    .trim();
         } catch (IOException e) {
             log.error("Error parsing page. Message: {}", e.getMessage());
             throw new DocumentParsingException(e);
