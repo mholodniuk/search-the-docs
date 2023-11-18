@@ -42,7 +42,7 @@ public class DocumentIndexService {
         return id;
     }
 
-    public Optional<PhraseSearchResponse> searchDocument(String phrase, Long userId, int fragmentSize) {
+    public PhraseSearchResponse searchDocument(String phrase, Long userId, int fragmentSize) {
 
         var availableRooms = roomService.findAvailableRooms(userId).stream()
                 .map(ExtendedRoomDto::id)
@@ -55,10 +55,11 @@ public class DocumentIndexService {
 
             return Stream.of(searchResponse)
                     .filter(result -> !result.hits().isEmpty())
-                    .findAny();
+                    .findAny()
+                    .orElse(PhraseSearchResponse.empty());
         } catch (IOException e) {
             log.error(e.getMessage());
-            return Optional.of(new PhraseSearchResponse(Collections.emptyList()));
+            return PhraseSearchResponse.empty();
         }
     }
 

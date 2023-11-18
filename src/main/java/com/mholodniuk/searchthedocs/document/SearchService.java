@@ -21,8 +21,6 @@ import java.util.List;
 class SearchService {
     private final ElasticsearchClient elasticsearchClient;
 
-    //    todo: look at this
-//    https://stackoverflow.com/questions/61581529/spring-data-elastic-search-query-highlight
     SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase, List<Long> roomIds, int fragmentSize) throws IOException {
         TermsQueryField roomTerms = new TermsQueryField.Builder()
                 .value(roomIds.stream().map(FieldValue::of).toList())
