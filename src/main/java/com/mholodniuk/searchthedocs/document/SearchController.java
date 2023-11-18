@@ -16,8 +16,9 @@ public class SearchController {
     @GetMapping
     public ResponseEntity<?> findByPhrase(
             @RequestParam("phrase") String phrase,
-            @RequestParam("requester") Long requesterId) {
-        return documentIndexService.searchDocument(phrase, requesterId)
+            @RequestParam("requester") Long requesterId,
+            @RequestParam(value = "fragment-size", defaultValue = "50") Integer fragmentSize) {
+        return documentIndexService.searchDocument(phrase, requesterId, fragmentSize)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }

@@ -13,8 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -43,14 +42,15 @@ public class DocumentIndexService {
         return id;
     }
 
-    public Optional<PhraseSearchResponse> searchDocument(String phrase, Long userId) {
+    public Optional<PhraseSearchResponse> searchDocument(String phrase, Long userId, int fragmentSize) {
 
         var availableRooms = roomService.findAvailableRooms(userId).stream()
                 .map(ExtendedRoomDto::id)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toSet())
+                .stream().toList();
 
         try {
-            var response = searchService.searchDocumentsByPhrase(phrase, availableRooms.stream().toList());
+            var response = searchService.searchDocumentsByPhrase(phrase, availableRooms, fragmentSize);
             var searchResponse = SearchResponseMapper.mapToDto(response);
 
             return Stream.of(searchResponse)
@@ -58,7 +58,7 @@ public class DocumentIndexService {
                     .findAny();
         } catch (IOException e) {
             log.error(e.getMessage());
-            return Optional.empty();
+            return Optional.of(new PhraseSearchResponse(Collections.emptyList()));
         }
     }
 

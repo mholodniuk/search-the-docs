@@ -23,7 +23,7 @@ class SearchService {
 
     //    todo: look at this
 //    https://stackoverflow.com/questions/61581529/spring-data-elastic-search-query-highlight
-    SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase, List<Long> roomIds) throws IOException {
+    SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase, List<Long> roomIds, int fragmentSize) throws IOException {
         TermsQueryField roomTerms = new TermsQueryField.Builder()
                 .value(roomIds.stream().map(FieldValue::of).toList())
                 .build();
@@ -33,7 +33,7 @@ class SearchService {
                         .source(SourceConfig.of(sc -> sc.filter(f -> f.excludes(List.of(FieldAttr.Document.TEXT_FIELD, "_class")))))
                         .highlight(Highlight.of(h -> h
                                 .fields(FieldAttr.Document.TEXT_FIELD, HighlightField.of(hf -> hf
-                                        .fragmentSize(69)
+                                        .fragmentSize(fragmentSize)
                                         .preTags("<b>")
                                         .postTags("</b>"))
                                 )
