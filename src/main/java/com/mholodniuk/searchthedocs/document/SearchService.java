@@ -21,7 +21,10 @@ import java.util.List;
 class SearchService {
     private final ElasticsearchClient elasticsearchClient;
 
-    SearchResponse<SearchableDocument> searchDocumentsByPhrase(String phrase, List<Long> roomIds, int fragmentSize) throws IOException {
+    SearchResponse<SearchableDocument> searchDocumentsByPhrase(
+            String phrase,
+            List<Long> roomIds,
+            int fragmentSize) throws IOException {
         TermsQueryField roomTerms = new TermsQueryField.Builder()
                 .value(roomIds.stream().map(FieldValue::of).toList())
                 .build();

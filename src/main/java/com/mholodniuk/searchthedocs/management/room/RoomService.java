@@ -72,7 +72,6 @@ public class RoomService {
                 room.setName(updated);
             }
         });
-        applyIfChanged(room.isPrivate(), updateRequest.isPrivate(), room::setPrivate);
         room.setModifiedAt(LocalDateTime.now());
 
         var updated = roomRepository.save(room);

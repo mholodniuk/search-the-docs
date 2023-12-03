@@ -1,7 +1,3 @@
-CREATE TYPE "access_privilege" AS ENUM ('VIEWER', 'MODIFIER', 'OTHER');
-
--- todo: define on delete cascade
-
 CREATE TABLE "rooms"
 (
     "id"          SERIAL PRIMARY KEY,
@@ -59,11 +55,6 @@ ALTER TABLE
     "documents"
     ADD
         FOREIGN KEY ("room_id") REFERENCES "rooms" ("id");
-
-ALTER TABLE
-    "access_keys"
-    ADD
-        FOREIGN KEY ("issuer_id") REFERENCES "users" ("id");
 
 ALTER TABLE
     "access_keys"

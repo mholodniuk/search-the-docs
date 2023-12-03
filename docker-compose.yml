@@ -1,14 +1,5 @@
 version: "3"
 services:
-#  api:
-#    container_name: backend
-#    hostname: backend
-#    depends_on:
-#      - elasticsearch
-#    build: ./
-#    restart: always
-#    ports:
-#      - "8080:8080"
   elasticsearch:
     hostname: elastic
     image: elasticsearch:7.17.6

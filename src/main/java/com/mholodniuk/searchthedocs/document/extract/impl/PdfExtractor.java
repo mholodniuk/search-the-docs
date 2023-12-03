@@ -17,12 +17,15 @@ import java.util.List;
 public class PdfExtractor implements ContentExtractor {
     @Override
     public List<String> extract(byte[] bytes) {
-        try (PDDocument document = PDDocument.load(new ByteArrayInputStream(bytes))) {
+        try (PDDocument document = PDDocument.load(
+                new ByteArrayInputStream(bytes))) {
             var pdfStripper = new PDFTextStripper();
             var splitter = new Splitter();
             var pages = splitter.split(document);
 
-            return pages.stream().map(page -> this.parsePage(pdfStripper, page)).toList();
+            return pages.stream()
+                    .map(page -> this.parsePage(pdfStripper, page))
+                    .toList();
         } catch (Exception e) {
             log.error("Error loading PDF. Message: {}", e.getMessage());
             throw new DocumentParsingException(e);

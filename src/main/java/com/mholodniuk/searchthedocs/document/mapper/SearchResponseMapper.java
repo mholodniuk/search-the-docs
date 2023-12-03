@@ -9,7 +9,8 @@ import com.mholodniuk.searchthedocs.document.dto.SingleSearchResponse;
 public class SearchResponseMapper {
     public static PhraseSearchResponse mapToDto(SearchResponse<SearchableDocument> response) {
         return new PhraseSearchResponse(
-                response.hits().hits()
+                response.hits()
+                        .hits()
                         .stream()
                         .filter(hit -> hit.source() != null)
                         .map(hit -> {
@@ -28,6 +29,8 @@ public class SearchResponseMapper {
                                     phraseHits,
                                     phraseHits.size());
                         })
-                        .toList());
+                        .toList(),
+                        response.hits().hits().size()
+                );
     }
 }

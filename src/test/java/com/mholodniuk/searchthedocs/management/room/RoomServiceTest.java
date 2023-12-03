@@ -98,7 +98,7 @@ class RoomServiceTest {
 
     @Test
     void Should_ModifyAllFields_When_Requested() {
-        var request = new UpdateRoomRequest("name", true);
+        var request = new UpdateRoomRequest("name");
         var room = new Room();
         room.setId(1L);
         room.setName("to-be-changed");
@@ -120,13 +120,12 @@ class RoomServiceTest {
 
         verify(roomRepository, times(1)).save(any(Room.class));
         Assertions.assertEquals(request.name(), capturedSavedRoom.getName());
-        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.isPrivate());
         Assertions.assertTrue(response.modifiedAt().isAfter(capturedSavedRoom.getCreatedAt()));
     }
 
     @Test
     void Should_ModifyOnlyPresentFields_When_Requested() {
-        var request = new UpdateRoomRequest(null, false);
+        var request = new UpdateRoomRequest(null);
         var room = new Room();
         room.setId(1L);
         room.setName("to-be-changed");
@@ -148,13 +147,12 @@ class RoomServiceTest {
         verify(roomRepository, times(1)).save(any(Room.class));
         Assertions.assertEquals(room.getName(), capturedSavedRoom.getName());
         Assertions.assertNotEquals(room.getName(), request.name());
-        Assertions.assertEquals(request.isPrivate(), capturedSavedRoom.isPrivate());
         Assertions.assertTrue(response.modifiedAt().isAfter(response.createdAt()));
     }
 
     @Test
     void Should_Throw_When_NoRoomFoundById() {
-        var request = new UpdateRoomRequest("room", true);
+        var request = new UpdateRoomRequest("room");
 
         when(roomRepository.findById(1L)).thenReturn(Optional.empty());
 
@@ -163,7 +161,7 @@ class RoomServiceTest {
 
     @Test
     void Should_ThrowForInvalidField_When_RoomAlreadyExists() {
-        var request = new UpdateRoomRequest("room", true);
+        var request = new UpdateRoomRequest("room");
         var room = new Room();
         var customer = new User();
         customer.setId(2L);

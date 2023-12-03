@@ -13,11 +13,11 @@ import java.util.List;
 public class DocxExtractor implements ContentExtractor {
     @Override
     public List<String> extract(byte[] bytes) {
-        try (XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(bytes))) {
+        try (XWPFDocument document = new XWPFDocument(
+                new ByteArrayInputStream(bytes))) {
             var xwpfWordExtractor = new XWPFWordExtractor(document);
             var docText = xwpfWordExtractor.getText().trim();
 
-            // todo: split text into pages
             return List.of(docText);
         } catch (Exception e) {
             throw new DocumentParsingException(e);
